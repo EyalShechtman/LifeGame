@@ -20,6 +20,18 @@ kbd{display:inline-block;min-width:20px;padding:1px 7px;border-radius:5px;backgr
 #chips{right:calc(22px + env(safe-area-inset-right,0px));top:calc(14px + env(safe-area-inset-top,0px));text-align:right}
 #chips b{display:block;font:400 48px/1 var(--display);color:var(--green);text-shadow:3px 3px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000;font-variant-numeric:tabular-nums}
 #chips span{display:block;font-size:12px;font-weight:800;letter-spacing:.18em;text-shadow:0 2px 0 #000}
+#soccerUI{left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(680px,calc(100vw - 32px));box-sizing:border-box;padding:14px 18px;background:var(--panel);border:2px solid rgba(226,181,82,.6);border-radius:10px;pointer-events:auto;display:flex;flex-direction:column;gap:12px}
+#soccerUI .row{display:flex;align-items:center;gap:12px}
+#soccerUI .cap{flex:1;display:flex;flex-direction:column;gap:2px;text-align:center;min-height:44px;justify-content:center}
+#soccerUI .cap small{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--gold)}
+#soccerUI .cap span{font-size:16px;font-weight:700;line-height:1.35}
+#soccerUI .arrow{width:44px;height:44px;border-radius:50%;border:2px solid var(--gold);background:transparent;color:var(--gold);font:800 22px var(--body);cursor:pointer;flex:none}
+#soccerUI .acts{justify-content:center;flex-wrap:wrap}
+#soccerUI .btn.ghost{background:transparent;color:var(--ink);border:2px solid rgba(255,255,255,.35)}
+body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt{display:none!important}
+#tvWrap{position:fixed;z-index:4;background:#000;box-shadow:0 0 40px rgba(120,160,255,.25)}
+#tvWrap iframe{width:100%;height:100%;border:0;display:block}
+#tvOpen{position:absolute;right:0;top:calc(100% + 8px);font:800 13px var(--body);color:var(--gold);background:rgba(0,0,0,.6);padding:6px 10px;border-radius:999px;text-decoration:none}
 #musicBtn{position:fixed;z-index:6;right:calc(22px + env(safe-area-inset-right,0px));top:calc(112px + env(safe-area-inset-top,0px));padding:6px 12px;border-radius:999px;border:2px solid var(--gold);background:rgba(0,0,0,.6);color:var(--gold);font:800 11px var(--body);letter-spacing:.14em;cursor:pointer}
 #musicBtn[aria-pressed="false"]{border-color:rgba(255,255,255,.35);color:rgba(255,255,255,.7)}
 #chips i{display:block;margin-top:6px;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--gold);text-shadow:0 2px 0 #000}
@@ -93,6 +105,11 @@ kbd{display:inline-block;min-width:20px;padding:1px 7px;border-radius:5px;backgr
 <div id="help" class="hud">Find out who Eyal is. Walk up to the flag, the frames on the walls, or the empty chair at the table.</div>
 <div id="chips" class="hud"><b id="chipNum">00/12</b><span>CHIPS FOUND</span><i id="viewLbl">VIEW · CHASE CAM</i></div>
 <button type="button" id="musicBtn" aria-pressed="false">♪ MUSIC OFF</button>
+<div id="tvWrap" hidden><iframe id="tvFrame" title="Bellevue Athletic highlights video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a id="tvOpen" href="https://youtu.be/uBo_WEquynA" target="_blank" rel="noopener">Open on YouTube ↗</a></div>
+<div id="soccerUI" class="hud" hidden role="region" aria-label="Soccer album">
+  <div class="row"><button type="button" class="arrow" id="sPrev" aria-label="Previous photo">‹</button><div class="cap" aria-live="polite"><small id="sCount">1 / 7</small><span id="sCap"></span></div><button type="button" class="arrow" id="sNext" aria-label="Next photo">›</button></div>
+  <div class="row acts"><button type="button" class="btn" id="sWatch">▶ Watch the highlights</button><button type="button" class="btn ghost" id="sStory">Read the story</button><button type="button" class="btn ghost" id="sBack">Back · Esc</button></div>
+</div>
 <canvas id="map" class="hud" width="170" height="170" aria-hidden="true"></canvas>
 <div id="keys" class="hud"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move</span><span>Mouse look</span><span><kbd>Shift</kbd> run</span><span><kbd>E</kbd> interact</span><span><kbd>V</kbd> dog's eyes</span><span><kbd>M</kbd> music</span></div>
 <div id="prompt" class="hud" hidden></div>
@@ -852,7 +869,7 @@ function framedPicture(draw, label, x, z, ry, act){
   bar(1.56, .12, 0, .66); bar(1.56, .12, 0, -.66); bar(.12, 1.2, -.72, 0); bar(.12, 1.2, .72, 0);
   bar(1.36, .025, 0, .6, .1); bar(1.36, .025, 0, -.6, .1); bar(.025, 1.2, -.66, 0, .1); bar(.025, 1.2, .66, 0, .1);
   const crest = new THREE.Mesh(new THREE.SphereGeometry(.09, 16, 10), gildM); crest.scale.set(1.8, 1, .45); crest.position.set(0, .74, .06); g.add(crest);
-  const p = new THREE.Mesh(new THREE.PlaneGeometry(1.05, .91), std({ map:pic, roughness:.6 })); p.position.z = .037; g.add(p);
+  const p = new THREE.Mesh(new THREE.PlaneGeometry(1.05, .91), std({ map:pic, roughness:.6 })); p.position.z = .037; g.add(p); g.userData.pic = p;
   const pl = plaque(label, .95); pl.position.set(0, -.84, .01); g.add(pl);
   /* picture light */
   const arm = new THREE.Mesh(new THREE.BoxGeometry(.02, .02, .2), gildM); arm.position.set(0, .86, .1); g.add(arm);
@@ -865,7 +882,7 @@ function framedPicture(draw, label, x, z, ry, act){
   wallGlow(at, 0, 1.85 + .1, 1.6, 1.7);
   return g;
 }
-framedPicture((g, w, h) => {
+const soccerFrame = framedPicture((g, w, h) => {
   g.fillStyle = '#e9dcc4'; g.fillRect(0, 0, w, h);
   g.save(); g.translate(w/2 - 280, 20); g.scale(4, 3.7);
   g.fillStyle = '#1d3a5f'; g.strokeStyle = '#10213a'; g.lineWidth = 1.2; const p = new Path2D('M30 20 L52 9 Q70 24 88 9 L110 20 L132 46 L113 60 L105 52 L105 122 L35 122 L35 52 L27 60 L8 46 Z'); g.fill(p); g.stroke(p);
@@ -873,7 +890,7 @@ framedPicture((g, w, h) => {
   g.restore();
   g.fillStyle = '#f6ecd9'; g.textAlign = 'center'; g.font = '800 40px Nunito, sans-serif'; g.fillText('BELLEVUE', w/2, 245); g.fillStyle = '#e0b84a'; g.font = '800 26px Nunito, sans-serif'; g.fillText('ATHLETIC', w/2, 280);
   g.fillStyle = '#f6ecd9'; g.font = '110px Anton, Impact, sans-serif'; g.fillText('[#]', w/2, 410);
-}, 'THE PITCH · [YEARS]', -RW / 2 + .05, -1.6, Math.PI / 2, 'soccer');
+}, 'BELLEVUE ATHLETIC FC', -RW / 2 + .05, -1.6, Math.PI / 2, 'soccer');
 framedPicture((g, w, h) => {
   g.fillStyle = '#c9b48e'; g.fillRect(0, 0, w, h);
   g.fillStyle = '#9c8560'; for (let y = 14; y < h; y += 28) for (let x = 14; x < w; x += 28){ g.beginPath(); g.arc(x, y, 3.5, 0, Math.PI * 2); g.fill(); }
@@ -938,6 +955,7 @@ const SPOTS = [
   { id:'sit', pos:SEAT.clone().add(new THREE.Vector3(0, 0, .5)), r:.85, label:'take a seat and get dealt in' }
 ];
 const COLLIDERS = []; COLLIDERS.push(...ENV_COLLIDERS);
+const COLLIDERS_LATE = COLLIDERS;
 /* chairs are solid: a rectangle matching the armchair's footprint, turned with the chair */
 const CHAIR_HX = .34, CHAIR_HZ = .2, CHAIR_CZ = .06, DOG_R = .14; // footprint, centred a little behind the chair origin
 const chairBox = (x, z, rot) => COLLIDERS.push({ box:true, x:x + Math.sin(rot) * CHAIR_CZ, z:z + Math.cos(rot) * CHAIR_CZ, c:Math.cos(rot), s:Math.sin(rot) });
@@ -1213,7 +1231,8 @@ let dragging = false, stickVec = { x:0, y:0 };
 addEventListener('keydown', e => {
   const k = e.key.toLowerCase();
   if (mode === 'title'){ if (!startBtn.disabled) start(); return; }
-  if (k === 'escape'){ if (mode === 'modal') closeCard(); else if (mode === 'seated') standUp(); return; }
+  if (k === 'escape'){ if (mode === 'modal') closeCard(); else if (mode === 'seated') standUp(); else if (mode === 'soccer') soccerKey('back'); return; }
+  if (mode === 'soccer'){ if (k === 'arrowleft' || k === 'a') soccerKey('prev'); else if (k === 'arrowright' || k === 'd') soccerKey('next'); else if (k === 'enter' || k === 'e') soccerKey('watch'); else if (k === 'm') Music.toggle(); e.preventDefault(); return; }
   if (mode === 'modal') return;
   if (['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','shift'].includes(k)){ keys[k] = true; e.preventDefault(); }
   if (k === 'v' && (mode === 'walk' || mode === 'seated')) togglePov();
@@ -1395,6 +1414,7 @@ let nearSpot = null;
 function interact(){ if (mode === 'walk' && nearSpot) doAct(nearSpot.id); }
 function doAct(act){
   if (act === 'sit') return sitDown();
+  if (act === 'soccer') return enterSoccer();
   if (act.startsWith('player:')){ const p = players[+act.split(':')[1]]; return openCard({ rank:p.rank, suit:p.suit, kick:'Seat at the table', title:p.name, body:p.line, grid:p.facts }, 'p-' + p.id); }
   openCard(CHAPTERS[act], act);
 }
@@ -1411,7 +1431,7 @@ function openCard(c, id){
   modal.hidden = false; modal.dataset.prev = mode; mode = 'modal'; mark(id);
   document.getElementById('cardClose').focus();
 }
-function closeCard(){ modal.hidden = true; mode = modal.dataset.prev === 'seated' ? 'seated' : 'walk'; if (mode === 'seated') dlg.hidden = false; for (const k in keys) keys[k] = false; }
+function closeCard(){ modal.hidden = true; mode = modal.dataset.prev === 'seated' ? 'seated' : modal.dataset.prev === 'soccer' ? 'soccer' : 'walk'; if (mode === 'seated') dlg.hidden = false; for (const k in keys) keys[k] = false; }
 document.getElementById('cardClose').addEventListener('click', closeCard);
 
 /* seated conversation */
@@ -1504,6 +1524,117 @@ function runAnim(dt){
   }
 }
 
+/* ---------------- soccer corner: the photo album and the highlights TV ---------------- */
+const SOCCER_PHOTOS = [
+  { src:'soccer/dribble.jpg', cap:'On the ball for Bellevue Athletic FC' },
+  { src:'soccer/card.jpg', cap:'Thumbs up for the ref. He went to the pocket anyway.' },
+  { src:'soccer/trophy.jpg', cap:'Trophy night. Bellevue 3, Guest 0.' },
+  { src:'soccer/away.jpg', cap:'Number 12, away whites' },
+  { src:'soccer/ecnl.jpg', cap:'ECNL: racing down the line' },
+  { src:'soccer/tackle.jpg', cap:'Going to ground for it' },
+  { src:'soccer/fifa.jpg', cap:'FIFA 20: #1,033 in the world, January (41 wins)' }
+];
+const VIDEO_ID = 'uBo_WEquynA';
+/* the album: two planes over the frame's picture crossfade from photo to photo */
+const albumTex = SOCCER_PHOTOS.map(() => null);
+const albumCanvas = img => {
+  const W = 1024, H = 887, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  const cover = Math.max(W / img.width, H / img.height), contain = Math.min(W / img.width, H / img.height);
+  g.filter = 'blur(22px) brightness(.55)'; g.drawImage(img, (W - img.width * cover) / 2, (H - img.height * cover) / 2, img.width * cover, img.height * cover); g.filter = 'none';
+  g.drawImage(img, (W - img.width * contain) / 2, (H - img.height * contain) / 2, img.width * contain, img.height * contain);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+};
+SOCCER_PHOTOS.forEach((ph, i) => { const im = new Image(); im.onload = () => { albumTex[i] = albumCanvas(im); if (i === album.i) showPhoto(i, true); }; im.src = ph.src; });
+const albumPlanes = [0, 1].map(k => {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(1.05, .91), new THREE.MeshStandardMaterial({ roughness:.55, transparent:true, opacity:k ? 0 : 1, envMapIntensity:.2 }));
+  m.position.z = .038 + k * .001; m.userData.act = 'soccer'; m.visible = false; soccerFrame.add(m); return m;
+});
+const album = { i:0, t:0, fade:1, front:0, hold:4.5 };
+function showPhoto(i, instant){
+  album.i = (i + SOCCER_PHOTOS.length) % SOCCER_PHOTOS.length; album.t = 0;
+  const tex = albumTex[album.i]; if (!tex) return;
+  if (instant || !albumPlanes[album.front].visible){ const a = albumPlanes[album.front]; a.material.map = tex; a.material.opacity = 1; a.material.needsUpdate = true; a.visible = true; album.fade = 1; }
+  else { album.front ^= 1; const a = albumPlanes[album.front]; a.material.map = tex; a.material.opacity = 0; a.material.needsUpdate = true; a.visible = true; a.position.z = .039; albumPlanes[album.front ^ 1].position.z = .038; album.fade = 0; }
+  document.getElementById('sCount').textContent = `${album.i + 1} / ${SOCCER_PHOTOS.length}`;
+  document.getElementById('sCap').textContent = SOCCER_PHOTOS[album.i].cap;
+}
+/* the TV, hung on the same wall */
+const TV = { x:-RW / 2 + .07, y:1.3, z:-3.15, w:1.16, h:.653 };
+const tvIdle = canvasTex(1024, 576, (g, w, h) => {
+  const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#0e1a12'); gr.addColorStop(1, '#050806'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  g.strokeStyle = 'rgba(214,180,120,.25)'; g.lineWidth = 2; for (let x = -h; x < w; x += 46){ g.beginPath(); g.moveTo(x, h); g.lineTo(x + h, 0); g.stroke(); }
+  g.fillStyle = '#d8b878'; g.textAlign = 'center'; g.font = '800 30px Nunito, sans-serif'; g.fillText('BELLEVUE ATHLETIC FC', w * .62, h * .42);
+  g.fillStyle = '#f3e9d8'; g.font = '64px Anton, Impact, sans-serif'; g.fillText('HIGHLIGHTS', w * .62, h * .56);
+  g.beginPath(); g.arc(w * .62, h * .76, 42, 0, Math.PI * 2); g.fillStyle = 'rgba(216,184,120,.9)'; g.fill();
+  g.fillStyle = '#101010'; g.beginPath(); g.moveTo(w * .62 - 13, h * .76 - 20); g.lineTo(w * .62 + 22, h * .76); g.lineTo(w * .62 - 13, h * .76 + 20); g.fill();
+});
+const tv = new THREE.Group(); tv.position.set(TV.x, TV.y, TV.z); tv.rotation.y = Math.PI / 2; scene.add(tv);
+const tvBody = new THREE.Mesh(new RoundedBoxGeometry(TV.w + .05, TV.h + .05, .045, 3, .012), std({ color:'#0b0b0c', roughness:.25, metalness:.4 })); tv.add(tvBody);
+const tvScreen = new THREE.Mesh(new THREE.PlaneGeometry(TV.w, TV.h), new THREE.MeshBasicMaterial({ map:tvIdle, toneMapped:false })); tvScreen.position.z = .024; tv.add(tvScreen);
+const crestTex = new THREE.TextureLoader().load('soccer/crest.jpg', t => { t.colorSpace = THREE.SRGBColorSpace; });
+const crest = new THREE.Mesh(new THREE.CircleGeometry(.2, 48), new THREE.MeshBasicMaterial({ map:crestTex, toneMapped:false, color:new THREE.Color(.85, .85, .85) }));
+crest.position.set(-TV.w * .26, .02, .026); tv.add(crest);
+const tvGlow = new THREE.PointLight('#9fc0ff', 0, 2.2, 2); tvGlow.position.set(.4, 0, .3); tv.add(tvGlow);
+tv.traverse(o => { if (o.isMesh) o.userData.act = 'soccer'; });
+COLLIDERS_LATE.push({ x:TV.x + .2, z:TV.z, r:.12 });
+/* soccer mode: the camera walks up to the wall; the album keeps turning; Watch puts the video on the TV */
+const soccerCam = { p:new THREE.Vector3(), l:new THREE.Vector3() };
+const sUI = document.getElementById('soccerUI'), tvWrap = document.getElementById('tvWrap'), tvFrame = document.getElementById('tvFrame');
+let soccerView = 'album', musicWas = false;
+function setSoccerView(v){
+  soccerView = v;
+  if (v === 'tv'){ const d = Math.max(1.45, 1.3 * (4 / 3) / (innerWidth / innerHeight)); soccerCam.p.set(TV.x + d, TV.y - .12, TV.z); soccerCam.l.set(TV.x, TV.y - .2, TV.z); }
+  else { const back = Math.max(2.7, 2.2 * (4 / 3) / (innerWidth / innerHeight)); soccerCam.p.set(-RW / 2 + back, 1.62, -2.3); soccerCam.l.set(-RW / 2, 1.58, -2.3); }
+}
+function enterSoccer(){
+  if (document.pointerLockElement) document.exitPointerLock();
+  mode = 'soccer'; mark('soccer'); document.body.classList.add('soccer'); setSoccerView('album'); showPhoto(album.i, true);
+  sUI.hidden = false; document.getElementById('prompt').hidden = true; document.getElementById('sNext').focus();
+}
+function stopVideo(){
+  if (!tvWrap.hidden){ tvWrap.hidden = true; tvFrame.src = 'about:blank'; tvGlow.intensity = 0; if (musicWas) Music.set(true); }
+  document.getElementById('sWatch').textContent = '▶ Watch the highlights';
+}
+function soccerKey(a){
+  if (a === 'prev') showPhoto(album.i - 1);
+  else if (a === 'next') showPhoto(album.i + 1);
+  else if (a === 'watch'){
+    if (!tvWrap.hidden){ stopVideo(); setSoccerView('album'); return; }
+    setSoccerView('tv'); musicWas = Music.on; if (musicWas) Music.set(false);
+    tvFrame.src = `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
+    tvWrap.hidden = false; tvWrap.style.opacity = 0; tvGlow.intensity = .8;
+    document.getElementById('sWatch').textContent = '■ Stop the video';
+  }
+  else if (a === 'story') openCard(CHAPTERS.soccer, 'soccer');
+  else if (a === 'back'){
+    if (!tvWrap.hidden){ stopVideo(); setSoccerView('album'); return; }
+    sUI.hidden = true; mode = 'walk'; document.body.classList.remove('soccer'); for (const k in keys) keys[k] = false;
+  }
+}
+document.getElementById('sPrev').onclick = () => soccerKey('prev');
+document.getElementById('sNext').onclick = () => soccerKey('next');
+document.getElementById('sWatch').onclick = () => soccerKey('watch');
+document.getElementById('sStory').onclick = () => soccerKey('story');
+document.getElementById('sBack').onclick = () => soccerKey('back');
+const _c = new THREE.Vector3();
+function soccerTick(dt){
+  /* album turns on its own, slower while someone is looking at it */
+  album.t += dt;
+  if (album.t > (mode === 'soccer' ? 6 : album.hold) && albumTex.some(Boolean)) showPhoto(album.i + 1);
+  if (album.fade < 1){ album.fade = Math.min(1, album.fade + dt * 1.2); albumPlanes[album.front].material.opacity = album.fade; if (album.fade === 1) albumPlanes[album.front ^ 1].visible = false; }
+  /* the video sits exactly over the TV's screen once the camera has arrived */
+  if (!tvWrap.hidden){
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]){
+      _c.set(sx * TV.w / 2, sy * TV.h / 2, .025); tv.localToWorld(_c); _c.project(camera);
+      const px = (_c.x + 1) / 2 * innerWidth, py = (1 - _c.y) / 2 * innerHeight; x0 = Math.min(x0, px); x1 = Math.max(x1, px); y0 = Math.min(y0, py); y1 = Math.max(y1, py);
+    }
+    Object.assign(tvWrap.style, { left:x0 + 'px', top:y0 + 'px', width:(x1 - x0) + 'px', height:(y1 - y0) + 'px' });
+    const settled = camera.position.distanceTo(soccerCam.p) < .05;
+    tvWrap.style.opacity = Math.min(1, (+tvWrap.style.opacity || 0) + (settled ? dt * 3 : 0));
+  }
+}
+
 /* ---------------- minimap ---------------- */
 const map = document.getElementById('map'), mg = map.getContext('2d');
 function drawMap(){
@@ -1574,10 +1705,10 @@ function frame(){
     for (const s of SPOTS){ if (Math.hypot(dog.position.x - s.pos.x, dog.position.z - s.pos.z) < s.r){ nearSpot = s; break; } }
     if (!nearSpot) players.forEach(p => { if (!nearSpot && Math.hypot(dog.position.x - p.group.position.x, dog.position.z - p.group.position.z) < .95) nearSpot = { id:'player:' + p.idx, label:'meet ' + p.name }; });
     if (nearSpot){ prompt.hidden = false; prompt.innerHTML = 'Press <kbd>E</kbd> to ' + nearSpot.label; } else prompt.hidden = true;
-  } else { prompt.hidden = true; if (mode === 'modal' && dogChar && modal.dataset.prev !== 'seated'){ speed = 0; pose(dogChar, { idle:1 }); } }
+  } else { prompt.hidden = true; if (dogChar && ((mode === 'modal' && modal.dataset.prev !== 'seated') || mode === 'soccer')){ speed = 0; pose(dogChar, { idle:1 }); } }
   runAnim(dt);
   const atTable = mode === 'seated' || (mode === 'modal' && modal.dataset.prev === 'seated');
-  dog.visible = !(pov && (mode === 'walk' || atTable));
+  dog.visible = !(pov && (mode === 'walk' || atTable)) && !(mode === 'soccer' || (mode === 'modal' && modal.dataset.prev === 'soccer'));
 
   /* players idle + speaker */
   players.forEach((p, i) => {
@@ -1588,11 +1719,14 @@ function frame(){
   if (dealer) aimHead(dealer.char, speaker ? headOf(speaker.group.userData.char) : null, dt, dealer.group);
   if (dogChar) dogChar.lookAt = (speaker && atTable) ? headOf(speaker.group.userData.char) : null;
   chars.forEach(c => tickChar(c, dt));
+  soccerTick(dt);
   if (dogChar){ dog.updateMatrixWorld(true); emberMark.getWorldPosition(ember.position); ember.visible = dog.visible; }
 
   /* camera */
   const k = Math.min(1, dt * 6);
-  if (atTable || mode === 'sitting'){
+  if (mode === 'soccer' || (mode === 'modal' && modal.dataset.prev === 'soccer')){
+    camPos.lerp(soccerCam.p, Math.min(1, dt * 3)); camLook.lerp(soccerCam.l, Math.min(1, dt * 3));
+  } else if (atTable || mode === 'sitting'){
     const eye = (pov && atTable) ? new THREE.Vector3(SEAT.x, .62, SEAT.z - .1) : new THREE.Vector3(SEAT.x + .34, 1.22, SEAT.z + .78);
     camPos.lerp(eye, Math.min(1, dt * (pov ? 6 : 2.5)));
     const mid = new THREE.Vector3(0, TABLE_Y + .1, 0);
@@ -1610,12 +1744,14 @@ function frame(){
     camLook.lerp(dog.position.clone().setY(.78).addScaledVector(right, .38).add(new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw)).multiplyScalar(.8)), k);
   }
 
+  camera.position.copy(camPos); camera.lookAt(camLook);
+
   /* smoke from the cigarette */
   puffT += dt;
   if (puffT > .16){
     puffT = 0;
     if (dog.visible && dogChar){ spawnPuff(ember.position.clone()); }
-    else if (mode !== 'title'){ const at = camera.position.clone(); const fw = new THREE.Vector3(); camera.getWorldDirection(fw); const rt = new THREE.Vector3().crossVectors(fw, camera.up).normalize(); at.addScaledVector(fw, .35).addScaledVector(rt, .16).add(new THREE.Vector3(0, -.12, 0)); spawnPuff(at); }
+    else if (mode !== 'title' && mode !== 'soccer' && !(mode === 'modal' && modal.dataset.prev === 'soccer')){ const at = camera.position.clone(); const fw = new THREE.Vector3(); camera.getWorldDirection(fw); const rt = new THREE.Vector3().crossVectors(fw, camera.up).normalize(); at.addScaledVector(fw, .35).addScaledVector(rt, .16).add(new THREE.Vector3(0, -.12, 0)); spawnPuff(at); }
   }
   puffs.forEach(p => { if (p.life <= 0) return; p.life -= dt * .35; p.s.position.addScaledVector(p.v, dt); p.v.x += Math.sin(t * 3 + p.life * 9) * dt * .03; const sc = .03 + (1 - p.life) * .22; p.s.scale.setScalar(sc); p.s.material.opacity = Math.max(0, p.life) * .35; if (p.life <= 0) p.s.visible = false; });
 
