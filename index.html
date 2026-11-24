@@ -1075,7 +1075,10 @@ function snap(c, name){ for (const k in c.w) c.w[k] = 0; c.w[name] = 1; c.want =
 const _v1 = new THREE.Vector3(), _v2 = new THREE.Vector3(), _q1 = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _q3 = new THREE.Quaternion(), _up = new THREE.Vector3(0, 1, 0), _ax = new THREE.Vector3();
 function tickChar(c, dt){
   for (const k in c.acts){ const tgt = c.want[k] || 0; c.w[k] += (tgt - c.w[k]) * Math.min(1, dt * c.rate); c.acts[k].setEffectiveWeight(c.w[k]); }
+  /* undo last frame's head turn first: bones the clips don't key would otherwise keep adding it up and spin */
+  for (const [bn] of c.aim) if (bn && bn.userData.pre) bn.quaternion.copy(bn.userData.pre);
   c.mixer.update(dt);
+  for (const [bn] of c.aim) if (bn) (bn.userData.pre || (bn.userData.pre = new THREE.Quaternion())).copy(bn.quaternion);
   /* head turns: spine, neck and head share the turn toward whatever the character is looking at */
   let ty = 0, tp = 0;
   if (c.lookAt){
@@ -1085,7 +1088,7 @@ function tickChar(c, dt){
     tp = THREE.MathUtils.clamp(Math.atan2(_v2.y, Math.hypot(_v2.x, _v2.z)), -.45, .35);
   }
   /* critically damped spring: quick to start, no drift, no overshoot */
-  const W = 14, h = Math.min(dt, .033);
+  const W = 10, h = Math.min(dt, .033);
   c.yv += (W * W * (ty - c.yaw) - 2 * W * c.yv) * h; c.yaw += c.yv * h;
   c.pv += (W * W * (tp - c.pitch) - 2 * W * c.pv) * h; c.pitch += c.pv * h;
   if (Math.abs(c.yaw) < .002 && Math.abs(c.pitch) < .002) return;
@@ -1606,7 +1609,6 @@ function frame(){
     camPos.lerp(want, k);
     camLook.lerp(dog.position.clone().setY(.78).addScaledVector(right, .38).add(new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw)).multiplyScalar(.8)), k);
   }
-  camera.position.copy(camPos); camera.lookAt(camLook);
 
   /* smoke from the cigarette */
   puffT += dt;
