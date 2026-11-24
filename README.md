@@ -22,7 +22,9 @@ Controls: WASD to move, mouse to look, Shift to run, E to interact, V for the do
 - `dog_rigged.glb.b64.txt`: the rigged, animated body (base64 GLB).
 - `dog_head.glb.b64.txt`: the high-detail head (base64 GLB).
 - `dog.webp`: title-screen picture.
-- `autumn-leaves.mp3` (not in the repo): optional background track. Without it the room plays generated lounge jazz.
+- `autumn-leaves.mp3`: the background track. If it can't load, the room plays generated lounge jazz.
+- `chess/`: EyalBot's model (`bot.onnx`) and its move list.
+- `soccer/`: album photos and the TV crests (`crest.jpg` for Bellevue Athletic, `highschool.png` for the high school TV).
 - `essays/`: the essays shown in the library (Markdown, listed in `essays/index.json`).
 - `tools/`: the Python scripts used to build the models and textures.
 
@@ -41,6 +43,8 @@ Each essay is a book on the shelf by the fireplace.
 
 3. Push to `main`. The site redeploys and the book appears on the shelf. The "Essays · Coming soon" placeholder disappears once there is at least one essay.
 
-## Connecting the chess bot
+## The chess bot
 
-The chess table plays a small built-in engine until the real bot is ready. To use the Maia-2 model from `~/Documents/projects/chess-bot`, serve it over HTTP and set `CHESS_BOT_URL` near the top of the chess section in `index.html`. The page sends `POST { "fen": "...", "moves": ["e2e4", ...] }` and expects `{ "move": "e7e5" }` back. If the server does not answer within 8 seconds, the built-in engine moves instead.
+EyalBot is the Maia-2 model fine-tuned on Eyal's chess.com games in `~/Documents/projects/chess-bot`. It was exported to ONNX with int8 weights (`chess/bot.onnx`, about 22 MB) and runs in the visitor's browser with onnxruntime-web, so there is no server. It predicts the move Eyal would play and does not search ahead; it samples a little warmer than the model so games vary. If the model can't load, a small built-in engine plays instead.
+
+To update the bot after retraining, re-export `models/my_bot.pt` to ONNX the same way (inputs `boards` [1,18,8,8], `elo_self`, `elo_oppo`; output `logits` [1,1880]) and replace `chess/bot.onnx`. `CHESS_BOT_URL` in `index.html` is an optional override for a bot served over HTTP: it receives `POST { "fen", "moves" }` and returns `{ "move" }`.

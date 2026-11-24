@@ -893,11 +893,12 @@ K.green = kit(greenGlassM);
   }
   scene.add(fronds);
   /* side-wall sconces flanking the soccer and pickleball frames (glow only, no extra lights) */
-  for (const w of [WALLS.left, WALLS.right]) for (const x of [-3.1, -.1]) sconce(w, w === WALLS.left ? -x : x, 2.0);
+  for (const w of [WALLS.left, WALLS.right]) for (const x of [-3.1, -.1]) if (!(w === WALLS.left && x === -3.1)) sconce(w, w === WALLS.left ? -x : x, 2.0); // the soccer TVs hang where the left one would be
 }
 
 /* ---------------- side walls: soccer + pickleball ---------------- */
 /* museum-style: deep gilt frames with a linen mat and a brass picture light; every mesh in the group keeps its act id */
+const FRAME_Y = 2.0; // high enough that the brass plaque clears the chair rail
 function framedPicture(draw, label, x, z, ry, act){
   const g = new THREE.Group();
   const pic = canvasTex(600, 520, draw);
@@ -911,12 +912,12 @@ function framedPicture(draw, label, x, z, ry, act){
   /* picture light */
   const arm = new THREE.Mesh(new THREE.BoxGeometry(.02, .02, .2), gildM); arm.position.set(0, .86, .1); g.add(arm);
   const hood = new THREE.Mesh(new THREE.CylinderGeometry(.04, .04, .8, 14, 1, false, 0, Math.PI), gildM); hood.rotation.z = Math.PI / 2; hood.position.set(0, .84, .2); g.add(hood);
-  g.position.set(x, 1.85, z); g.rotation.y = ry; scene.add(g);
+  g.position.set(x, FRAME_Y, z); g.rotation.y = ry; scene.add(g);
   g.traverse(o => { if (o.isMesh) o.userData.act = act; });
   g.updateMatrixWorld(true);
   glowBit(g.matrixWorld, 0, .82, .2, .36, .01, .02);
   const at = new THREE.Matrix4().compose(new THREE.Vector3(x, 0, z).add(new THREE.Vector3(Math.sin(ry), 0, Math.cos(ry)).multiplyScalar(-.05)), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, ry, 0)), new THREE.Vector3(1, 1, 1));
-  wallGlow(at, 0, 1.85 + .1, 1.6, 1.7);
+  wallGlow(at, 0, FRAME_Y + .1, 1.6, 1.7);
   return g;
 }
 const soccerFrame = framedPicture((g, w, h) => {
@@ -1588,8 +1589,8 @@ const SOCCER_PHOTOS = [
   { src:'soccer/fifa.jpg', cap:'FIFA 20: #1,033 in the world, January (41 wins)' }
 ];
 const VIDEOS = [
-  { id:'PNwCJ091ctc', name:'High school', title:'HIGH SCHOOL' },
-  { id:'uBo_WEquynA', name:'Bellevue Athletic', title:'BELLEVUE ATHLETIC FC' }
+  { id:'PNwCJ091ctc', name:'High school', title:'HIGH SCHOOL', crest:'soccer/highschool.png', fit:.82 },
+  { id:'uBo_WEquynA', name:'Bellevue Athletic', title:'BELLEVUE ATHLETIC FC', crest:'soccer/crest.jpg', fit:1 }
 ];
 /* the album: two planes over the frame's picture crossfade from photo to photo */
 const albumTex = SOCCER_PHOTOS.map(() => null);
@@ -1614,39 +1615,44 @@ function showPhoto(i, instant){
   document.getElementById('sCount').textContent = `${album.i + 1} / ${SOCCER_PHOTOS.length}`;
   document.getElementById('sCap').textContent = SOCCER_PHOTOS[album.i].cap;
 }
-/* the TV, hung on the same wall */
-const TV = { x:-RW / 2 + .07, y:1.3, z:-3.15, w:1.16, h:.653 };
-const tvIdle = canvasTex(1024, 576, (g, w, h) => {
-  const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#0e1a12'); gr.addColorStop(1, '#050806'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
-  g.strokeStyle = 'rgba(214,180,120,.25)'; g.lineWidth = 2; for (let x = -h; x < w; x += 46){ g.beginPath(); g.moveTo(x, h); g.lineTo(x + h, 0); g.stroke(); }
-  g.fillStyle = '#f3e9d8'; g.textAlign = 'left'; g.font = '44px Anton, Impact, sans-serif'; g.fillText('HIGHLIGHTS', w * .43, h * .17);
-  VIDEOS.forEach((v, k) => {
-    const y = h * (.27 + k * .36), bh = h * .29, bx = w * .43, bw = w * .52;
-    g.fillStyle = 'rgba(0,0,0,.45)'; g.fillRect(bx, y, bw, bh); g.strokeStyle = 'rgba(216,184,120,.7)'; g.lineWidth = 3; g.strokeRect(bx, y, bw, bh);
-    const cx = bx + 62, cy = y + bh / 2;
-    g.beginPath(); g.arc(cx, cy, 34, 0, Math.PI * 2); g.fillStyle = 'rgba(216,184,120,.95)'; g.fill();
-    g.fillStyle = '#101010'; g.beginPath(); g.moveTo(cx - 10, cy - 16); g.lineTo(cx + 18, cy); g.lineTo(cx - 10, cy + 16); g.fill();
-    g.fillStyle = '#d8b878'; g.font = '800 22px Nunito, sans-serif'; g.fillText('CHANNEL ' + (k + 1), bx + 116, cy - 14);
-    g.fillStyle = '#f3e9d8'; g.font = (v.title.length > 14 ? '30px' : '40px') + ' Anton, Impact, sans-serif'; g.fillText(v.title, bx + 116, cy + 26);
+/* two TVs, one above the other on the same wall: high school on top, Bellevue Athletic below */
+const TVW = 1.0, TVH = .5625;
+const TVS = VIDEOS.map((v, k) => {
+  const T = { x:-RW / 2 + .07, y:k === 0 ? 2.22 : 1.5, z:-3.2, w:TVW, h:TVH };
+  const idleTex = crested => canvasTex(1024, 576, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, k ? '#0e1a12' : '#121626'); gr.addColorStop(1, '#050806'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    g.strokeStyle = 'rgba(214,180,120,.22)'; g.lineWidth = 2; for (let x = -h; x < w; x += 46){ g.beginPath(); g.moveTo(x, h); g.lineTo(x + h, 0); g.stroke(); }
+    const tx = crested ? w * .42 : w * .1;
+    g.fillStyle = '#d8b878'; g.textAlign = 'left'; g.font = '800 30px Nunito, sans-serif'; g.fillText('CHANNEL ' + (k + 1) + ' · HIGHLIGHTS', tx, h * .3);
+    g.fillStyle = '#f3e9d8'; g.font = (v.title.length > 14 ? '64px' : '96px') + ' Anton, Impact, sans-serif'; g.fillText(v.title, tx, h * .3 + (v.title.length > 14 ? 90 : 120));
+    const cx = tx + 44, cy = h * .78; g.beginPath(); g.arc(cx, cy, 40, 0, Math.PI * 2); g.fillStyle = 'rgba(216,184,120,.95)'; g.fill();
+    g.fillStyle = '#101010'; g.beginPath(); g.moveTo(cx - 12, cy - 19); g.lineTo(cx + 21, cy); g.lineTo(cx - 12, cy + 19); g.fill();
+    g.fillStyle = '#f3e9d8'; g.font = '800 30px Nunito, sans-serif'; g.fillText('PRESS PLAY', cx + 64, cy + 11);
   });
+  const grp = new THREE.Group(); grp.position.set(T.x, T.y, T.z); grp.rotation.y = Math.PI / 2; scene.add(grp);
+  grp.add(new THREE.Mesh(new RoundedBoxGeometry(TVW + .05, TVH + .05, .045, 3, .012), std({ color:'#0b0b0c', roughness:.25, metalness:.4 })));
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(TVW, TVH), new THREE.MeshBasicMaterial({ map:idleTex(false), toneMapped:false })); screen.position.z = .024; screen.userData.act = 'soccer'; grp.add(screen);
+  /* each TV wears its team's crest on a white disc once the image loads */
+  new THREE.TextureLoader().load(v.crest, t => {
+    t.colorSpace = THREE.SRGBColorSpace;
+    const disc = new THREE.Mesh(new THREE.CircleGeometry(.17, 48), new THREE.MeshBasicMaterial({ color:'#d9d9d9', toneMapped:false })); disc.position.set(-TVW * .3, 0, .0255);
+    const crest = new THREE.Mesh(new THREE.CircleGeometry(.17 * v.fit, 48), new THREE.MeshBasicMaterial({ map:t, toneMapped:false, color:new THREE.Color(.85, .85, .85) })); crest.position.set(-TVW * .3, 0, .026);
+    disc.userData.act = crest.userData.act = 'soccer'; grp.add(disc, crest);
+    screen.material.map = idleTex(true); screen.material.needsUpdate = true;
+  });
+  grp.traverse(o => { if (o.isMesh) o.userData.act = 'soccer'; });
+  T.grp = grp; return T;
 });
-const tv = new THREE.Group(); tv.position.set(TV.x, TV.y, TV.z); tv.rotation.y = Math.PI / 2; scene.add(tv);
-const tvBody = new THREE.Mesh(new RoundedBoxGeometry(TV.w + .05, TV.h + .05, .045, 3, .012), std({ color:'#0b0b0c', roughness:.25, metalness:.4 })); tv.add(tvBody);
-const tvScreen = new THREE.Mesh(new THREE.PlaneGeometry(TV.w, TV.h), new THREE.MeshBasicMaterial({ map:tvIdle, toneMapped:false })); tvScreen.position.z = .024; tv.add(tvScreen);
-const crestTex = new THREE.TextureLoader().load('soccer/crest.jpg', t => { t.colorSpace = THREE.SRGBColorSpace; });
-const crest = new THREE.Mesh(new THREE.CircleGeometry(.2, 48), new THREE.MeshBasicMaterial({ map:crestTex, toneMapped:false, color:new THREE.Color(.85, .85, .85) }));
-crest.position.set(-TV.w * .3, 0, .026); tv.add(crest);
-const tvGlow = new THREE.PointLight('#9fc0ff', 0, 2.2, 2); tvGlow.position.set(.4, 0, .3); tv.add(tvGlow);
-tv.traverse(o => { if (o.isMesh) o.userData.act = 'soccer'; });
-COLLIDERS_LATE.push({ x:TV.x + .2, z:TV.z, r:.12 });
+const tvGlow = new THREE.PointLight('#9fc0ff', 0, 2.2, 2); scene.add(tvGlow);
+COLLIDERS_LATE.push({ x:TVS[0].x + .2, z:TVS[0].z, r:.12 });
 /* soccer mode: the camera walks up to the wall; the album keeps turning; Watch puts the video on the TV */
 const soccerCam = { p:new THREE.Vector3(), l:new THREE.Vector3() };
 const sUI = document.getElementById('soccerUI'), tvWrap = document.getElementById('tvWrap'), tvFrame = document.getElementById('tvFrame');
 let soccerView = 'album', musicWas = false;
 function setSoccerView(v){
   soccerView = v;
-  if (v === 'tv'){ const d = Math.max(1.45, 1.3 * (4 / 3) / (innerWidth / innerHeight)); soccerCam.p.set(TV.x + d, TV.y - .12, TV.z); soccerCam.l.set(TV.x, TV.y - .2, TV.z); }
-  else { const back = Math.max(2.7, 2.2 * (4 / 3) / (innerWidth / innerHeight)); soccerCam.p.set(-RW / 2 + back, 1.62, -2.3); soccerCam.l.set(-RW / 2, 1.58, -2.3); }
+  if (v === 'tv'){ const T = TVS[Math.max(0, playing)], d = Math.max(1.3, 1.15 * (4 / 3) / (innerWidth / innerHeight)); soccerCam.p.set(T.x + d, T.y - .05, T.z); soccerCam.l.set(T.x, T.y - .1, T.z); }
+  else { const back = Math.max(3.2, 2.6 * (4 / 3) / (innerWidth / innerHeight)); soccerCam.p.set(-RW / 2 + back, 1.78, -2.4); soccerCam.l.set(-RW / 2, 1.7, -2.4); }
 }
 function enterSoccer(){
   if (document.pointerLockElement) document.exitPointerLock();
@@ -1669,10 +1675,11 @@ function soccerKey(a){
     /* Claude's artifact viewer blocks embedded players, so there the video opens on YouTube instead */
     if (NO_EMBED){ window.open('https://youtu.be/' + VIDEOS[k].id, '_blank', 'noopener'); if (Music.on) Music.set(false); return; }
     if (playing === k){ stopVideo(); setSoccerView('album'); return; }
-    if (tvWrap.hidden){ setSoccerView('tv'); musicWas = Music.on; if (musicWas) Music.set(false); tvWrap.style.opacity = 0; }
+    if (tvWrap.hidden){ musicWas = Music.on; if (musicWas) Music.set(false); }
+    playing = k; setSoccerView('tv'); tvWrap.style.opacity = 0;
     tvFrame.src = `https://www.youtube-nocookie.com/embed/${VIDEOS[k].id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
     document.getElementById('tvOpen').href = 'https://youtu.be/' + VIDEOS[k].id;
-    tvWrap.hidden = false; tvGlow.intensity = .8; playing = k; watchLabels();
+    tvWrap.hidden = false; tvGlow.position.set(TVS[k].x + .3, TVS[k].y, TVS[k].z); tvGlow.intensity = .8; watchLabels();
   }
   else if (a === 'story') openCard(CHAPTERS.soccer, 'soccer');
   else if (a === 'back'){
@@ -1696,7 +1703,7 @@ function soccerTick(dt){
   if (!tvWrap.hidden){
     let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
     for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]){
-      _c.set(sx * TV.w / 2, sy * TV.h / 2, .025); tv.localToWorld(_c); _c.project(camera);
+      const T = TVS[Math.max(0, playing)]; _c.set(sx * T.w / 2, sy * T.h / 2, .025); T.grp.localToWorld(_c); _c.project(camera);
       const px = (_c.x + 1) / 2 * innerWidth, py = (1 - _c.y) / 2 * innerHeight; x0 = Math.min(x0, px); x1 = Math.max(x1, px); y0 = Math.min(y0, py); y1 = Math.max(y1, py);
     }
     Object.assign(tvWrap.style, { left:x0 + 'px', top:y0 + 'px', width:(x1 - x0) + 'px', height:(y1 - y0) + 'px' });
@@ -1943,7 +1950,7 @@ function shelveBooks(){
   const n = BOOKS.length, gap = .052, x0 = LIB.CX - (n - 1) * gap / 2;
   BOOKS.forEach((b, i) => {
     const h = .27 + (i % 3) * .012, m = new THREE.Mesh(new THREE.BoxGeometry(.046, h, .2), libBookM(b));
-    m.position.set(x0 + i * gap, LIB.featY + .015 + h / 2, LIB.D - .13); m.rotation.y = 0; m.castShadow = true;
+    m.position.set(x0 + i * gap, LIB.featY + .074 + h / 2, LIB.D - .14); m.rotation.y = 0; m.castShadow = true; // .074 = top face of the shelf board
     m.userData = { book:i, home:m.position.clone(), act:'library' }; lib.add(m); libBooks.push(m);
   });
 }
@@ -2039,13 +2046,13 @@ STATIONS.library = {
     const here = station === STATIONS.library;
     libBooks.forEach((m, i) => {
       const hot = here && i === libSel && reader.hidden;
-      if (!libAnim || libAnim.i !== i){ const want = m.userData.home.z + (hot ? .035 : 0); m.position.z += (want - m.position.z) * Math.min(1, dt * 10); }
+      if (!libAnim || libAnim.i !== i){ const want = m.userData.home.z + (hot ? .03 : 0); m.position.z += (want - m.position.z) * Math.min(1, dt * 10); }
       m.material[4].emissive.set(hot ? '#3a2a10' : '#000000');
     });
     if (libAnim){
       const A = libAnim, m = libBooks[A.i]; A.t += dt; const k = Math.min(1, A.t / .45);
       const out = A.dir > 0 ? ease(k) : 1 - ease(k);
-      m.position.z = m.userData.home.z + .035 + .17 * out; m.rotation.x = -.12 * out;
+      m.position.z = m.userData.home.z + .03 + .17 * out; m.rotation.x = -.12 * out;
       if (k >= 1){ libAnim = null; if (A.dir > 0) openBook(A.i); }
     }
   }
@@ -2054,10 +2061,47 @@ lib.updateMatrixWorld(true);
 SPOTS.push({ id:'library', pos:new THREE.Vector3(RW / 2 - 1.0, 0, LIB.CX), r:.8, label:'browse the library', dot:'#c9a0ff' });
 
 /* ---------------- the chess table: back left, under the painting; sit down and play EyalBot ---------------- */
-/* EyalBot is a Maia-2 model being fine-tuned on Eyal's chess.com games (~/Documents/projects/chess-bot).
-   When it is served over HTTP, set CHESS_BOT_URL: the page POSTs { fen, moves:['e2e4', …] } and expects { move:'e7e5' }.
-   Until then, or if the server does not answer, a small built-in engine plays in its place. */
+/* EyalBot is Maia-2 fine-tuned on Eyal's chess.com games (~/Documents/projects/chess-bot), exported to
+   chess/bot.onnx (int8) and run right here in the browser with onnxruntime-web. It predicts the move Eyal
+   would play; it does not search ahead. If the model can't load, a small built-in engine plays instead.
+   CHESS_BOT_URL is an optional override: the page POSTs { fen, moves:['e2e4', …] } and expects { move:'e7e5' }. */
 const CHESS_BOT_URL = '';
+const MAIA = { ort:'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.3/dist/', elo:1660, temp:1.6, floor:.02 }; // elo: Eyal's blitz ~1360 on chess.com, +300 for the Lichess scale the model uses
+let maiaP = null;
+function maiaLoad(){
+  if (maiaP) return maiaP;
+  maiaP = (async () => {
+    if (!window.ort) await new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = MAIA.ort + 'ort.min.js'; sc.onload = ok; sc.onerror = no; document.head.append(sc); });
+    ort.env.wasm.wasmPaths = MAIA.ort; ort.env.wasm.numThreads = 1;
+    const [sess, moves] = await Promise.all([ort.InferenceSession.create('chess/bot.onnx', { executionProviders:['wasm'] }), fetch('chess/moves.json').then(r => r.json())]);
+    return { sess, idx:new Map(moves.map((m, i) => [m, i])) };
+  })();
+  maiaP.catch(() => {});
+  return maiaP;
+}
+/* the position as Maia sees it: always from the side to move, so Black's positions are mirrored */
+function maiaMove(M, s){
+  const blk = s.side === 8, mir = sq => blk ? sq ^ 56 : sq, legal = Chess.legal(s);
+  const x = new Float32Array(18 * 64);
+  s.b.forEach((pc, sq) => { if (!pc) return; const mine = ((pc & 8) === s.side); x[((mine ? 0 : 6) + (pc & 7) - 1) * 64 + mir(sq)] = 1; });
+  x.fill(1, 12 * 64, 13 * 64);
+  const [K, Q, k, q] = blk ? [4, 8, 1, 2] : [1, 2, 4, 8];
+  [K, Q, k, q].forEach((bit, i) => { if (s.castle & bit) x.fill(1, (13 + i) * 64, (14 + i) * 64); });
+  if (s.ep >= 0 && legal.some(m => m.flag === Chess.EP)) x[17 * 64 + mir(s.ep)] = 1; // the training FENs only carried a capturable en-passant square
+  const cat = e => e < 1100 ? 0 : e >= 2000 ? 10 : Math.floor((e - 1100) / 100) + 1, c = BigInt(cat(MAIA.elo));
+  return M.sess.run({ boards:new ort.Tensor('float32', x, [1, 18, 8, 8]), elo_self:new ort.Tensor('int64', BigInt64Array.from([c]), [1]), elo_oppo:new ort.Tensor('int64', BigInt64Array.from([c]), [1]) }).then(out => {
+    const lg = out.logits.data, cand = [];
+    for (const m of legal){
+      const u = Chess.sqName(mir(m.from)) + Chess.sqName(mir(m.to)) + (m.promo ? ' pnbrqk'[m.promo & 7] : ''), i = M.idx.get(u);
+      if (i !== undefined) cand.push([m, lg[i]]);
+    }
+    if (!cand.length) return null;
+    /* softmax, drop the long tail, then sample a little warmer than the model so games vary like Eyal's do */
+    const mx = Math.max(...cand.map(c => c[1])); let p = cand.map(([m, l]) => [m, Math.exp(l - mx)]); const z = p.reduce((a, c) => a + c[1], 0);
+    p = p.map(([m, v]) => [m, v / z]).filter(c => c[1] >= MAIA.floor).map(([m, v]) => [m, Math.pow(v, 1 / MAIA.temp)]);
+    let r = Math.random() * p.reduce((a, c) => a + c[1], 0); for (const [m, v] of p){ if ((r -= v) <= 0) return m; } return p[0][0];
+  });
+}
 const CHESS_COM = 'https://www.chess.com/member/EyalShechtman12';
 const Chess = (() => {
   const P = 1, N = 2, B = 3, R = 4, Q = 5, K = 6, DBL = 1, EP = 2, CASTLE = 3;
@@ -2221,7 +2265,7 @@ const Chess = (() => {
     if (!rest.length || (rest.length === 1 && [N, B].includes(rest[0] & 7))) return 'material';
     return null;
   }
-  return { start, legal, make, best, san, uci, fen, status, inCheck, VAL, P, N, B, R, Q, K, EP, CASTLE, get nodes(){ return nodes; } };
+  return { start, legal, make, best, san, uci, fen, sqName, status, inCheck, VAL, P, N, B, R, Q, K, EP, CASTLE, get nodes(){ return nodes; } };
 })();
 
 const CH = { cx:-2.7, cz:-3.15, top:.4, S:.058 };
@@ -2368,9 +2412,9 @@ function chOverText(){
 }
 function chMenu(){
   const list = [];
-  if (!chess.log.length) list.push(chess.you ? ['Play White instead', () => chNew(0), true] : ['Play Black instead', () => chNew(8), true]);
-  else if (chess.over) list.push(['New game as White', () => chNew(0)], ['Play Black', () => chNew(8), true]);
-  else list.push(['Take back', chUndo, true], ['Resign', chResign, true]);
+  /* the side you play is always one click away: White and Black before a game, Switch sides during one */
+  if (!chess.log.length || chess.over) list.push([(chess.you === 0 && !chess.over ? '✓ ' : '') + 'Play White', () => chNew(0), chess.you !== 0 || !!chess.over], [(chess.you === 8 && !chess.over ? '✓ ' : '') + 'Play Black', () => chNew(8), chess.you !== 8 || !!chess.over]);
+  else list.push(['Take back', chUndo, true], ['Resign', chResign, true], ['New game · ' + (chess.you ? 'play White' : 'play Black'), () => chNew(chess.you ? 0 : 8), true]);
   list.push(['Eyal on chess.com ↗', () => window.open(CHESS_COM, '_blank', 'noopener'), true], ['Stand up · Esc', leaveStation, true]);
   stButtons(list);
 }
@@ -2388,7 +2432,7 @@ function chUndo(){
   chLayout(); chMenu(); chSay('Fine. Take it back. Eyal never does, but I’m nicer than him.');
 }
 function chResign(){ if (chess.over) return; chess.over = 'resign'; chSay('You resign? Respect. Shake paws and set them up again?'); stSub.textContent = 'GAME OVER'; chMenu(); }
-const CH_LINES = ['Your move.', 'Hm. I didn’t expect that.', 'Eyal plays that line too.', 'That’s what a 1700 would play.', 'Your move. Take your time.', 'Interesting.', 'Careful with that knight.', 'I like this position.'];
+const CH_LINES = ['Your move.', 'Hm. I didn’t expect that.', 'Eyal plays that line too.', 'That’s what Eyal would play.', 'Your move. Take your time.', 'Interesting.', 'Careful with that knight.', 'I like this position.'];
 function chAfterBot(san, m){
   chMenu();
   if (chess.over) return chSay(`I play ${san}. ` + chOverText());
@@ -2409,6 +2453,7 @@ async function chBotMove(){
       m = Chess.legal(s).find(x => Chess.uci(x).slice(0, 4) === want) || null;
     } catch (_) { m = null; }
   }
+  if (!m){ try { m = await maiaMove(await maiaLoad(), s); } catch (_) { m = null; } }
   await new Promise(r => setTimeout(r, 450));
   if (chess.s !== s || !chess.thinking){ chess.thinking = false; return; }
   if (!m) m = Chess.best(s, s.full < 4 ? 3 : 4);
@@ -2455,12 +2500,13 @@ READY.push(() => {
 const _boardC = new THREE.Vector3(CH.cx, CH.surf, CH.cz);
 STATIONS.chess = {
   id:'chess', hideDog:false, exitYaw:0,
-  cam:{ p:new THREE.Vector3(CH.cx + .66, 1.56, CH.cz + .86), l:new THREE.Vector3(CH.cx + .03, .16, CH.cz - .14) },
+  cam:{ p:new THREE.Vector3(CH.cx + .04, 1.5, CH.cz + .74), l:new THREE.Vector3(CH.cx, .3, CH.cz - .04) },
   enter(){
+    maiaLoad(); // start fetching EyalBot's model while the dog sits down
     const C = CH.seat, front = C.clone().add(new THREE.Vector3(0, 0, -SIT_FWD)), side = dog.position.x < C.x ? -1 : 1;
     sitAt([new THREE.Vector3(C.x + side * .46, 0, C.z + .05), new THREE.Vector3(C.x + side * .3, 0, front.z), front], Math.PI, 0, () => {
       chess.seated = true; chMenu();
-      if (!chess.met){ chess.met = true; chSay('I’m EyalBot. Eyal is training me on 6,606 of his own chess.com games, so one day I’ll play exactly like him: same openings, same habits, same blunders. I’m still in training, so my understudy plays tonight. You have White.'); }
+      if (!chess.met){ chess.met = true; chSay('I’m EyalBot. I learned chess from 6,606 of Eyal’s own chess.com games, and I pick the move he would play: same openings, same habits, same blunders. I don’t calculate ahead, just like him in blitz. You have White.'); }
       else if (chess.over || !chess.log.length) chSay('Back for another? Pick a side.');
       else { chSay('Where were we? ' + (chess.s.side === chess.you ? 'Your move.' : 'My move.')); if (chess.s.side !== chess.you) setTimeout(chBotMove, 700); }
     });
