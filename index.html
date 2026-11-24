@@ -28,7 +28,7 @@ kbd{display:inline-block;min-width:20px;padding:1px 7px;border-radius:5px;backgr
 #soccerUI .arrow{width:44px;height:44px;border-radius:50%;border:2px solid var(--gold);background:transparent;color:var(--gold);font:800 22px var(--body);cursor:pointer;flex:none}
 #soccerUI .acts{justify-content:center;flex-wrap:wrap}
 #soccerUI .btn.ghost{background:transparent;color:var(--ink);border:2px solid rgba(255,255,255,.35)}
-body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt{display:none!important}
+body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt,body.station #keys,body.station #map,body.station #help,body.station #prompt{display:none!important}
 #tvWrap{position:fixed;z-index:4;background:#000;box-shadow:0 0 40px rgba(120,160,255,.25)}
 #tvWrap iframe{width:100%;height:100%;border:0;display:block}
 #tvOpen{position:absolute;right:0;top:calc(100% + 8px);font:800 13px var(--body);color:var(--gold);background:rgba(0,0,0,.6);padding:6px 10px;border-radius:999px;text-decoration:none}
@@ -41,9 +41,9 @@ body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt{display
 #vignette{inset:0;background:radial-gradient(ellipse at 50% 55%,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%)}
 
 /* seated conversation */
-#dlg{left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(760px,calc(100vw - 32px));box-sizing:border-box;padding:18px 22px 16px;background:var(--panel);border:2px solid rgba(226,181,82,.6);border-radius:10px;pointer-events:auto}
-#dlg .who{display:flex;justify-content:space-between;gap:12px;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--gold)}
-#dlg p{margin:8px 0 14px;font-size:19px;font-weight:700;line-height:1.45;min-height:56px}
+#dlg,#stUI{left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(760px,calc(100vw - 32px));box-sizing:border-box;padding:18px 22px 16px;background:var(--panel);border:2px solid rgba(226,181,82,.6);border-radius:10px;pointer-events:auto}
+#dlg .who,#stUI .who{display:flex;justify-content:space-between;gap:12px;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--gold)}
+#dlg p,#stUI p{margin:8px 0 14px;font-size:19px;font-weight:700;line-height:1.45;min-height:56px}
 #more{margin:-4px 0 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
 #more div{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.07)}
 #more small{display:block;font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--muted)}
@@ -71,7 +71,9 @@ body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt{display
 #card .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
 #card .grid div{padding:10px 14px;border-radius:12px;background:#efe2c9;border:1px solid #dcc8a4}
 #card .grid small{display:block;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#6b5440}
-#card .grid span{font-size:15px;font-weight:700}
+#card .grid span,#card .grid a{font-size:15px;font-weight:700;overflow-wrap:anywhere}
+#card .grid a{color:#8e2630}
+#more a{color:var(--gold);font-weight:700;overflow-wrap:anywhere}
 #card .foot{display:flex;justify-content:flex-end;margin-top:18px}
 #card .btn{background:var(--paperInk);color:var(--paper)}
 
@@ -98,11 +100,27 @@ body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt{display
 @media (pointer:coarse){#touch,#tbtns{display:block}#tbtns{display:flex}#keys{display:none}#map{width:120px;height:120px;bottom:auto;top:calc(110px + env(safe-area-inset-top,0px))}}
 @media (max-width:700px){#chips b{font-size:34px}#help{font-size:13px}#title img{max-width:80vw;height:42vh}}
 @media (prefers-reduced-motion:reduce){.act .chip{transition:none}}
+/* library reader */
+#reader{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:rgba(8,4,2,.72);backdrop-filter:blur(3px)}
+#reader[hidden]{display:none}
+#reader .book{width:min(1040px,calc(100vw - 32px));box-sizing:border-box;padding:38px 46px 18px;border-radius:6px;background:linear-gradient(90deg,#efe2c4 0%,#f6ecd4 48%,#d9c9a6 50%,#f6ecd4 52%,#efe2c4 100%);box-shadow:0 0 0 10px #4a1a12,0 0 0 12px #c9a24a,0 30px 80px rgba(0,0,0,.6);color:#2a1a10}
+#rdPages{height:min(560px,calc(100vh - 200px));overflow:hidden}
+#rdFlow{height:100%;font:400 18px/1.6 Georgia,'Times New Roman',serif;transition:transform .45s ease}
+#rdFlow h1{font:400 40px/1.1 var(--display);letter-spacing:.03em;color:#5b1620;margin:0 0 18px}
+#rdFlow h2{font:800 13px var(--body);letter-spacing:.16em;text-transform:uppercase;color:#8a5a1a;margin:22px 0 6px;break-after:avoid}
+#rdFlow p{margin:0 0 12px}#rdFlow a{color:#5b1620}
+#rdFlow blockquote{margin:0 0 12px;padding-left:14px;border-left:3px solid #c9a24a;font-style:italic}
+#rdFlow ul{margin:0 0 12px;padding-left:20px}
+.rdNav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px;font:800 13px var(--body);color:#6a4a2a}
+.rdNav button:not(.btn){width:40px;height:40px;border-radius:50%;border:2px solid #8a5a1a;background:none;color:#5b1620;font-size:22px;cursor:pointer}
+.rdNav button:disabled{opacity:.3;cursor:default}
+@media (max-width:700px){#reader .book{padding:24px 20px 14px;background:#f3e8cf}}
+
 </style>
 
 <div id="stage"></div>
 <div id="vignette" class="hud"></div>
-<div id="help" class="hud">Find out who Eyal is. Walk up to the flag, the frames on the walls, or the empty chair at the table.</div>
+<div id="help" class="hud">Find out who Eyal is. Take the empty chair at the table, get a drink at the bar, pull a book from the library, or sit down for a game of chess.</div>
 <div id="chips" class="hud"><b id="chipNum">00/12</b><span>CHIPS FOUND</span><i id="viewLbl">VIEW · CHASE CAM</i></div>
 <button type="button" id="musicBtn" aria-pressed="false">♪ MUSIC OFF</button>
 <div id="tvWrap" hidden><iframe id="tvFrame" title="Soccer highlights video" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a id="tvOpen" href="https://youtu.be/uBo_WEquynA" target="_blank" rel="noopener">Open on YouTube ↗</a></div>
@@ -110,6 +128,8 @@ body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt{display
   <div class="row"><button type="button" class="arrow" id="sPrev" aria-label="Previous photo">‹</button><div class="cap" aria-live="polite"><small id="sCount">1 / 7</small><span id="sCap"></span></div><button type="button" class="arrow" id="sNext" aria-label="Next photo">›</button></div>
   <div class="row acts"><button type="button" class="btn" id="sWatch0">▶ High school highlights</button><button type="button" class="btn" id="sWatch1">▶ Bellevue Athletic highlights</button><button type="button" class="btn ghost" id="sStory">Read the story</button><button type="button" class="btn ghost" id="sBack">Back · Esc</button></div>
 </div>
+<div id="stUI" class="hud" hidden role="dialog" aria-label="Conversation"><div class="who"><span id="stWho"></span><span id="stSub"></span></div><p id="stText" aria-live="polite"></p><div class="acts" id="stActs"></div></div>
+<div id="reader" hidden role="dialog" aria-label="Book"><div class="book"><div class="pages" id="rdPages"><div id="rdFlow"></div></div><div class="rdNav"><button type="button" id="rdPrev" aria-label="Previous page">‹</button><span id="rdNum"></span><button type="button" id="rdNext" aria-label="Next page">›</button><button type="button" id="rdClose" class="btn">Put it back · Esc</button></div></div></div>
 <canvas id="map" class="hud" width="170" height="170" aria-hidden="true"></canvas>
 <div id="keys" class="hud"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move</span><span>Mouse look</span><span><kbd>Shift</kbd> run</span><span><kbd>E</kbd> interact</span><span><kbd>V</kbd> dog's eyes</span><span><kbd>M</kbd> music</span></div>
 <div id="prompt" class="hud" hidden></div>
@@ -162,40 +182,62 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 /* ---------------- content ---------------- */
 const PLAYERS = [
-  { id:'arkero', name:'Arkero', rank:'A', suit:'♠',
-    line:'Football clubs still run matchday on spreadsheets and group chats. I put it all in one place: plans, ticketing, attendance. Want to see my hand?',
-    more:'Clubs use it for matchday plans, season-ticket data and post-match surveys, with an agent on top that answers questions from the club’s own numbers.',
-    facts:[['Built with','[STACK]'],['My role','[ROLE]'],['Status','[LIVE / BUILDING]'],['Link','[URL]']],
+  { id:'arkero', name:'Arkero', rank:'A', suit:'♠', short:'The operating system for pro football clubs. My day job.',
+    line:'Football clubs still run matchday on spreadsheets and group chats. At Arkero we’re building the operating system that replaces them, and I was the second engineer through the door. Want to see my hand?',
+    more:'I own Match Day Planning end to end, the AI agents clubs use every day, and the data warehouse that pulls in their ticketing and operations systems. It’s live with professional clubs, and Arkero raised a $6M pre-seed in January 2026.',
+    facts:[['Built with','Next.js, Supabase, Trigger.dev, AI agents, MCP'],['My role','Founding engineer, since Feb 2026'],['Status','Live with pro clubs · $6M pre-seed'],['Link','https://arkero.ai']],
     look:{fur:'#8b5a2b', hat:'#16161a', vest:'#15171d', shirt:'#f7f5f0', pants:'#15171d'} },
-  { id:'panenka', name:'Panenka', rank:'K', suit:'♥',
-    line:'Every day, a few new questions. You answer, then you see how everyone else answered. Feeling lucky?',
-    more:'[Where it lives, how many people play, what you would build next.]',
-    facts:[['Built with','[STACK]'],['My role','[ROLE]'],['Status','[LIVE / BUILDING]'],['Link','[URL]']],
+  { id:'pictur', name:'Pictur.ai', rank:'K', suit:'♥', short:'An AI image studio: 45+ tools, built solo.',
+    line:'Pictur is my AI image studio: more than 45 tools to remove backgrounds, sharpen photos and generate art, all in one place. I built the whole thing myself. Feeling lucky?',
+    more:'Next.js 15 and Supabase on the web, with rate limiting and analytics built in, plus Glimmr, a companion iPhone app written in Swift. It launched in September 2025 and I’m still shipping to it.',
+    facts:[['Built with','Next.js 15, TypeScript, Supabase, Swift'],['My role','Solo: design, code, launch'],['Status','Live since Sept 2025'],['Link','https://pictur.ai']],
     look:{fur:'#efe9de', hat:'#2a1015', vest:'#5e1626', shirt:'#f6f1e7', pants:'#5e1626'} },
-  { id:'lunch', name:'LunchAgent', rank:'Q', suit:'♣',
-    line:'[One or two lines in LunchAgent’s voice: what it does and who it’s for.] Interested?',
-    more:'[A few more sentences: the problem, what you built, what you learned.]',
-    facts:[['Built with','[STACK]'],['My role','[ROLE]'],['Status','[LIVE / BUILDING]'],['Link','[URL]']],
+  { id:'panenka', name:'Panenka', rank:'Q', suit:'♦', short:'A daily football quiz where every answer is a penalty.',
+    line:'A daily football quiz where every answer is a penalty kick. The keeper dives where everyone else answered, so the rarer your right answer, the better your finish. Want to step up?',
+    more:'Five prompts a day, 25 seconds each, plus an unlimited mode and live rooms for up to ten friends. It runs on Cloudflare Workers with Durable Objects and WebSockets, the animation is drawn on a canvas, and every sound is synthesized in the browser.',
+    facts:[['Built with','React, Cloudflare Workers, Durable Objects'],['My role','Creator'],['Status','Live, new questions every day'],['Link','https://dailypanenka.com']],
     look:{fur:'#8d9096', hat:'#161b26', vest:'#1b2b48', shirt:'#f4f2ee', pants:'#1b2b48'} },
-  { id:'p4', name:'[Project 4]', rank:'J', suit:'♦', line:'[One or two lines about this project.] You in?', more:'[More detail.]',
-    facts:[['Built with','[STACK]'],['My role','[ROLE]'],['Status','[STATUS]'],['Link','[URL]']],
+  { id:'blitz', name:'Blitz', rank:'J', suit:'♣', short:'Mass texting and email for student orgs and a city.',
+    line:'I co-founded Blitz, a mass texting and email platform. It started as the tool I built to reach my TAMID members, and now student groups and a city government send through it. Interested?',
+    more:'Bulk SMS and email that’s simple enough for a club president: contact lists, templates, scheduled sends. Seven student organizations and the City of Medina use it.',
+    facts:[['Built with','Web app · SMS and email'],['My role','Co-founder & founding engineer'],['Status','In use since 2025'],['Users','7 student orgs · City of Medina']],
     look:{fur:'#c98b4f', hat:'#0c1f18', vest:'#0f3d2e', shirt:'#f5f0e6', pants:'#0f3d2e'} },
-  { id:'p5', name:'[Project 5]', rank:'10', suit:'♠', line:'[One or two lines about this project.] You in?', more:'[More detail.]',
-    facts:[['Built with','[STACK]'],['My role','[ROLE]'],['Status','[STATUS]'],['Link','[URL]']],
+  { id:'dress', name:'Dress to Impress', rank:'10', suit:'♠', short:'An AI fashion game. 4th of ~800 at OpenAI’s GPT-5 hackathon.',
+    line:'Twenty-four hours at OpenAI’s GPT-5 hackathon. Snap into an avatar with your webcam, shop real clothes against the clock, then walk the runway against an AI stylist. We finished fourth of about 800. You in?',
+    more:'A GPT agent styles against you and a multimodal judge picks the winner. Virtual try-on puts the real products on your avatar, and an image-to-video model turns the final look into a runway walk.',
+    facts:[['Built with','Next.js 15, React 19, OpenAI, FASHN, Kling'],['Result','4th of ~800 · Aug 2025'],['Demo','https://youtu.be/s8o59vPj6kY'],['Code','https://github.com/parsakhaz/open-ai-dress2impress']],
     look:{fur:'#2e2725', hat:'#1a1a1a', vest:'#e8e0cf', shirt:'#faf8f3', pants:'#16161a'} },
-  { id:'p6', name:'[Project 6]', rank:'9', suit:'♥', line:'[One or two lines about this project.] You in?', more:'[More detail.]',
-    facts:[['Built with','[STACK]'],['My role','[ROLE]'],['Status','[STATUS]'],['Link','[URL]']],
-    look:{fur:'#e0bd86', hat:'#201a26', vest:'#3d2b4e', shirt:'#f6f2ea', pants:'#3d2b4e'} }
+  { id:'vid', name:'VidUnderstand', rank:'9', suit:'♥', short:'Search hours of video for the moment you need.',
+    line:'I watch your videos so you don’t have to. Upload hours of footage, jump straight to the moment you need, and I’ll write the document from what happened. Want a look?',
+    more:'A Rust backend does the heavy lifting, Gemini does the watching, and a Next.js front end ties it together. Search is by meaning, not file names.',
+    facts:[['Built with','Rust, Next.js, Gemini'],['Built','Oct–Nov 2025'],['Demo','https://youtu.be/LovM-rcPZ-I?t=55'],['Code','https://github.com/EyalShechtman/open-ai-video-understanding']],
+    look:{fur:'#e0bd86', hat:'#201a26', vest:'#3d2b4e', shirt:'#f6f2ea', pants:'#3d2b4e'} },
+  /* three more on their feet behind the rail, waiting for a seat */
+  { id:'beambell', name:'BeamBell', rank:'8', suit:'♦', stand:[-.74, -1.8], short:'AI phone agents. 1st of ~350 at the DeepMind × YC hackathon.',
+    line:'At the Google DeepMind × YC hackathon we built BeamBell: a fleet of AI phone agents that call around and gather competitive intel for you. First place out of about 350. Want in?',
+    more:'Each agent places a real phone call, asks the questions, and writes up what it heard. It won first place and a guaranteed interview at Y Combinator.',
+    facts:[['Built with','Voice AI agents'],['Result','1st of ~350 · Oct 2025'],['My role','Co-builder'],['Link','https://beambell.com']],
+    look:{fur:'#d9b48a', hat:'#1d1a14', vest:'#6a4a1a', shirt:'#f7f2e8', pants:'#2a2218'} },
+  { id:'stylist', name:'StyleList', rank:'7', suit:'♣', stand:[.74, -1.8], short:'An open-source AI stylist. 7th of 300+ at Meta’s hackathon.',
+    line:'I’m an open-source AI stylist. Describe a vibe and I build the moodboard, find real products and put you in them. Seventh of 300+ at the Meta hackathon, and the launch post drew 150k views on Reddit. Like the look?',
+    more:'Gemini 2.5 Flash plans the outfit, a product search finds the real pieces, and virtual try-on shows you wearing them.',
+    facts:[['Built with','Next.js 15, Gemini 2.5 Flash'],['Result','7th of 300+ · Jun 2025'],['Reach','~150k views on Reddit'],['Code','https://github.com/parsakhaz/open-ai-stylist']],
+    look:{fur:'#b07a4a', hat:'#2b0f2a', vest:'#6b1f5e', shirt:'#f7eef4', pants:'#2b0f2a'} },
+  { id:'lunch', name:'LunchAgent', rank:'6', suit:'♠', stand:[0, -2.08], short:'An AI agent that orders your work lunch.',
+    line:'I order your work lunch. I learn what you like, text you an offer every day, and order it on your own DoorDash inside the company budget. Hungry?',
+    more:'Anything over budget needs your explicit yes, and the safety rules live in code, not in a prompt. Under the hood: an MCP server with 29 tools, a small Mac helper, and a hub on Fly.io that sends the texts.',
+    facts:[['Built with','TypeScript, MCP, Fly.io, DoorDash CLI'],['My role','Builder'],['Status','In development'],['Link','Private for now']],
+    look:{fur:'#6f5a48', hat:'#121a14', vest:'#2f4a2a', shirt:'#f3f0e6', pants:'#1f2a1c'} }
 ];
 const DEALER_LOOK = {fur:'#a87443', hat:'#121212', vest:'#101012', shirt:'#fbfaf6', pants:'#101012'};
 const DOG_LOOK = {fur:'#ddb683', hat:'#6b4226', vest:'#4c5631', shirt:'#e7d8b8', pants:'#4a5230'};
 const CHAPTERS = {
-  projects:{ rank:'A', suit:'♦', kick:'Behind the flag', title:'The projects', body:'Every player at this table is something I built. Sit down in the empty chair and they’ll deal you in one by one, or read the whole hand here.', grid:PLAYERS.map(p=>[p.name,p.line.replace(/\s*(Want to see my hand\?|Feeling lucky\?|Interested\?|You in\?)$/,'')]) },
-  soccer:{ rank:'10', suit:'♣', kick:'Chapter · The pitch', title:'Bellevue Athletic', body:'[A few lines: how you ended up on the team, what you played, the game you still think about.]', grid:[['Years','[YEAR – YEAR]'],['Position','[POSITION]'],['Number','[#]'],['Best moment','[ONE LINE]']] },
-  pickle:{ rank:'7', suit:'♥', kick:'Chapter · The kitchen line', title:'Pickleball', body:'[Why you got hooked, where you play, who you play with.]', grid:[['Home court','[WHERE]'],['Partner','[NAME]'],['Signature shot','[SHOT]'],['Rating','[DUPR]']] },
-  contact:{ rank:'J', suit:'♥', kick:'All in', title:'Let’s talk', body:'You pushed your chips in. Here’s where to find me.', grid:[['Email','[EMAIL]'],['LinkedIn','[LINK]'],['GitHub','[LINK]'],['Résumé','[LINK]']] }
+  projects:{ rank:'A', suit:'♦', kick:'Behind the flag', title:'The projects', body:'Every player in this room is something I built. Sit in the empty chair and they’ll deal you in one by one, or read the whole hand here.', grid:PLAYERS.map(p => [p.name, p.short]).concat([['Also built', 'mdxx · AWS Hack Day · RoamRich (DubHacks) · Sammamish Pickleball app · VideoArchive · AutomatedAds · ArtistOS · Casca'], ['All the code', 'https://github.com/EyalShechtman']]) },
+  soccer:{ rank:'10', suit:'♣', kick:'Chapter · The pitch', title:'The soccer years', body:'Most of my weekends growing up were spent on a pitch: club soccer with Bellevue Athletic FC in the ECNL, and my high school team. The album on the wall has the photos. The TV has the highlights.', grid:[['Club','Bellevue Athletic FC'],['League','ECNL'],['Number','12'],['Highlights','https://www.youtube.com/@eyalshechtman7050']] },
+  pickle:{ rank:'7', suit:'♥', kick:'Chapter · The kitchen line', title:'Pickleball', body:'Pickleball got me off the screen, and then right back on it: I built a court-scheduling app for the City of Sammamish.', grid:[['The app','Court scheduling'],['Built for','City of Sammamish'],['Stack','Swift, iOS'],['Year','2024']] },
+  contact:{ rank:'J', suit:'♥', kick:'All in', title:'Let’s talk', body:'You pushed your chips in. Here’s where to find me.', grid:[['LinkedIn','https://www.linkedin.com/in/eyal-shechtman'],['GitHub','https://github.com/EyalShechtman'],['YouTube','https://www.youtube.com/@eyalshechtman7050'],['Chess.com','https://www.chess.com/member/EyalShechtman12']] }
 };
-const TOTAL = 3 + PLAYERS.length + 1 + 1; // flag, soccer, pickle, players, sat down, contact
+const TOTAL = 3 + PLAYERS.length + 1 + 1 + 3; // flag, soccer, pickle, players, sat down, contact, bar, library, chess
 const found = new Set();
 function mark(id){ found.add(id); document.getElementById('chipNum').textContent = String(found.size).padStart(2,'0') + '/' + TOTAL; }
 mark; document.getElementById('chipNum').textContent = '00/' + TOTAL;
@@ -780,12 +822,7 @@ K.green = kit(greenGlassM);
   K.wood.put(new THREE.CylinderGeometry(.17, .17, .025, 24), 3.3, .3, FX); K.wood.put(new THREE.CylinderGeometry(.025, .03, .28, 10), 3.3, .15, FX); K.wood.put(new THREE.CylinderGeometry(.11, .13, .02, 18), 3.3, .01, FX);
   K.wood.box(.12, .04, .08, 3.28, .332, FX - .04); K.glass.put(new THREE.CylinderGeometry(.022, .019, .045, 12), 3.36, .335, FX + .06);
   ENV_COLLIDERS.push({ x:3.3, z:FX, r:.22 }, { x:4.6, z:FX - .35, r:.35 }, { x:4.6, z:FX + .35, r:.35 });
-  /* standard lamp in the corner */
-  K.gilt.put(new THREE.CylinderGeometry(.1, .12, .025, 18), 4.45, .012, 3.75); K.gilt.put(new THREE.CylinderGeometry(.012, .014, 1.2, 10), 4.45, .6, 3.75);
-  K.shade.put(new THREE.CylinderGeometry(.12, .2, .2, 20, 1, true), 4.45, 1.25, 3.75);
-  glowBit(null, 4.45, 1.2, 3.75, .03, .03, .03);
-  wallGlow(WALLS.right, 3.75, 1.35, 1.3, 1.6); wallGlow(WALLS.front, -4.45, 1.35, 1.2, 1.5); floorGlow(4.4, 3.7, 1.4, 1.4);
-  ENV_COLLIDERS.push({ x:4.45, z:3.75, r:.18 });
+  wallGlow(WALLS.front, -4.45, 1.35, 1.2, 1.5);
 }
 
 /* ---------------- salon: entrance doors and paintings (front wall), palms in the far corners ---------------- */
@@ -1209,18 +1246,25 @@ Promise.all([loadGlb('dog_rigged.glb.b64.txt'), loadGlb('dog_head.glb.b64.txt')]
     dealer = { group:c, char:dc }; }
   const PLAYER_SLOTS = [0, 1, 2, 4, 5, 6];
   PLAYERS.forEach((p, i) => {
-    const a = slotAngle(PLAYER_SLOTS[i]);
-    const x = Math.cos(a) * (TRX + .38), z = Math.sin(a) * (TRZ + .38);
+    const a = slotAngle(PLAYER_SLOTS[i] ?? 0);
+    const [x, z] = p.stand || [Math.cos(a) * (TRX + .38), Math.sin(a) * (TRZ + .38)];
     const c = makeCharacter(p.look, false, true), pc = c.userData.char;
     c.position.set(x, 0, z); c.rotation.y = Math.atan2(-x, -z); scene.add(c);
-    pose(pc, { sitidle:1 }); pc.w.idle = 0; pc.w.sitidle = 1; pc.acts.sitidle.time = Math.random() * clips.sitidle.duration;
-    pc.acts.sitidle.timeScale = .85 + Math.random() * .3;
-    const ch = chair.clone(); ch.traverse(o => { if (o.isMesh) o.userData.act = null; });
-    ch.position.set(x, 0, z); ch.rotation.y = c.rotation.y + Math.PI; scene.add(ch); chairBox(x, z, ch.rotation.y);
-    const lb = label(p.name); lb.position.set(x, 1.2, z); scene.add(lb);
+    if (p.stand){
+      /* waiting on their feet behind the rail */
+      pc.acts.idle.time = Math.random() * clips.idle.duration; pc.acts.idle.timeScale = .8 + Math.random() * .3;
+      COLLIDERS.push({ x, z, r:.24 });
+    } else {
+      pose(pc, { sitidle:1 }); pc.w.idle = 0; pc.w.sitidle = 1; pc.acts.sitidle.time = Math.random() * clips.sitidle.duration;
+      pc.acts.sitidle.timeScale = .85 + Math.random() * .3;
+      const ch = chair.clone(); ch.traverse(o => { if (o.isMesh) o.userData.act = null; });
+      ch.position.set(x, 0, z); ch.rotation.y = c.rotation.y + Math.PI; scene.add(ch); chairBox(x, z, ch.rotation.y);
+    }
+    const lb = label(p.name); lb.position.set(x, p.stand ? 1.45 : 1.2, z); scene.add(lb);
     pc.meshes.forEach(m => m.userData.act = 'player:' + i);
     players.push({ ...p, group:c, label:lb, base:c.rotation.y, idx:i });
   });
+  READY.forEach(f => f());
   startBtn.disabled = false; startBtn.textContent = 'Deal me in';
 }).catch(e => { console.error(e); startBtn.textContent = 'The dog model did not load. Reload the page.'; });
 
@@ -1231,6 +1275,7 @@ let dragging = false, stickVec = { x:0, y:0 };
 addEventListener('keydown', e => {
   const k = e.key.toLowerCase();
   if (mode === 'title'){ if (!startBtn.disabled) start(); return; }
+  if (mode === 'station'){ if (k === 'm') Music.toggle(); else if (station) station.key(k, e); if (k !== 'tab') e.preventDefault(); return; }
   if (k === 'escape'){ if (mode === 'modal') closeCard(); else if (mode === 'seated') standUp(); else if (mode === 'soccer') soccerKey('back'); return; }
   if (mode === 'soccer'){ if (k === 'arrowleft' || k === 'a') soccerKey('prev'); else if (k === 'arrowright' || k === 'd') soccerKey('next'); else if (k === 'enter' || k === 'e') soccerKey('watch'); else if (k === '1' || k === '2') soccerKey('watch' + (+k - 1)); else if (k === 'm') Music.toggle(); e.preventDefault(); return; }
   if (mode === 'modal') return;
@@ -1249,6 +1294,7 @@ addEventListener('mousemove', e => {
   if (document.pointerLockElement === cvs || dragging){ yaw -= e.movementX * .0026; pitch = THREE.MathUtils.clamp(pitch + e.movementY * .002, -.35, .7); }
 });
 cvs.addEventListener('click', e => {
+  if (mode === 'station' && station && station.click){ station.click(e); return; }
   if (mode !== 'walk') return;
   const ray = new THREE.Raycaster(), m = new THREE.Vector2();
   if (document.pointerLockElement === cvs) m.set(0, 0); else m.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
@@ -1415,10 +1461,17 @@ function interact(){ if (mode === 'walk' && nearSpot) doAct(nearSpot.id); }
 function doAct(act){
   if (act === 'sit') return sitDown();
   if (act === 'soccer') return enterSoccer();
+  if (STATIONS[act]) return enterStation(act);
   if (act.startsWith('player:')){ const p = players[+act.split(':')[1]]; return openCard({ rank:p.rank, suit:p.suit, kick:'Seat at the table', title:p.name, body:p.line, grid:p.facts }, 'p-' + p.id); }
   openCard(CHAPTERS[act], act);
 }
 const modal = document.getElementById('modal');
+/* a fact's value: plain text, or a link when it is a URL */
+function factVal(v){
+  if (!/^https?:\/\//.test(v)) { const sp = document.createElement('span'); sp.textContent = v; return sp; }
+  const a = document.createElement('a'); a.href = v; a.target = '_blank'; a.rel = 'noopener';
+  a.textContent = v.replace(/^https?:\/\/(www\.)?/, '').replace(/\?.*$/, '').replace(/\/$/, '') + ' ↗'; return a;
+}
 function openCard(c, id){
   if (document.pointerLockElement) document.exitPointerLock();
   document.getElementById('cardIdx').innerHTML = `<span>${c.rank}</span><span>${c.suit}</span>`;
@@ -1427,7 +1480,7 @@ function openCard(c, id){
   document.getElementById('cardTitle').textContent = c.title;
   document.getElementById('cardBody').textContent = c.body;
   const grid = document.getElementById('cardGrid'); grid.innerHTML = '';
-  c.grid.forEach(([k, v]) => { const d = document.createElement('div'); const s = document.createElement('small'); s.textContent = k; const sp = document.createElement('span'); sp.textContent = v; d.append(s, sp); grid.append(d); });
+  c.grid.forEach(([k, v]) => { const d = document.createElement('div'); const s = document.createElement('small'); s.textContent = k; d.append(s, factVal(v)); grid.append(d); });
   modal.hidden = false; modal.dataset.prev = mode; mode = 'modal'; mark(id);
   document.getElementById('cardClose').focus();
 }
@@ -1473,7 +1526,7 @@ document.getElementById('acts').addEventListener('click', e => {
   mark('p-' + p.id); hand.push(p.name);
   type(a === 'call' ? p.more : p.more);
   more.innerHTML = ''; more.hidden = a !== 'raise';
-  if (a === 'raise') p.facts.forEach(([k, v]) => { const d = document.createElement('div'); d.innerHTML = '<small></small><span></span>'; d.children[0].textContent = k; d.children[1].textContent = v; more.append(d); });
+  if (a === 'raise') p.facts.forEach(([k, v]) => { const d = document.createElement('div'); const sm = document.createElement('small'); sm.textContent = k; d.append(sm, factVal(v)); more.append(d); });
   document.getElementById('acts').hidden = true; document.getElementById('nextRow').hidden = false;
   document.getElementById('nextBtn').textContent = turn + 1 < players.length ? 'Next player' : 'Showdown';
   document.getElementById('nextBtn').focus({ preventScroll:true });
@@ -1507,7 +1560,7 @@ function followPath(path, dt){
 }
 function finishStand(){
   mode = 'walk'; seatRing.visible = true; yaw = 0; pitch = .08;
-  document.getElementById('help').textContent = 'Find out who Eyal is. Walk up to the flag, the frames on the walls, or the empty chair at the table.';
+  document.getElementById('help').textContent = 'Find out who Eyal is. Take the empty chair at the table, get a drink at the bar, pull a book from the library, or sit down for a game of chess.';
 }
 let anim = null;
 const ease = x => x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
@@ -1652,6 +1705,791 @@ function soccerTick(dt){
   }
 }
 
+/* ---------------- stations: the bar, the library and the chess table ---------------- */
+/* a station takes over the camera and the panel at the bottom of the screen; Esc always walks you back out */
+const stUI = document.getElementById('stUI'), stWho = document.getElementById('stWho'), stSub = document.getElementById('stSub'), stText = document.getElementById('stText'), stActs = document.getElementById('stActs');
+const STATIONS = {};
+let station = null, stTyper = null;
+function stSay(who, text, sub = ''){
+  stUI.hidden = false; stWho.textContent = who; stSub.textContent = sub;
+  clearInterval(stTyper); stText.textContent = ''; let i = 0;
+  stTyper = setInterval(() => { stText.textContent = text.slice(0, ++i); if (i >= text.length) clearInterval(stTyper); }, 16);
+}
+function stButtons(list){
+  stActs.innerHTML = '';
+  list.forEach(([text, fn, ghost]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn' + (ghost ? ' ghost' : ''); b.textContent = text; b.onclick = () => { b.blur(); fn(); }; stActs.append(b); });
+  const first = stActs.querySelector('button'); if (first) setTimeout(() => first.focus({ preventScroll:true }), 30);
+}
+function enterStation(id){
+  const st = STATIONS[id]; if (!st || !dogChar || station) return;
+  if (document.pointerLockElement) document.exitPointerLock();
+  for (const k in keys) keys[k] = false; speed = 0;
+  station = st; mode = 'station'; document.body.classList.add('station'); mark(id); prompt.hidden = true;
+  st.enter();
+}
+function leaveStation(){
+  if (!station || station.leaving) return; const st = station; st.leaving = true;
+  stUI.hidden = true; clearInterval(stTyper);
+  st.leave(() => { st.leaving = false; station = null; mode = 'walk'; document.body.classList.remove('station'); if (st.exitYaw !== undefined) yaw = st.exitYaw; pitch = .08; for (const k in keys) keys[k] = false; });
+}
+/* sitting the dog on any seat: walk the path, face the way the seat faces, sit back into it; lift raises the hips onto a tall stool */
+let perch = null;
+function sitAt(path, face, lift, done){ perch = { phase:'walk', path, face, lift, t:0, done }; }
+function standFrom(face, lift, path, done){ once(dogChar, 'standup', STAND_SPEED); perch = { phase:'up', face, lift, path, t:0, done }; }
+function perchTick(dt){
+  if (!perch) return; const P = perch; P.t += dt;
+  const fx = Math.sin(P.face), fz = Math.cos(P.face);
+  if (P.phase === 'walk'){ if (followPath(P.path, dt)){ P.phase = 'turn'; pose(dogChar, { idle:1 }, 6); } }
+  else if (P.phase === 'turn'){ if (turnTo(P.face, dt * 7) < .04){ dog.rotation.y = P.face; once(dogChar, 'sitdown', SIT_SPEED); P.phase = 'down'; P.t = 0; } }
+  else if (P.phase === 'down'){
+    const D = clips.sitdown.duration / SIT_SPEED; dog.position.y = P.lift * ease(Math.min(1, P.t / D));
+    if (P.t >= D){ snap(dogChar, 'sitidle'); dog.position.x -= fx * SIT_BACK; dog.position.z -= fz * SIT_BACK; perch = null; if (P.done) P.done(); }
+  } else if (P.phase === 'up'){
+    const D = clips.standup.duration / STAND_SPEED; dog.position.y = P.lift * (1 - ease(Math.min(1, P.t / D)));
+    if (P.t >= D){ snap(dogChar, 'idle'); dog.position.y = 0; dog.position.x += fx * STAND_FWD; dog.position.z += fz * STAND_FWD; P.phase = 'away'; }
+  } else if (P.phase === 'away'){ if (followPath(P.path, dt)){ pose(dogChar, { idle:1 }, 5); perch = null; if (P.done) P.done(); } }
+}
+const READY = []; // things that need the character model; run once it has loaded
+
+/* ---------------- the bar: a bartender, a stool, and Eyal's two beers ---------------- */
+const BAR = { stool:new THREE.Vector3(-3.56, 0, 2.1), face:-Math.PI / 2, lift:.26, counter:new THREE.Vector3(-3.93, .6, 2.1), tap:new THREE.Vector3(-4.2, .6, 2.1) };
+const BARTENDER_LOOK = { fur:'#6b4a2e', hat:'#101010', vest:'#ece6d8', shirt:'#fbfaf6', pants:'#121214' };
+const BEERS = {
+  guinness:{ name:'Guinness', liquid:'#160b06', settle:'#7a5236', head:'#efe2c4', headH:.013,
+    pour:'One Guinness, poured properly: three quarters, let it settle, then top it off. This was Eyal’s favourite pint in England.',
+    sips:[
+      'That’s the one. Roasted barley, a creamy head from the nitrogen, and lighter than it looks.',
+      'People think stout is heavy. A pint of Guinness has fewer calories than most people guess.',
+      'Eyal says nothing he drank in England beat a good pint of Guinness. Take your time with it.',
+      'Last sip. You can tell a good pour: the foam leaves rings down the glass, one for every sip.'
+    ] },
+  superbock:{ name:'Super Bock', liquid:'#d8961c', settle:'#f0c25a', head:'#fffaf0', headH:.008,
+    pour:'Super Bock, ice cold. Portugal’s lager, brewed in Porto since 1927. Eyal’s beer every time he was in Portugal.',
+    sips:[
+      'Crisp, cold, easy. It tastes like a warm evening by the water.',
+      'Order a beer on tap in Porto and you ask for a “fino”. In Lisbon it’s an “imperial”. Same beer, different city.',
+      'It’s the one Eyal kept ordering in Portugal. Best with grilled sardines and a sunset.',
+      'Last sip. Saúde.'
+    ] }
+};
+const barGlass = (() => {
+  const g = new THREE.Group(); g.visible = false; g.scale.setScalar(1.3); scene.add(g);
+  const wall = [[0, 0], [.024, 0], [.025, .004], [.027, .075], [.031, .09], [.03, .1], [.031, .112]].map(([r, y]) => new THREE.Vector2(r, y));
+  const gm = glassM.clone(); gm.side = THREE.DoubleSide; gm.opacity = .16; gm.envMapIntensity = .5;
+  g.add(new THREE.Mesh(new THREE.LatheGeometry(wall, 24), gm));
+  const lg = new THREE.CylinderGeometry(.0265, .0228, .09, 24); lg.translate(0, .045, 0);
+  const liquidM = std({ color:'#160b06', roughness:.45, envMapIntensity:.12 }), headM = std({ color:'#efe2c4', roughness:.9, envMapIntensity:.2 });
+  const liquid = new THREE.Mesh(lg, liquidM); liquid.position.y = .004; g.add(liquid);
+  const head = new THREE.Mesh(new THREE.CylinderGeometry(.028, .0275, 1, 24), headM); g.add(head);
+  const set = (level, beer, settle = 1) => {
+    liquid.visible = head.visible = level > .02;
+    liquid.scale.y = Math.max(.001, level);
+    liquidM.color.set(beer.settle).lerp(new THREE.Color(beer.liquid), settle);
+    headM.color.set(beer.head);
+    const hh = beer.headH * (level > .02 ? 1 : 0) * (settle < 1 ? 1.8 : 1);
+    head.scale.y = Math.max(.001, hh); head.position.y = .004 + .09 * level + hh / 2;
+  };
+  return { g, set };
+})();
+const bar = { beer:null, level:0, line:0, anim:null, barman:null, barmanG:null, talk:0 };
+READY.push(() => {
+  const g = makeCharacter(BARTENDER_LOOK, false, true); g.position.set(-4.47, 0, 2.1); g.rotation.y = Math.PI / 2; scene.add(g);
+  bar.barmanG = g; bar.barman = g.userData.char;
+  const lb = label('Bartender'); lb.position.set(-4.47, 1.22, 2.1); scene.add(lb);
+});
+function barSay(text){ bar.talk = Math.max(2.2, text.length * .045); stSay('THE BARTENDER', text, 'THE BAR'); }
+function barMenu(){
+  const full = bar.beer && bar.level > .05;
+  const list = [];
+  if (full) list.push(['Take a sip', barSip]);
+  list.push(['A Guinness, please', () => barPour('guinness'), full], ['A Super Bock', () => barPour('superbock'), true]);
+  list.push(['Stand up · Esc', leaveStation, true]);
+  stButtons(list);
+}
+function barPour(id){
+  if (bar.anim) return;
+  if (bar.beer && bar.level > .05 && bar.beer !== BEERS[id]){ barSay('Finish that ' + bar.beer.name + ' first. I’ll have the next one ready.'); return; }
+  if (bar.beer && bar.level > .05){ barSay('You’ve still got half a pint there. Take a sip.'); return; }
+  bar.beer = BEERS[id]; bar.level = 0; bar.line = 0;
+  barGlass.g.visible = true; barGlass.g.position.copy(BAR.tap); barGlass.g.rotation.set(0, 0, 0); barGlass.set(0, bar.beer, 0);
+  bar.anim = { kind:'pour', t:0 }; stActs.innerHTML = '';
+  barSay(bar.beer.pour);
+}
+function barSip(){
+  if (bar.anim || !bar.beer || bar.level <= .05) return;
+  bar.anim = { kind:'sip', t:0 }; stActs.innerHTML = '';
+}
+const _mouth = new THREE.Vector3();
+function barTick(dt){
+  const here = station === STATIONS.bar && !station.leaving;
+  if (bar.barman){
+    aimHead(bar.barman, here ? dogHead() : null, dt, bar.barmanG);
+    bar.talk -= dt; bar.barman.body.rotation.z = here && bar.talk > 0 ? Math.sin(performance.now() / 400) * .025 : 0;
+  }
+  const A = bar.anim; if (!A) return;
+  A.t += dt;
+  if (A.kind === 'pour'){
+    /* a stout gets the two-part pour and a moment to settle; a lager just pours */
+    const two = bar.beer === BEERS.guinness, T = two ? 3.2 : 1.6;
+    let lv, settle;
+    if (two){ lv = A.t < 1 ? .75 * A.t : A.t < 2 ? .75 : Math.min(1, .75 + (A.t - 2) * .5); settle = Math.min(1, A.t / 2.6); }
+    else { lv = Math.min(1, A.t / 1.1); settle = Math.min(1, A.t / 1.3); }
+    barGlass.set(lv, bar.beer, settle);
+    if (A.t > T){ const k = Math.min(1, (A.t - T) / .5); barGlass.g.position.lerpVectors(BAR.tap, BAR.counter, ease(k)); if (k >= 1){ bar.level = 1; bar.anim = null; barMenu(); } }
+  } else if (A.kind === 'sip'){
+    /* lift to the mouth, tip, set it back down */
+    const T = 2.2, k = A.t / T;
+    /* the rim meets the mouth, by the cigarette: aim from the ember, a little toward the middle of the snout */
+    _mouth.copy(ember.position).add(new THREE.Vector3(Math.sin(dog.rotation.y), 0, Math.cos(dog.rotation.y)).multiplyScalar(.17)).add(new THREE.Vector3(0, -.14, 0));
+    _mouth.x += (dog.position.x - ember.position.x) * .1; _mouth.z += (dog.position.z - ember.position.z) * .45;
+    const up = k < .35 ? ease(k / .35) : k < .65 ? 1 : 1 - ease((k - .65) / .35);
+    barGlass.g.position.lerpVectors(BAR.counter, _mouth, up);
+    barGlass.g.rotation.z = -1.05 * (k < .35 ? 0 : k < .65 ? Math.sin((k - .35) / .3 * Math.PI) : 0) - .25 * up;
+    const lv = bar.level - (k > .35 && k < .65 ? .26 * (k - .35) / .3 : k >= .65 ? .26 : 0);
+    barGlass.set(Math.max(0, lv), bar.beer);
+    if (A.t >= T){
+      bar.level = Math.max(0, bar.level - .26); barGlass.g.rotation.z = 0; barGlass.g.position.copy(BAR.counter); bar.anim = null;
+      const lines = bar.beer.sips; barSay(lines[Math.min(bar.line++, lines.length - 1)]);
+      if (bar.level <= .05){ bar.level = 0; barGlass.set(0, bar.beer); setTimeout(() => { if (station === STATIONS.bar){ barSay('Another round? Same again, or the other one?'); barMenu(); } }, 2600); }
+      else barMenu();
+    }
+  }
+}
+STATIONS.bar = {
+  id:'bar', hideDog:false, exitYaw:-Math.PI / 2,
+  cam:{ p:new THREE.Vector3(-3.25, 1.12, 3.4), l:new THREE.Vector3(-4.05, .78, 2.0) },
+  enter(){
+    const front = BAR.stool.clone().add(new THREE.Vector3(Math.sin(BAR.face) * SIT_FWD, 0, Math.cos(BAR.face) * SIT_FWD));
+    sitAt([new THREE.Vector3(-3.15, 0, 2.6), new THREE.Vector3(-3.72, 0, 2.5), front], BAR.face, BAR.lift, () => {
+      barSay(bar.beer && bar.level > .05 ? 'Welcome back. Your ' + bar.beer.name + ' is right where you left it.' : 'Evening. You’re in Eyal’s seat. He’d order a Guinness, his favourite pint from England. Or a Super Bock, his beer in Portugal. What’ll it be?');
+      barMenu();
+    });
+  },
+  leave(done){ bar.anim = null; if (bar.beer && bar.level > .05) barGlass.g.position.copy(BAR.counter), barGlass.g.rotation.z = 0, barGlass.set(bar.level, bar.beer);
+    standFrom(BAR.face, BAR.lift, [new THREE.Vector3(-3.72, 0, 2.5), new THREE.Vector3(-3.05, 0, 2.55)], done); },
+  key(k){ if (k === 'escape') leaveStation(); else if (k === 'e' || k === 'enter'){ const b = stActs.querySelector('button'); if (b) b.click(); } else if (k === '1') barPour('guinness'); else if (k === '2') barPour('superbock'); },
+  tick:barTick
+};
+SPOTS.push({ id:'bar', pos:new THREE.Vector3(-3.1, 0, 2.1), r:.75, label:'take a seat at the bar', dot:'#ffb060' });
+
+/* ---------------- the library: a bookcase right of the fireplace; pull a book, read it ---------------- */
+/* essays live in essays/: add a markdown file and a line in essays/index.json and a new book appears on the shelf */
+const BOOKS = [
+  { title:'The Story So Far', sub:'Volume I', color:'#5b1620', builtin:true, body:`# The Story So Far
+
+Eyal Shechtman builds things, mostly with other people, mostly fast.
+
+## Seattle
+He studies Informatics and Economics at the University of Washington, in Seattle. Before that it was the Eastside: Bellevue and the clubs around it, where a lot of the weekends went to soccer.
+
+## Work
+He is a founding engineer at **Arkero**, which builds the operating system for professional football clubs: matchday planning, the data a club already has, and AI agents that answer questions from it. Arkero raised a $6M pre-seed in January 2026.
+
+Before Arkero he was a software engineer at **Chewy**, in Bellevue. Before that, an undergraduate researcher at the UW Information School, building a browser extension that adds context to news headlines.
+
+## On the side
+He founded and runs **TAMID at UW**, a student group for business and tech, and hosted Zero-to-One, a startup weekend for students.
+
+The players at the card table are the rest of the story. Each one is something he built. Sit down and they will deal you in.
+
+## The rest of the room
+The pitch in the corner is soccer: Bellevue Athletic FC and his high school team. The bar is his two favourite beers. The chess table is a bot that learned to play like him, from every game he has played on chess.com.` },
+  { title:'Hackathon Nights', sub:'Volume II', color:'#1f3a5f', builtin:true, body:`# Hackathon Nights
+
+Some of the best things on this shelf were built in a weekend.
+
+## Google DeepMind × YC
+**BeamBell.** A fleet of AI phone agents that call around and gather competitive information. 1st place out of about 350.
+
+## OpenAI GPT-5 hackathon, San Francisco
+**Dress to Impress, with AI.** Snap into an avatar with your webcam, shop real items against the clock, try them on and walk a generated runway. A GPT stylist plays against you and a multimodal judge picks the winner. 4th out of about 800, built in 24 hours.
+
+## Meta hackathon
+**StyleList.** An open-source AI stylist: describe a vibe, get a moodboard, real products and a virtual try-on. 7th out of 300+, and the launch post drew about 150k views on Reddit.
+
+## DubHacks
+**RoamRich.** Round up your spending and invest the change.
+
+## AWS Hack Day
+A multi-agent investing pipeline that reads sentiment, pulls market data and paper-trades.
+
+He calls himself a four-time hackathon winner. The weekends add up.` },
+  { title:'Essays', sub:'Coming soon', color:'#2d4a2a', builtin:true, body:`# Essays
+
+This shelf is where Eyal’s essays go.
+
+They are on their way. Each one will get its own book, right here next to the fire.
+
+Come back soon, and bring a drink from the bar.` }
+];
+const LIB = { CX:3.72, W:1.3, H:2.3, D:.32, shelves:[.08, .5, .92, 1.34, 1.76], featY:.92 };
+const lib = new THREE.Group(); lib.applyMatrix4(WALLS.right); scene.add(lib);
+const libBooks = []; let libSel = 0, libAnim = null;
+function spineTex(b){
+  return canvasTex(96, 560, (g, w, h) => {
+    g.fillStyle = b.color; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 900; i++){ g.fillStyle = `rgba(${Math.random() < .5 ? '0,0,0' : '255,230,200'},${rnd(0,.06)})`; g.fillRect(rnd(0,w), rnd(0,h), 2, 2); }
+    g.fillStyle = '#d6b25e'; for (const y of [30, 44, h - 44, h - 30]) g.fillRect(6, y, w - 12, 5);
+    g.save(); g.translate(w / 2 + 2, h / 2); g.rotate(-Math.PI / 2);
+    g.fillStyle = '#efd8a0'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    let fs = 40; g.font = `${fs}px Anton, Impact, sans-serif`; while (g.measureText(b.title.toUpperCase()).width > h - 150 && fs > 18){ fs -= 2; g.font = `${fs}px Anton, Impact, sans-serif`; }
+    g.fillText(b.title.toUpperCase(), 0, -10); g.font = '800 17px Nunito, sans-serif'; g.fillStyle = 'rgba(239,216,160,.8)'; g.fillText((b.sub || '').toUpperCase(), 0, 26);
+    g.restore();
+  });
+}
+const libBookM = (b) => { const side = std({ color:b.color, roughness:.6 }); const pages = std({ color:'#efe4cc', roughness:.9 }); return [pages, side, pages, pages, std({ map:spineTex(b), roughness:.55 }), side]; };
+function shelveBooks(){
+  libBooks.forEach(m => lib.remove(m)); libBooks.length = 0;
+  const n = BOOKS.length, gap = .052, x0 = LIB.CX - (n - 1) * gap / 2;
+  BOOKS.forEach((b, i) => {
+    const h = .27 + (i % 3) * .012, m = new THREE.Mesh(new THREE.BoxGeometry(.046, h, .2), libBookM(b));
+    m.position.set(x0 + i * gap, LIB.featY + .015 + h / 2, LIB.D - .13); m.rotation.y = 0; m.castShadow = true;
+    m.userData = { book:i, home:m.position.clone(), act:'library' }; lib.add(m); libBooks.push(m);
+  });
+}
+{
+  const at = WALLS.right, { CX, W, H, D } = LIB, wood = woodDkM;
+  const box = (w, h, d, x, y, z, m = wood) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, y, z); b.castShadow = b.receiveShadow = true; lib.add(b); return b; };
+  box(W, H, .02, CX, H / 2, .012, std({ color:'#1a0b05', roughness:.7 }));                 // back
+  for (const s of [-1, 1]){ box(.05, H + .06, D + .02, CX + s * (W / 2 + .025), (H + .06) / 2, D / 2); box(.012, H - .1, .01, CX + s * (W / 2 + .025), H / 2, D + .016, gildM); }
+  box(W + .16, .07, D + .06, CX, H + .06, D / 2 + .01); box(W + .2, .035, D + .1, CX, H + .11, D / 2 + .02); box(W + .17, .012, D + .07, CX, H + .025, D / 2 + .012, gildM);
+  box(W + .1, .1, D + .04, CX, .05, D / 2 + .01);
+  LIB.shelves.forEach(y => { box(W, .028, D, CX, y + .06, D / 2); box(W, .008, .006, CX, y + .05, D + .002, gildM); });
+  /* the collection: one instanced mesh of leather and cloth spines, a gap left in the middle of the reading shelf */
+  const spots = [], cols = ['#4a1a12', '#1d2b45', '#2c3b22', '#6a4a20', '#3a1b30', '#5a2a1a', '#20201c', '#7a5a30', '#40281a', '#233a3a'];
+  LIB.shelves.forEach((sy, si) => {
+    let x = CX - W / 2 + .03;
+    while (x < CX + W / 2 - .04){
+      const t = rnd(.022, .05), h = rnd(.2, .33) * (si === 4 ? .9 : 1);
+      if (si === 2 && Math.abs(x - CX) < BOOKS.length * .03 + .08){ x += .02; continue; }
+      if (Math.random() < .06){ x += rnd(.04, .1); continue; }
+      const lean = x > CX + W / 2 - .12 && Math.random() < .5 ? -.18 : 0;
+      spots.push([x + t / 2, sy + .074 + h / 2, D - .14 + rnd(-.015, .015), t, h, rnd(.17, .21), lean, cols[Math.floor(rnd(0, cols.length))]]);
+      x += t + rnd(0, .004);
+    }
+  });
+  const coll = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), std({ color:'#ffffff', roughness:.7 }), spots.length);
+  const m4 = new THREE.Matrix4(), c = new THREE.Color();
+  spots.forEach(([x, y, z, t, h, d, lean, col], i) => { m4.compose(new THREE.Vector3(x, y, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0, lean)), new THREE.Vector3(t, h, d)); coll.setMatrixAt(i, m4); coll.setColorAt(i, c.set(col).multiplyScalar(rnd(.7, 1.15))); });
+  coll.castShadow = true; coll.receiveShadow = true; lib.add(coll);
+  /* a brass library lamp on the reading shelf's top edge, and a plaque */
+  const lampL = new THREE.PointLight('#ffcf90', 2.2, 2.6, 1.6); lampL.position.set(CX, 1.95, .9); lib.add(lampL);
+  const pq = plaque('THE LIBRARY · ESSAYS', .9); pq.position.set(CX, 2.47, .02); lib.add(pq);
+  lib.updateMatrixWorld(true);
+  for (let z = CX - W / 2; z <= CX + W / 2 + .01; z += .3) COLLIDERS_LATE.push({ x:RW / 2 - .2, z, r:.3 });
+  wallGlow(at, CX, 1.4, 1.9, 2.2, .005);
+}
+shelveBooks();
+/* essays from essays/index.json join the shelf when present: [{ "file":"my-essay.md", "title":"…", "sub":"2026" }] */
+fetch('essays/index.json').then(r => r.ok ? r.json() : []).then(list => Promise.all((list || []).map(e => fetch('essays/' + e.file).then(r => r.ok ? r.text() : '').then(body => ({ title:e.title, sub:e.sub || '', color:e.color || ['#4a2a12', '#26324a', '#3a2a40', '#2a4030'][BOOKS.length % 4], body })))))
+  .then(found => { const real = found.filter(b => b.body); if (!real.length) return; const k = BOOKS.findIndex(b => b.title === 'Essays'); if (k >= 0) BOOKS.splice(k, 1); BOOKS.push(...real); shelveBooks(); }).catch(() => {});
+
+/* reading: a two-page spread, flowed into columns and turned a spread at a time */
+const reader = document.getElementById('reader'), rdFlow = document.getElementById('rdFlow'), rdPages = document.getElementById('rdPages'), rdNum = document.getElementById('rdNum');
+let rdPage = 0, rdCount = 1;
+function md(src){
+  const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const inline = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\*(.+?)\*/g, '<em>$1</em>').replace(/\[(.+?)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  return src.replace(/^(#{1,2} .*)$/gm, '\n$1\n').trim().split(/\n\s*\n/).map(b => b.trim()).filter(Boolean).map(b => {
+    if (/^# /.test(b)) return '<h1>' + inline(b.slice(2)) + '</h1>';
+    if (/^## /.test(b)) return '<h2>' + inline(b.slice(3)) + '</h2>';
+    if (/^> /.test(b)) return '<blockquote>' + inline(b.replace(/^> /gm, '')) + '</blockquote>';
+    if (/^- /.test(b)) return '<ul>' + b.split('\n').map(l => '<li>' + inline(l.replace(/^- /, '')) + '</li>').join('') + '</ul>';
+    return '<p>' + b.split('\n').map(inline).join('<br>') + '</p>';
+  }).join('');
+}
+function rdLayout(){
+  const G = 64, W = rdPages.clientWidth, cols = innerWidth < 700 ? 1 : 2, cw = (W - G * (cols - 1)) / cols;
+  rdFlow.style.columnWidth = cw + 'px'; rdFlow.style.columnGap = G + 'px'; rdFlow.style.columnCount = 'auto';
+  const n = Math.max(1, Math.round((rdFlow.scrollWidth + G) / (cw + G)));
+  rdCount = Math.ceil(n / cols); rdPage = Math.min(rdPage, rdCount - 1);
+  rdFlow.style.transform = `translateX(${-rdPage * (W + G)}px)`;
+  rdNum.textContent = rdCount > 1 ? `${rdPage + 1} / ${rdCount}` : '';
+  document.getElementById('rdPrev').disabled = rdPage === 0; document.getElementById('rdNext').disabled = rdPage >= rdCount - 1;
+}
+function openBook(i){
+  const b = BOOKS[i]; rdFlow.innerHTML = md(b.body); rdPage = 0;
+  reader.hidden = false; rdLayout(); document.getElementById('rdNext').focus({ preventScroll:true });
+}
+function closeBook(){ reader.hidden = true; libAnim = { i:libSel, dir:-1, t:0 }; libMenu(); }
+document.getElementById('rdPrev').onclick = () => { rdPage = Math.max(0, rdPage - 1); rdLayout(); };
+document.getElementById('rdNext').onclick = () => { rdPage = Math.min(rdCount - 1, rdPage + 1); rdLayout(); };
+document.getElementById('rdClose').onclick = () => closeBook();
+addEventListener('resize', () => { if (!reader.hidden) rdLayout(); });
+function libMenu(){
+  const b = BOOKS[libSel];
+  stSay('THE LIBRARY', `“${b.title}”${b.sub ? ' · ' + b.sub : ''}. Pick a book with the arrows, or click one on the shelf.`, `BOOK ${libSel + 1} OF ${BOOKS.length}`);
+  stButtons([['Pull it out and read', () => libPull(libSel)], ['‹', () => libPick(libSel - 1), true], ['›', () => libPick(libSel + 1), true], ['Back · Esc', leaveStation, true]]);
+}
+function libPick(i){ if (libAnim || !reader.hidden) return; libSel = (i + BOOKS.length) % BOOKS.length; libMenu(); }
+function libPull(i){ if (libAnim || !reader.hidden) return; libSel = i; libAnim = { i, dir:1, t:0 }; stActs.innerHTML = ''; }
+const _ray = new THREE.Raycaster(), _m2 = new THREE.Vector2();
+function libHit(e){ _m2.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); _ray.setFromCamera(_m2, camera); const h = _ray.intersectObjects(libBooks, false)[0]; return h ? h.object.userData.book : -1; }
+STATIONS.library = {
+  id:'library', hideDog:true, exitYaw:Math.PI / 2,
+  cam:{ p:new THREE.Vector3(RW / 2 - 1.38, 1.12, LIB.CX), l:new THREE.Vector3(RW / 2, 1.04, LIB.CX) },
+  enter(){ libSel = Math.min(libSel, BOOKS.length - 1); libMenu(); },
+  leave(done){ reader.hidden = true; libAnim = null; libBooks.forEach(m => m.position.copy(m.userData.home)); dog.position.set(RW / 2 - 1.05, 0, LIB.CX - .1); dog.rotation.y = -Math.PI / 2; done(); },
+  key(k){
+    if (!reader.hidden){ if (k === 'escape' || k === 'e') closeBook(); else if (k === 'arrowright' || k === 'd' || k === ' ') document.getElementById('rdNext').click(); else if (k === 'arrowleft' || k === 'a') document.getElementById('rdPrev').click(); return; }
+    if (k === 'escape') leaveStation(); else if (k === 'arrowleft' || k === 'a') libPick(libSel - 1); else if (k === 'arrowright' || k === 'd') libPick(libSel + 1); else if (k === 'enter' || k === 'e') libPull(libSel);
+  },
+  click(e){ const i = libHit(e); if (i >= 0){ if (i === libSel) libPull(i); else libPick(i); } },
+  tick(dt){
+    const here = station === STATIONS.library;
+    libBooks.forEach((m, i) => {
+      const hot = here && i === libSel && reader.hidden;
+      if (!libAnim || libAnim.i !== i){ const want = m.userData.home.z + (hot ? .035 : 0); m.position.z += (want - m.position.z) * Math.min(1, dt * 10); }
+      m.material[4].emissive.set(hot ? '#3a2a10' : '#000000');
+    });
+    if (libAnim){
+      const A = libAnim, m = libBooks[A.i]; A.t += dt; const k = Math.min(1, A.t / .45);
+      const out = A.dir > 0 ? ease(k) : 1 - ease(k);
+      m.position.z = m.userData.home.z + .035 + .17 * out; m.rotation.x = -.12 * out;
+      if (k >= 1){ libAnim = null; if (A.dir > 0) openBook(A.i); }
+    }
+  }
+};
+lib.updateMatrixWorld(true);
+SPOTS.push({ id:'library', pos:new THREE.Vector3(RW / 2 - 1.0, 0, LIB.CX), r:.8, label:'browse the library', dot:'#c9a0ff' });
+
+/* ---------------- the chess table: back left, under the painting; sit down and play EyalBot ---------------- */
+/* EyalBot is a Maia-2 model being fine-tuned on Eyal's chess.com games (~/Documents/projects/chess-bot).
+   When it is served over HTTP, set CHESS_BOT_URL: the page POSTs { fen, moves:['e2e4', …] } and expects { move:'e7e5' }.
+   Until then, or if the server does not answer, a small built-in engine plays in its place. */
+const CHESS_BOT_URL = '';
+const CHESS_COM = 'https://www.chess.com/member/EyalShechtman12';
+const Chess = (() => {
+  const P = 1, N = 2, B = 3, R = 4, Q = 5, K = 6, DBL = 1, EP = 2, CASTLE = 3;
+  const VAL = [0, 100, 320, 330, 500, 900, 0];
+  const KN = [[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]], DI = [[1,1],[1,-1],[-1,1],[-1,-1]], OR = [[1,0],[-1,0],[0,1],[0,-1]], KG = DI.concat(OR);
+  /* piece-square tables, drawn from White's side with rank 8 at the top */
+  const T = s => s.trim().split(/[\s,]+/).map(Number);
+  const PST = [null,
+    T(`0 0 0 0 0 0 0 0 50 50 50 50 50 50 50 50 10 10 20 30 30 20 10 10 5 5 10 25 25 10 5 5 0 0 0 20 20 0 0 0 5 -5 -10 0 0 -10 -5 5 5 10 10 -20 -20 10 10 5 0 0 0 0 0 0 0 0`),
+    T(`-50 -40 -30 -30 -30 -30 -40 -50 -40 -20 0 0 0 0 -20 -40 -30 0 10 15 15 10 0 -30 -30 5 15 20 20 15 5 -30 -30 0 15 20 20 15 0 -30 -30 5 10 15 15 10 5 -30 -40 -20 0 5 5 0 -20 -40 -50 -40 -30 -30 -30 -30 -40 -50`),
+    T(`-20 -10 -10 -10 -10 -10 -10 -20 -10 0 0 0 0 0 0 -10 -10 0 5 10 10 5 0 -10 -10 5 5 10 10 5 5 -10 -10 0 10 10 10 10 0 -10 -10 10 10 10 10 10 10 -10 -10 5 0 0 0 0 5 -10 -20 -10 -10 -10 -10 -10 -10 -20`),
+    T(`0 0 0 0 0 0 0 0 5 10 10 10 10 10 10 5 -5 0 0 0 0 0 0 -5 -5 0 0 0 0 0 0 -5 -5 0 0 0 0 0 0 -5 -5 0 0 0 0 0 0 -5 -5 0 0 0 0 0 0 -5 0 0 0 5 5 0 0 0`),
+    T(`-20 -10 -10 -5 -5 -10 -10 -20 -10 0 0 0 0 0 0 -10 -10 0 5 5 5 5 0 -10 -5 0 5 5 5 5 0 -5 0 0 5 5 5 5 0 -5 -10 5 5 5 5 5 0 -10 -10 0 5 0 0 0 0 -10 -20 -10 -10 -5 -5 -10 -10 -20`),
+    T(`-30 -40 -40 -50 -50 -40 -40 -30 -30 -40 -40 -50 -50 -40 -40 -30 -30 -40 -40 -50 -50 -40 -40 -30 -30 -40 -40 -50 -50 -40 -40 -30 -20 -30 -30 -40 -40 -30 -30 -20 -10 -20 -20 -20 -20 -20 -20 -10 20 20 0 0 0 0 20 20 20 30 10 0 0 10 30 20`)];
+  const KEND = T(`-50 -40 -30 -20 -20 -30 -40 -50 -30 -20 -10 0 0 -10 -20 -30 -30 -10 20 30 30 20 -10 -30 -30 -10 30 40 40 30 -10 -30 -30 -10 30 40 40 30 -10 -30 -30 -10 20 30 30 20 -10 -30 -30 -30 0 0 0 0 -30 -30 -50 -30 -30 -30 -30 -30 -30 -50`);
+  const on = (r, f) => r >= 0 && r < 8 && f >= 0 && f < 8;
+  function start(){
+    const b = new Int8Array(64), back = [R, N, B, Q, K, B, N, R];
+    for (let f = 0; f < 8; f++){ b[f] = back[f]; b[8 + f] = P; b[48 + f] = P | 8; b[56 + f] = back[f] | 8; }
+    return { b, side:0, castle:15, ep:-1, half:0, full:1 };
+  }
+  function attacked(b, sq, by){
+    const r = sq >> 3, f = sq & 7, pr = by ? r + 1 : r - 1;
+    if (pr >= 0 && pr < 8) for (const df of [-1, 1]) if (on(pr, f + df) && b[pr * 8 + f + df] === (P | by)) return true;
+    for (const [dr, df] of KN) if (on(r + dr, f + df) && b[(r + dr) * 8 + f + df] === (N | by)) return true;
+    for (const [dr, df] of KG) if (on(r + dr, f + df) && b[(r + dr) * 8 + f + df] === (K | by)) return true;
+    for (const [dirs, a, c] of [[DI, B, Q], [OR, R, Q]]) for (const [dr, df] of dirs){
+      let rr = r + dr, ff = f + df;
+      while (on(rr, ff)){ const pc = b[rr * 8 + ff]; if (pc){ if (pc === (a | by) || pc === (c | by)) return true; break; } rr += dr; ff += df; }
+    }
+    return false;
+  }
+  const kingSq = (b, side) => b.indexOf(K | side);
+  const inCheck = s => attacked(s.b, kingSq(s.b, s.side), s.side ^ 8);
+  function pseudo(s, capsOnly){
+    const b = s.b, me = s.side, them = me ^ 8, out = [];
+    const add = (from, to, flag = 0, promo = 0) => out.push({ from, to, flag, promo, cap:flag === EP ? (P | them) : b[to] });
+    for (let sq = 0; sq < 64; sq++){
+      const pc = b[sq]; if (!pc || (pc & 8) !== me) continue;
+      const t = pc & 7, r = sq >> 3, f = sq & 7;
+      if (t === P){
+        const dir = me ? -1 : 1, r1 = r + dir, last = me ? 0 : 7;
+        if (r1 < 0 || r1 > 7) continue;
+        const to = r1 * 8 + f;
+        if (!b[to]){
+          if (r1 === last) add(sq, to, 0, Q);
+          else if (!capsOnly){ add(sq, to); const to2 = (r + 2 * dir) * 8 + f; if (r === (me ? 6 : 1) && !b[to2]) add(sq, to2, DBL); }
+        }
+        for (const df of [-1, 1]){
+          if (!on(r1, f + df)) continue; const t2 = r1 * 8 + f + df;
+          if (b[t2] && (b[t2] & 8) === them) add(sq, t2, 0, r1 === last ? Q : 0);
+          else if (t2 === s.ep) add(sq, t2, EP);
+        }
+      } else if (t === N || t === K){
+        for (const [dr, df] of t === N ? KN : KG){
+          if (!on(r + dr, f + df)) continue; const to = (r + dr) * 8 + f + df, c = b[to];
+          if (!c){ if (!capsOnly) add(sq, to); } else if ((c & 8) === them) add(sq, to);
+        }
+        if (t === K && !capsOnly){
+          const base = me ? 56 : 0, ks = me ? 4 : 1, qs = me ? 8 : 2;
+          if (sq === base + 4 && !attacked(b, sq, them)){
+            if (s.castle & ks && !b[base + 5] && !b[base + 6] && b[base + 7] === (R | me) && !attacked(b, base + 5, them) && !attacked(b, base + 6, them)) add(sq, base + 6, CASTLE);
+            if (s.castle & qs && !b[base + 3] && !b[base + 2] && !b[base + 1] && b[base] === (R | me) && !attacked(b, base + 3, them) && !attacked(b, base + 2, them)) add(sq, base + 2, CASTLE);
+          }
+        }
+      } else {
+        for (const [dr, df] of t === B ? DI : t === R ? OR : KG){
+          let rr = r + dr, ff = f + df;
+          while (on(rr, ff)){
+            const to = rr * 8 + ff, c = b[to];
+            if (!c){ if (!capsOnly) add(sq, to); } else { if ((c & 8) === them) add(sq, to); break; }
+            rr += dr; ff += df;
+          }
+        }
+      }
+    }
+    return out;
+  }
+  function make(s, m){
+    const b = s.b.slice(), pc = b[m.from], t = pc & 7, me = s.side;
+    b[m.to] = m.promo ? (m.promo | me) : pc; b[m.from] = 0;
+    if (m.flag === EP) b[m.to + (me ? 8 : -8)] = 0;
+    if (m.flag === CASTLE){ if (m.to > m.from){ b[m.from + 1] = b[m.from + 3]; b[m.from + 3] = 0; } else { b[m.from - 1] = b[m.from - 4]; b[m.from - 4] = 0; } }
+    let c = s.castle; if (t === K) c &= me ? ~12 : ~3;
+    for (const sq of [m.from, m.to]){ if (sq === 0) c &= ~2; if (sq === 7) c &= ~1; if (sq === 56) c &= ~8; if (sq === 63) c &= ~4; }
+    return { b, side:me ^ 8, castle:c, ep:m.flag === DBL ? (m.from + m.to) >> 1 : -1, half:(t === P || m.cap) ? 0 : s.half + 1, full:s.full + (me ? 1 : 0) };
+  }
+  const legalAfter = (s, m) => { const n = make(s, m); return attacked(n.b, kingSq(n.b, s.side), n.side) ? null : n; };
+  const legal = s => pseudo(s).filter(m => legalAfter(s, m));
+  function evaluate(s){
+    const b = s.b; let np = 0, sc = 0;
+    for (let i = 0; i < 64; i++){ const t = b[i] & 7; if (t && t !== P && t !== K) np += VAL[t]; }
+    const end = np <= 2600;
+    for (let i = 0; i < 64; i++){
+      const pc = b[i]; if (!pc) continue; const t = pc & 7, white = !(pc & 8);
+      const idx = white ? (7 - (i >> 3)) * 8 + (i & 7) : i;
+      const v = VAL[t] + (t === K && end ? KEND[idx] : PST[t][idx]);
+      sc += white ? v : -v;
+    }
+    return s.side ? -sc : sc;
+  }
+  const order = ms => ms.sort((a, b) => ((b.cap ? VAL[b.cap & 7] * 10 : 0) + (b.promo ? 800 : 0)) - ((a.cap ? VAL[a.cap & 7] * 10 : 0) + (a.promo ? 800 : 0)));
+  let nodes = 0;
+  function qs(s, a, b, d){
+    nodes++; const stand = evaluate(s); if (stand >= b) return b; if (stand > a) a = stand; if (d <= 0) return a;
+    for (const m of order(pseudo(s, true))){ const n = legalAfter(s, m); if (!n) continue; const v = -qs(n, -b, -a, d - 1); if (v >= b) return b; if (v > a) a = v; }
+    return a;
+  }
+  function nm(s, depth, a, b, ply){
+    if (s.half >= 100) return 0;
+    if (depth <= 0) return qs(s, a, b, 4);
+    nodes++; let any = false;
+    for (const m of order(pseudo(s))){
+      const n = legalAfter(s, m); if (!n) continue; any = true;
+      const v = -nm(n, depth - 1, -b, -a, ply + 1); if (v >= b) return b; if (v > a) a = v;
+    }
+    if (!any) return inCheck(s) ? -100000 + ply : 0;
+    return a;
+  }
+  function best(s, depth = 3){
+    nodes = 0; let bestM = null, bestV = -Infinity;
+    const ms = order(legal(s));
+    for (const m of ms){
+      const v = -nm(make(s, m), depth - 1, -Infinity, -bestV + 12, 1) + Math.random() * 12;
+      if (v > bestV){ bestV = v; bestM = m; }
+    }
+    return bestM;
+  }
+  const sqName = sq => 'abcdefgh'[sq & 7] + ((sq >> 3) + 1);
+  const uci = m => sqName(m.from) + sqName(m.to) + (m.promo ? 'q' : '');
+  function san(s, m){
+    const t = s.b[m.from] & 7, n = make(s, m);
+    let out;
+    if (m.flag === CASTLE) out = m.to > m.from ? 'O-O' : 'O-O-O';
+    else {
+      const cap = m.cap ? 'x' : '';
+      if (t === P) out = (cap ? 'abcdefgh'[m.from & 7] : '') + cap + sqName(m.to) + (m.promo ? '=Q' : '');
+      else {
+        const twins = legal(s).filter(o => o.to === m.to && o.from !== m.from && (s.b[o.from] & 7) === t);
+        let dis = ''; if (twins.length) dis = twins.some(o => (o.from & 7) === (m.from & 7)) ? String((m.from >> 3) + 1) : 'abcdefgh'[m.from & 7];
+        out = ' PNBRQK'[t] + dis + cap + sqName(m.to);
+      }
+    }
+    if (inCheck(n)) out += legal(n).length ? '+' : '#';
+    return out;
+  }
+  function fen(s){
+    let o = '';
+    for (let r = 7; r >= 0; r--){
+      let run = 0;
+      for (let f = 0; f < 8; f++){ const pc = s.b[r * 8 + f]; if (!pc){ run++; continue; } if (run){ o += run; run = 0; } const ch = ' pnbrqk'[pc & 7]; o += pc & 8 ? ch : ch.toUpperCase(); }
+      if (run) o += run; if (r) o += '/';
+    }
+    const c = (s.castle & 1 ? 'K' : '') + (s.castle & 2 ? 'Q' : '') + (s.castle & 4 ? 'k' : '') + (s.castle & 8 ? 'q' : '');
+    return `${o} ${s.side ? 'b' : 'w'} ${c || '-'} ${s.ep >= 0 ? sqName(s.ep) : '-'} ${s.half} ${s.full}`;
+  }
+  function status(s){
+    if (!legal(s).length) return inCheck(s) ? 'mate' : 'stalemate';
+    if (s.half >= 100) return 'fifty';
+    const rest = [...s.b].filter(pc => pc && (pc & 7) !== K);
+    if (!rest.length || (rest.length === 1 && [N, B].includes(rest[0] & 7))) return 'material';
+    return null;
+  }
+  return { start, legal, make, best, san, uci, fen, status, inCheck, VAL, P, N, B, R, Q, K, EP, CASTLE, get nodes(){ return nodes; } };
+})();
+
+const CH = { cx:-2.7, cz:-3.15, top:.4, S:.058 };
+CH.surf = CH.top + .016;
+CH.seat = new THREE.Vector3(CH.cx, 0, CH.cz + .66); CH.botAt = new THREE.Vector3(CH.cx, 0, CH.cz - .66);
+const chessG = new THREE.Group(); chessG.position.set(CH.cx, 0, CH.cz); scene.add(chessG);
+/* the board: walnut and maple squares in a frame with the files and ranks inlaid in brass */
+function boardTex(flip){
+  return canvasTex(1024, 1024, (g, w) => {
+    const bd = Math.round(w * .055 / (8 * CH.S + .11)), sq = (w - 2 * bd) / 8;
+    g.fillStyle = '#2a1309'; g.fillRect(0, 0, w, w);
+    for (let i = 0; i < 2600; i++){ g.fillStyle = `rgba(${Math.random() < .5 ? '0,0,0' : '255,210,160'},${rnd(0, .05)})`; g.fillRect(rnd(0, w), rnd(0, w), rnd(2, 30), 1.5); }
+    for (let r = 0; r < 8; r++) for (let f = 0; f < 8; f++){
+      const light = (f + r) % 2 === 1, x = bd + f * sq, y = bd + (7 - r) * sq;
+      g.fillStyle = light ? '#e4cfa0' : '#6e3b1c'; g.fillRect(x, y, sq + .5, sq + .5);
+      for (let k = 0; k < 18; k++){ g.fillStyle = light ? `rgba(150,100,40,${rnd(.04, .12)})` : `rgba(20,8,2,${rnd(.05, .18)})`; g.fillRect(x, y + rnd(0, sq), sq, rnd(1, 3)); }
+    }
+    g.strokeStyle = '#c9a24a'; g.lineWidth = 4; g.strokeRect(bd - 4, bd - 4, 8 * sq + 8, 8 * sq + 8);
+    g.fillStyle = '#d6b25e'; g.font = `800 ${Math.round(bd * .5)}px Nunito, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    for (let i = 0; i < 8; i++){
+      const file = 'abcdefgh'[flip ? 7 - i : i], rank = String(flip ? i + 1 : 8 - i);
+      g.fillText(file, bd + (i + .5) * sq, w - bd / 2); g.fillText(rank, bd / 2, bd + (i + .5) * sq);
+    }
+  });
+}
+const boardM = std({ map:boardTex(false), roughness:.32, envMapIntensity:.5 });
+const boardTop = new THREE.Mesh(new THREE.PlaneGeometry(8 * CH.S + .11, 8 * CH.S + .11), boardM);
+boardTop.rotation.x = -Math.PI / 2; boardTop.position.y = CH.surf + .0005; boardTop.receiveShadow = true; chessG.add(boardTop);
+{
+  const walnutM = std({ color:'#3a1d0c', roughness:.35, envMapIntensity:.6 }), W = 8 * CH.S + .11;
+  const box = (w, h, d, x, y, z, m) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, y, z); b.castShadow = b.receiveShadow = true; chessG.add(b); return b; };
+  box(W, .016, W, 0, CH.surf - .008, 0, walnutM);                                   // board body
+  box(.74, .03, .74, 0, CH.top - .015, 0, woodDkM);                                   // table top
+  box(.76, .012, .76, 0, CH.top - .034, 0, gildM);                                     // brass edge
+  const leg = new THREE.Mesh(new THREE.LatheGeometry([[0, 0], [.2, 0], [.2, .02], [.12, .04], [.05, .07], [.04, .15], [.055, .22], [.035, .3], [.06, CH.top - .04], [0, CH.top - .04]].map(([r, y]) => new THREE.Vector2(r, y)), 28), walnutM);
+  leg.castShadow = true; chessG.add(leg);
+  /* a chess clock at the dog's right hand */
+  const clk = new THREE.Group(); clk.position.set(.3, CH.top, -.27); clk.rotation.y = -Math.PI / 2; chessG.add(clk);
+  const cb = new THREE.Mesh(new THREE.BoxGeometry(.16, .06, .05), woodDkM); cb.position.y = .03; cb.rotation.x = -.15; cb.castShadow = true; clk.add(cb);
+  const face = canvasTex(256, 96, (g, w, h) => { g.fillStyle = '#efe4cc'; for (const x of [8, 136]){ g.beginPath(); g.arc(x + 56, h / 2, 40, 0, Math.PI * 2); g.fill(); } g.strokeStyle = '#1c120b'; g.lineWidth = 4; for (const [x, a] of [[64, -.6], [192, .9]]){ g.beginPath(); g.moveTo(x, h / 2); g.lineTo(x + Math.sin(a) * 30, h / 2 - Math.cos(a) * 30); g.stroke(); } });
+  const fm = new THREE.Mesh(new THREE.PlaneGeometry(.15, .056), std({ map:face, roughness:.4 })); fm.position.set(0, .03, .0255); fm.rotation.x = -.15; clk.add(fm);
+  for (const s of [-1, 1]){ const btn = new THREE.Mesh(new THREE.CylinderGeometry(.008, .008, .012, 12), gildM); btn.position.set(s * .045, .068, -.004); clk.add(btn); }
+  const lamp = new THREE.PointLight('#ffd7a0', 2.4, 2.4, 1.6); lamp.position.set(0, 1.55, .1); chessG.add(lamp);
+  COLLIDERS_LATE.push({ x:CH.cx, z:CH.cz, r:.44 });
+}
+/* the pieces: turned on a lathe, ivory and ebony */
+const pieceGeo = (() => {
+  const arc = (cy, rad, a0, a1, n = 8) => Array.from({ length:n + 1 }, (_, i) => { const a = (a0 + (a1 - a0) * i / n) * Math.PI / 180; return [Math.cos(a) * rad, cy + Math.sin(a) * rad]; });
+  const BASE = [[0, 0], [.02, 0], [.02, .005], [.017, .008], [.013, .01]];
+  const L = pts => new THREE.LatheGeometry(pts.map(([r, y]) => new THREE.Vector2(Math.max(r, 0), y)), 28);
+  const g = {};
+  g[1] = [L([...BASE, [.008, .014], [.0055, .026], [.009, .028], [.0055, .03], ...arc(.0375, .0085, -60, 90)])];
+  g[4] = [L([...BASE, [.012, .012], [.011, .034], [.0135, .036], [.0135, .048], [.0095, .048], [.0095, .044], [0, .044]])];
+  g[3] = [L([...BASE, [.009, .014], [.006, .03], [.0095, .032], [.006, .034], ...arc(.045, .0095, -50, 65), [.003, .055], ...arc(.0585, .0035, -60, 90)])];
+  g[5] = [L([...BASE, [.011, .013], [.0065, .04], [.011, .043], [.007, .046], [.012, .059], [.008, .06], ...arc(.062, .0045, -30, 90)])];
+  g[6] = [L([...BASE, [.012, .013], [.007, .046], [.0115, .049], [.0075, .052], [.0125, .066], [.006, .068], [0, .068]]), new THREE.BoxGeometry(.004, .016, .004).translate(0, .076, 0), new THREE.BoxGeometry(.012, .004, .004).translate(0, .078, 0)];
+  const head = new THREE.Shape([[-.01, .014], [.01, .014], [.008, .028], [.014, .04], [.013, .048], [.005, .058], [-.002, .06], [-.009, .054], [-.012, .044], [-.007, .034], [-.011, .024]].map(([x, y]) => new THREE.Vector2(x, y)));
+  const hg = new THREE.ExtrudeGeometry(head, { depth:.011, bevelEnabled:true, bevelThickness:.002, bevelSize:.0015, bevelSegments:2 }); hg.translate(0, 0, -.0055);
+  g[2] = [L([...BASE, [.012, .013], [.012, .016], [0, .016]]), hg];
+  return g;
+})();
+const pieceM = [std({ color:'#efe2c6', roughness:.32, envMapIntensity:.5 }), std({ color:'#1d1411', roughness:.28, envMapIntensity:.7 })];
+function makePiece(pc){
+  const grp = new THREE.Group(), m = pieceM[pc & 8 ? 1 : 0];
+  pieceGeo[pc & 7].forEach(geo => { const mesh = new THREE.Mesh(geo, m); mesh.castShadow = true; grp.add(mesh); });
+  grp.scale.setScalar(1.3); grp.userData.pc = pc; chessG.add(grp); return grp;
+}
+/* square highlights: the selected piece, where it can go, the last move, a king in check */
+const hiGeo = new THREE.PlaneGeometry(CH.S, CH.S).rotateX(-Math.PI / 2), dotGeo = new THREE.CircleGeometry(CH.S * .17, 20).rotateX(-Math.PI / 2), ringGeo = new THREE.RingGeometry(CH.S * .36, CH.S * .46, 28).rotateX(-Math.PI / 2);
+const hiMat = c => new THREE.MeshBasicMaterial({ color:c, transparent:true, opacity:.45, depthWrite:false, polygonOffset:true, polygonOffsetFactor:-2 });
+const hiSel = new THREE.Mesh(hiGeo, hiMat('#ffd060')), hiFrom = new THREE.Mesh(hiGeo, hiMat('#c9a24a')), hiTo = new THREE.Mesh(hiGeo, hiMat('#c9a24a')), hiChk = new THREE.Mesh(hiGeo, hiMat('#ff3030'));
+hiFrom.material.opacity = hiTo.material.opacity = .3;
+[hiSel, hiFrom, hiTo, hiChk].forEach(m => { m.visible = false; chessG.add(m); });
+const dotM = hiMat('#1b1b1b'); dotM.opacity = .35;
+const dots = Array.from({ length:28 }, () => { const m = new THREE.Mesh(dotGeo, dotM); m.visible = false; chessG.add(m); return m; });
+const rings = Array.from({ length:12 }, () => { const m = new THREE.Mesh(ringGeo, dotM); m.visible = false; chessG.add(m); return m; });
+
+const chess = { s:Chess.start(), past:[], log:[], you:0, flip:false, sel:-1, meshes:new Array(64).fill(null), tray:[[], []], tweens:[], thinking:false, over:null, seated:false, bot:null, botG:null, lean:0, met:false };
+function sqPos(sq, y = CH.surf){ let f = sq & 7, r = sq >> 3; if (chess.flip){ f = 7 - f; r = 7 - r; } return new THREE.Vector3((f - 3.5) * CH.S, y, -(r - 3.5) * CH.S); }
+/* captured pieces stand in a row beside the board: yours on your right, EyalBot's on your left */
+function trayPos(side, i){ const x = side === 0 ? .325 : -.325; return new THREE.Vector3(x, CH.top, .25 - i * .028); }
+function toTray(mesh, takerIsYou){ if (!mesh.parent) return; const t = takerIsYou ? 0 : 1; const i = chess.tray[t].length; chess.tray[t].push(mesh); tween(mesh, trayPos(t, i), .06, .5, .95); }
+function tween(mesh, to, lift = .03, dur = .45, scale = null, done = null){
+  chess.tweens = chess.tweens.filter(tw => tw.mesh !== mesh);
+  chess.tweens.push({ mesh, from:mesh.position.clone(), to, lift, dur, t:0, s0:mesh.scale.x, s1:scale ?? mesh.scale.x, done });
+}
+function chLayout(){
+  /* rebuild every piece from the position: new game, take-back, or switching sides */
+  chess.tweens.length = 0;
+  chess.meshes.forEach(m => m && chessG.remove(m)); chess.tray.flat().forEach(m => chessG.remove(m));
+  chess.meshes = new Array(64).fill(null); chess.tray = [[], []];
+  chess.s.b.forEach((pc, sq) => { if (!pc) return; const m = makePiece(pc); m.position.copy(sqPos(sq)); if ((pc & 7) === Chess.N) m.rotation.y = ((pc & 8) ? 1 : 0) ^ (chess.flip ? 1 : 0) ? -Math.PI / 2 : Math.PI / 2; chess.meshes[sq] = m; });
+  /* what is missing from each side goes back on the trays */
+  const start = { 1:8, 2:2, 3:2, 4:2, 5:1 };
+  for (const color of [0, 8]){
+    for (const t of [5, 4, 3, 2, 1]){
+      const have = chess.s.b.filter(pc => pc === (t | color)).length;
+      for (let k = have; k < start[t]; k++){ const m = makePiece(t | color), side = color === chess.you ? 1 : 0, i = chess.tray[side].length; m.position.copy(trayPos(side, i)); m.scale.setScalar(.95); chess.tray[side].push(m); }
+    }
+  }
+  boardM.map = boardTex(chess.flip); boardM.needsUpdate = true;
+  chHighlights();
+}
+function chHighlights(){
+  const last = chess.log[chess.log.length - 1];
+  hiFrom.visible = hiTo.visible = !!last; if (last){ hiFrom.position.copy(sqPos(last.m.from, CH.surf + .001)); hiTo.position.copy(sqPos(last.m.to, CH.surf + .001)); }
+  const chk = Chess.inCheck(chess.s); hiChk.visible = chk; if (chk) hiChk.position.copy(sqPos(chess.s.b.indexOf(Chess.K | chess.s.side), CH.surf + .0015));
+  hiSel.visible = chess.sel >= 0; if (chess.sel >= 0) hiSel.position.copy(sqPos(chess.sel, CH.surf + .002));
+  dots.forEach(d => d.visible = false); rings.forEach(d => d.visible = false);
+  if (chess.sel >= 0){
+    let di = 0, ri = 0;
+    Chess.legal(chess.s).filter(m => m.from === chess.sel).forEach(m => {
+      const mk = m.cap ? rings[ri++] : dots[di++]; if (!mk) return; mk.visible = true; mk.position.copy(sqPos(m.to, CH.surf + .0025));
+    });
+  }
+}
+/* play a move on the board: slide (a knight hops), take, castle, promote */
+function chPlay(m){
+  const s = chess.s, me = s.side, isYou = me === chess.you;
+  const sanStr = Chess.san(s, m);
+  chess.past.push(s); chess.log.push({ m, san:sanStr });
+  const mv = chess.meshes[m.from]; chess.meshes[m.from] = null;
+  const capSq = m.flag === Chess.EP ? m.to + (me ? 8 : -8) : m.cap ? m.to : -1;
+  if (capSq >= 0){ const cm = chess.meshes[capSq]; chess.meshes[capSq] = null; if (cm) setTimeout(() => toTray(cm, isYou), 260); }
+  const knight = (s.b[m.from] & 7) === Chess.N;
+  tween(mv, sqPos(m.to), knight ? .07 : .022, .5, null, m.promo ? () => { chessG.remove(mv); const q = makePiece(m.promo | me); q.position.copy(sqPos(m.to)); chess.meshes[m.to] = q; } : null);
+  chess.meshes[m.to] = mv;
+  if (m.flag === Chess.CASTLE){
+    const rf = m.to > m.from ? m.from + 3 : m.from - 4, rt = m.to > m.from ? m.from + 1 : m.from - 1;
+    const rk = chess.meshes[rf]; chess.meshes[rf] = null; chess.meshes[rt] = rk; if (rk) setTimeout(() => tween(rk, sqPos(rt), .05, .45), 200);
+  }
+  chess.s = Chess.make(s, m); chess.sel = -1; chHighlights();
+  chess.over = Chess.status(chess.s);
+  return sanStr;
+}
+function chSay(text){ stSay('EYALBOT', text, chMoveNo()); }
+function chMoveNo(){ return chess.over ? 'GAME OVER' : `MOVE ${chess.s.full} · YOU PLAY ${chess.you ? 'BLACK' : 'WHITE'}`; }
+function chOverText(){
+  const o = chess.over, youMated = o === 'mate' && chess.s.side === chess.you;
+  if (o === 'mate') return youMated ? 'Checkmate. Good game. Eyal would have enjoyed that one. Another?' : 'Checkmate. You beat me. Don’t tell Eyal. Another game?';
+  if (o === 'stalemate') return 'Stalemate. Nobody wins, nobody loses. Another?';
+  if (o === 'fifty') return 'Fifty moves without a capture or a pawn move. That’s a draw.';
+  return 'Not enough pieces left to mate. It’s a draw.';
+}
+function chMenu(){
+  const list = [];
+  if (!chess.log.length) list.push(chess.you ? ['Play White instead', () => chNew(0), true] : ['Play Black instead', () => chNew(8), true]);
+  else if (chess.over) list.push(['New game as White', () => chNew(0)], ['Play Black', () => chNew(8), true]);
+  else list.push(['Take back', chUndo, true], ['Resign', chResign, true]);
+  list.push(['Eyal on chess.com ↗', () => window.open(CHESS_COM, '_blank', 'noopener'), true], ['Stand up · Esc', leaveStation, true]);
+  stButtons(list);
+}
+function chNew(color){
+  chess.s = Chess.start(); chess.past = []; chess.log = []; chess.you = color; chess.flip = color === 8; chess.sel = -1; chess.over = null; chess.thinking = false;
+  chLayout(); chMenu();
+  if (color === 8){ chSay('You’ve got Black. I’ll open.'); setTimeout(chBotMove, 900); }
+  else chSay('You’ve got White. Click a piece to move it, then click where it should go.');
+}
+function chUndo(){
+  if (chess.thinking || !chess.past.length) return;
+  let n = chess.s.side === chess.you ? 2 : 1; if (chess.past.length < n) n = chess.past.length;
+  chess.s = chess.past[chess.past.length - n]; chess.past.length -= n; chess.log.length -= n; chess.over = null; chess.sel = -1;
+  if (chess.s.side !== chess.you){ chLayout(); chMenu(); setTimeout(chBotMove, 600); return; }
+  chLayout(); chMenu(); chSay('Fine. Take it back. Eyal never does, but I’m nicer than him.');
+}
+function chResign(){ if (chess.over) return; chess.over = 'resign'; chSay('You resign? Respect. Shake paws and set them up again?'); stSub.textContent = 'GAME OVER'; chMenu(); }
+const CH_LINES = ['Your move.', 'Hm. I didn’t expect that.', 'Eyal plays that line too.', 'That’s what a 1700 would play.', 'Your move. Take your time.', 'Interesting.', 'Careful with that knight.', 'I like this position.'];
+function chAfterBot(san, m){
+  chMenu();
+  if (chess.over) return chSay(`I play ${san}. ` + chOverText());
+  if (Chess.inCheck(chess.s)) return chSay(`${san}. Check.`);
+  if (m.cap && (m.cap & 7) === Chess.Q) return chSay(`${san}. I’ll take that queen, thank you.`);
+  chSay(`I play ${san}. ` + (Math.random() < .45 ? CH_LINES[Math.floor(Math.random() * CH_LINES.length)] : 'Your move.'));
+}
+async function chBotMove(){
+  if (chess.over || chess.s.side === chess.you || chess.thinking) return;
+  chess.thinking = true; chess.lean = 1;
+  const s = chess.s; let m = null;
+  if (CHESS_BOT_URL){
+    try {
+      const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 8000);
+      const r = await fetch(CHESS_BOT_URL, { method:'POST', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ fen:Chess.fen(s), moves:chess.log.map(l => Chess.uci(l.m)) }), signal:ctl.signal });
+      clearTimeout(timer);
+      const want = ((await r.json()).move || '').slice(0, 4);
+      m = Chess.legal(s).find(x => Chess.uci(x).slice(0, 4) === want) || null;
+    } catch (_) { m = null; }
+  }
+  await new Promise(r => setTimeout(r, 450));
+  if (chess.s !== s || !chess.thinking){ chess.thinking = false; return; }
+  if (!m) m = Chess.best(s, s.full < 4 ? 3 : 4);
+  chess.thinking = false; chess.lean = 0;
+  if (!m) return;
+  chAfterBot(chPlay(m), m);
+}
+function chClick(sq){
+  if (!chess.seated || chess.over || chess.thinking || chess.s.side !== chess.you || chess.tweens.length) return;
+  const pc = chess.s.b[sq];
+  if (chess.sel >= 0){
+    const m = Chess.legal(chess.s).find(x => x.from === chess.sel && x.to === sq);
+    if (m){
+      const san = chPlay(m); chMenu();
+      if (chess.over){ chSay(`${san}. ` + chOverText()); return; }
+      if (m.cap && (m.cap & 7) === Chess.Q) chSay('Ouch. Eyal hangs his queen sometimes too. Let me think…');
+      else chSay(Chess.inCheck(chess.s) ? 'Check. Hm. Let me think…' : 'Let me think…');
+      setTimeout(chBotMove, 650); return;
+    }
+  }
+  if (pc && (pc & 8) === chess.you && Chess.legal(chess.s).some(x => x.from === sq)){ chess.sel = sq === chess.sel ? -1 : sq; chHighlights(); return; }
+  chess.sel = -1; chHighlights();
+}
+const _cRay = new THREE.Raycaster(), _cM = new THREE.Vector2(), _cP = new THREE.Vector3();
+function chPick(e){
+  _cM.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); _cRay.setFromCamera(_cM, camera);
+  const h = _cRay.intersectObject(boardTop, false)[0]; if (!h) return -1;
+  _cP.copy(h.point); chessG.worldToLocal(_cP);
+  let f = Math.floor(_cP.x / CH.S + 4), r = Math.floor(-_cP.z / CH.S + 4);
+  if (f < 0 || f > 7 || r < 0 || r > 7) return -1;
+  if (chess.flip){ f = 7 - f; r = 7 - r; }
+  return r * 8 + f;
+}
+READY.push(() => {
+  /* the two chairs, and EyalBot in the far one */
+  for (const [at, rot] of [[CH.seat, 0], [CH.botAt, Math.PI]]){ const ch = chair.clone(); ch.traverse(o => { if (o.isMesh) o.userData.act = null; }); ch.position.copy(at); ch.rotation.y = rot; scene.add(ch); chairBox(at.x, at.z, rot); }
+  const g = makeCharacter({ fur:'#9aa1a8', hat:'#14161a', vest:'#1e2733', shirt:'#f3f1ec', pants:'#1e2733' }, false, true), c = g.userData.char;
+  g.position.copy(CH.botAt); g.rotation.y = 0; scene.add(g);
+  pose(c, { sitidle:1 }); c.w.idle = 0; c.w.sitidle = 1; c.acts.sitidle.timeScale = .7;
+  const lb = label('EyalBot'); lb.position.set(CH.botAt.x, 1.2, CH.botAt.z); scene.add(lb);
+  chess.bot = c; chess.botG = g;
+  chLayout();
+});
+const _boardC = new THREE.Vector3(CH.cx, CH.surf, CH.cz);
+STATIONS.chess = {
+  id:'chess', hideDog:false, exitYaw:0,
+  cam:{ p:new THREE.Vector3(CH.cx + .66, 1.56, CH.cz + .86), l:new THREE.Vector3(CH.cx + .03, .16, CH.cz - .14) },
+  enter(){
+    const C = CH.seat, front = C.clone().add(new THREE.Vector3(0, 0, -SIT_FWD)), side = dog.position.x < C.x ? -1 : 1;
+    sitAt([new THREE.Vector3(C.x + side * .46, 0, C.z + .05), new THREE.Vector3(C.x + side * .3, 0, front.z), front], Math.PI, 0, () => {
+      chess.seated = true; chMenu();
+      if (!chess.met){ chess.met = true; chSay('I’m EyalBot. Eyal is training me on 6,606 of his own chess.com games, so one day I’ll play exactly like him: same openings, same habits, same blunders. I’m still in training, so my understudy plays tonight. You have White.'); }
+      else if (chess.over || !chess.log.length) chSay('Back for another? Pick a side.');
+      else { chSay('Where were we? ' + (chess.s.side === chess.you ? 'Your move.' : 'My move.')); if (chess.s.side !== chess.you) setTimeout(chBotMove, 700); }
+    });
+  },
+  leave(done){
+    chess.seated = false; chess.sel = -1; chHighlights();
+    const C = CH.seat;
+    standFrom(Math.PI, 0, [new THREE.Vector3(C.x + .4, 0, C.z - SIT_FWD), new THREE.Vector3(C.x + .5, 0, C.z + .4)], done);
+  },
+  key(k){ if (k === 'escape') leaveStation(); else if (k === 'n' && (chess.over || !chess.log.length)) chNew(chess.you); else if (k === 'u' || k === 'backspace') chUndo(); },
+  click(e){ const sq = chPick(e); if (sq >= 0) chClick(sq); },
+  tick(dt){
+    for (const tw of chess.tweens.slice()){
+      tw.t += dt; const k = Math.min(1, tw.t / tw.dur), e = ease(k);
+      tw.mesh.position.lerpVectors(tw.from, tw.to, e); tw.mesh.position.y += Math.sin(k * Math.PI) * tw.lift;
+      tw.mesh.scale.setScalar(tw.s0 + (tw.s1 - tw.s0) * e);
+      if (k >= 1){ chess.tweens.splice(chess.tweens.indexOf(tw), 1); if (tw.done) tw.done(); }
+    }
+    if (chess.bot){
+      const here = station === STATIONS.chess && chess.seated;
+      aimHead(chess.bot, here ? (chess.thinking || chess.s.side !== chess.you ? _boardC : dogHead()) : null, dt, chess.botG);
+      chess.bot.body.rotation.x += ((chess.thinking ? .1 : 0) - chess.bot.body.rotation.x) * Math.min(1, dt * 4);
+    }
+  }
+};
+SPOTS.push({ id:'chess', pos:new THREE.Vector3(CH.cx + .1, 0, CH.cz + 1.3), r:.7, label:'play EyalBot at chess', dot:'#7fd1ff' });
+
+function stationTick(dt){ if (!dogChar) return; perchTick(dt); for (const k in STATIONS) if (STATIONS[k].tick) STATIONS[k].tick(dt); }
+
 /* ---------------- minimap ---------------- */
 const map = document.getElementById('map'), mg = map.getContext('2d');
 function drawMap(){
@@ -1664,6 +2502,7 @@ function drawMap(){
   dot(SPOTS[1].pos.x, SPOTS[1].pos.z, found.has('soccer') ? '#666' : '#5aa9ff');
   dot(SPOTS[2].pos.x, SPOTS[2].pos.z, found.has('pickle') ? '#666' : '#8be08b');
   dot(SEAT.x, SEAT.z, '#ff6b6b');
+  SPOTS.forEach(sp => { if (sp.dot) dot(sp.pos.x, sp.pos.z, found.has(sp.id) ? '#666' : sp.dot); });
   players.forEach(p => dot(p.group.position.x, p.group.position.z, '#ffffff'));
   mg.restore();
   mg.save(); mg.translate(W/2, W/2); mg.rotate(yaw + Math.atan2(Math.sin(dog.rotation.y), -Math.cos(dog.rotation.y)));
@@ -1725,7 +2564,7 @@ function frame(){
   } else { prompt.hidden = true; if (dogChar && ((mode === 'modal' && modal.dataset.prev !== 'seated') || mode === 'soccer')){ speed = 0; pose(dogChar, { idle:1 }); } }
   runAnim(dt);
   const atTable = mode === 'seated' || (mode === 'modal' && modal.dataset.prev === 'seated');
-  dog.visible = !(pov && (mode === 'walk' || atTable)) && !(mode === 'soccer' || (mode === 'modal' && modal.dataset.prev === 'soccer'));
+  dog.visible = !(pov && (mode === 'walk' || atTable)) && !(mode === 'soccer' || (mode === 'modal' && modal.dataset.prev === 'soccer')) && !(mode === 'station' && station && station.hideDog);
 
   /* players idle + speaker */
   players.forEach((p, i) => {
@@ -1737,11 +2576,14 @@ function frame(){
   if (dogChar) dogChar.lookAt = (speaker && atTable) ? headOf(speaker.group.userData.char) : null;
   chars.forEach(c => tickChar(c, dt));
   soccerTick(dt);
+  stationTick(dt);
   if (dogChar){ dog.updateMatrixWorld(true); emberMark.getWorldPosition(ember.position); ember.visible = dog.visible; }
 
   /* camera */
   const k = Math.min(1, dt * 6);
-  if (mode === 'soccer' || (mode === 'modal' && modal.dataset.prev === 'soccer')){
+  if (mode === 'station' && station){
+    camPos.lerp(station.cam.p, Math.min(1, dt * 2.5)); camLook.lerp(station.cam.l, Math.min(1, dt * 2.5));
+  } else if (mode === 'soccer' || (mode === 'modal' && modal.dataset.prev === 'soccer')){
     camPos.lerp(soccerCam.p, Math.min(1, dt * 3)); camLook.lerp(soccerCam.l, Math.min(1, dt * 3));
   } else if (atTable || mode === 'sitting'){
     const eye = (pov && atTable) ? new THREE.Vector3(SEAT.x, .62, SEAT.z - .1) : new THREE.Vector3(SEAT.x + .34, 1.22, SEAT.z + .78);
@@ -1768,7 +2610,7 @@ function frame(){
   if (puffT > .16){
     puffT = 0;
     if (dog.visible && dogChar){ spawnPuff(ember.position.clone()); }
-    else if (mode !== 'title' && mode !== 'soccer' && !(mode === 'modal' && modal.dataset.prev === 'soccer')){ const at = camera.position.clone(); const fw = new THREE.Vector3(); camera.getWorldDirection(fw); const rt = new THREE.Vector3().crossVectors(fw, camera.up).normalize(); at.addScaledVector(fw, .35).addScaledVector(rt, .16).add(new THREE.Vector3(0, -.12, 0)); spawnPuff(at); }
+    else if (mode !== 'title' && mode !== 'soccer' && mode !== 'station' && !(mode === 'modal' && modal.dataset.prev === 'soccer')){ const at = camera.position.clone(); const fw = new THREE.Vector3(); camera.getWorldDirection(fw); const rt = new THREE.Vector3().crossVectors(fw, camera.up).normalize(); at.addScaledVector(fw, .35).addScaledVector(rt, .16).add(new THREE.Vector3(0, -.12, 0)); spawnPuff(at); }
   }
   puffs.forEach(p => { if (p.life <= 0) return; p.life -= dt * .35; p.s.position.addScaledVector(p.v, dt); p.v.x += Math.sin(t * 3 + p.life * 9) * dt * .03; const sc = .03 + (1 - p.life) * .22; p.s.scale.setScalar(sc); p.s.material.opacity = Math.max(0, p.life) * .35; if (p.life <= 0) p.s.visible = false; });
 
