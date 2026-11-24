@@ -304,12 +304,14 @@ mark; document.getElementById('chipNum').textContent = '00/' + TOTAL;
 
 /* ---------------- renderer ---------------- */
 const stage = document.getElementById('stage');
-const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
-const COARSE = matchMedia('(pointer:coarse)').matches;
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, COARSE ? 1.5 : 2));
+/* phones and tablets get a lighter renderer: native-ish resolution, no bloom pass, simpler shadows, 30 fps.
+   That is most of the GPU work, so the phone stays cool. Desktop keeps the full look. */
+const COARSE = matchMedia('(pointer:coarse)').matches, LITE = COARSE;
+const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:LITE ? 'default' : 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, LITE ? 1.25 : 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = LITE ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.95;
 stage.appendChild(renderer.domElement);
@@ -321,18 +323,20 @@ const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
 
 const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.05, 60);
-const composer = new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.38, 0.5, 0.92);
-composer.addPass(bloom);
-composer.addPass(new OutputPass());
+let composer = null;
+if (!LITE){
+  composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.38, 0.5, 0.92));
+  composer.addPass(new OutputPass());
+}
 
 /* ---------------- helpers ---------------- */
 function canvasTex(w, h, draw, repeat){
   const c = document.createElement('canvas'); c.width = w; c.height = h;
   draw(c.getContext('2d'), w, h);
   const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = Math.min(LITE ? 4 : 16, renderer.capabilities.getMaxAnisotropy());
   if (repeat){ t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat[0], repeat[1]); }
   return t;
 }
@@ -564,7 +568,7 @@ const bulb = new THREE.Mesh(new THREE.SphereGeometry(.08, 24, 16), new THREE.Mes
 add(bulb, 0, lampY - .1, 0, false, false);
 const spot = new THREE.SpotLight('#ffd9a0', 70, 7, .8, .55, 1.4);
 spot.position.set(0, lampY - .05, 0); spot.target.position.set(0, 0, 0);
-spot.castShadow = true; spot.shadow.mapSize.set(2048, 2048); spot.shadow.bias = -.0004; spot.shadow.radius = 4; spot.shadow.camera.near = .2; spot.shadow.camera.far = 6;
+spot.castShadow = true; spot.shadow.mapSize.setScalar(LITE ? 1024 : 2048); spot.shadow.bias = -.0004; spot.shadow.radius = 4; spot.shadow.camera.near = .2; spot.shadow.camera.far = 6;
 scene.add(spot, spot.target);
 const cone = new THREE.Mesh(new THREE.ConeGeometry(1.35, lampY - .15, 48, 1, true), new THREE.MeshBasicMaterial({ color:'#ffd9a0', transparent:true, opacity:.045, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide }));
 cone.position.set(0, (lampY - .15) / 2, 0); scene.add(cone);
@@ -2673,7 +2677,12 @@ function blocked(x, z){
   }
   return false;
 }
-function frame(){
+/* skip drawing while nothing of the room can be seen (rotate screen, open book, open card), and cap phones at 30 fps */
+const readerEl = document.getElementById('reader'), portraitGate = matchMedia('(pointer:coarse) and (orientation:portrait)');
+let lastFrame = 0;
+function frame(now){
+  if ((LITE && now - lastFrame < 31) || (mode !== 'title' && (portraitGate.matches || !readerEl.hidden || mode === 'modal'))){ requestAnimationFrame(frame); return; }
+  lastFrame = now;
   const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime;
 
   /* flag ripple */
@@ -2765,7 +2774,7 @@ function frame(){
   puffs.forEach(p => { if (p.life <= 0) return; p.life -= dt * .35; p.s.position.addScaledVector(p.v, dt); p.v.x += Math.sin(t * 3 + p.life * 9) * dt * .03; const sc = .03 + (1 - p.life) * .22; p.s.scale.setScalar(sc); p.s.material.opacity = Math.max(0, p.life) * .35; if (p.life <= 0) p.s.visible = false; });
 
   updateViewShift(dt);
-  composer.render();
+  if (composer) composer.render(); else renderer.render(scene, camera);
   if (mode !== 'title') drawMap();
   requestAnimationFrame(frame);
 }
@@ -2773,6 +2782,6 @@ requestAnimationFrame(frame);
 
 addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight; if (camera.view && camera.view.enabled) camera.setViewOffset(innerWidth, innerHeight, viewShift, 0, innerWidth, innerHeight); camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight);
+  renderer.setSize(innerWidth, innerHeight); if (composer) composer.setSize(innerWidth, innerHeight);
 });
 </script>
