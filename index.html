@@ -1,4 +1,9 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0507">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Eyal's Card Room</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Nunito:wght@400;700;800&display=swap">
@@ -11,7 +16,7 @@
   color-scheme:dark;
 }
 [hidden]{display:none!important}
-html,body{height:100%;margin:0;background:#07040a;color:var(--ink);font-family:var(--body);overflow:hidden}
+html,body{height:100%;margin:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;background:#07040a;color:var(--ink);font-family:var(--body);overflow:hidden}
 #stage{position:fixed;inset:0}
 #stage canvas{display:block;width:100%;height:100%;touch-action:none}
 .hud{position:fixed;z-index:5;pointer-events:none}
@@ -100,6 +105,59 @@ body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt,body.st
 @media (pointer:coarse){#touch,#tbtns{display:block}#tbtns{display:flex}#keys{display:none}#map{width:120px;height:120px;bottom:auto;top:calc(110px + env(safe-area-inset-top,0px))}}
 @media (max-width:700px){#chips b{font-size:34px}#help{font-size:13px}#title img{max-width:80vw;height:42vh}}
 @media (prefers-reduced-motion:reduce){.act .chip{transition:none}}
+/* phones and tablets: landscape only */
+#rotate{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:24px;background:#0a0507;color:var(--ink);text-align:center}
+#rotate .ph{width:54px;height:92px;box-sizing:border-box;border:4px solid var(--gold);border-radius:12px;animation:turn 2.4s ease-in-out infinite}
+#rotate b{font:400 34px/1 var(--display);letter-spacing:.03em}
+#rotate span{max-width:280px;font-size:15px;font-weight:700;color:var(--muted);line-height:1.45}
+@keyframes turn{0%,25%{transform:rotate(0)}55%,85%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
+@media (pointer:coarse) and (orientation:portrait){#rotate{display:flex}}
+.tOnly{display:none}
+@media (pointer:coarse){
+  .tOnly{display:flex}.kOnly{display:none!important}
+  #prompt{pointer-events:auto;cursor:pointer}
+  #stick{opacity:.55;transition:opacity .15s}#stick.on{opacity:1}
+  body.station #touch,body.soccer #touch,body.station #tbtns,body.soccer #tbtns{display:none!important}
+}
+/* short landscape screens (phones on their side): compact HUD, panels move to the right edge */
+@media (max-height:500px) and (orientation:landscape){
+  #help{max-width:min(300px,38vw);padding:8px 12px;font-size:12px;line-height:1.4}
+  #chips b{font-size:28px}#chips span{font-size:10px}#chips i{display:none}
+  #musicBtn{top:calc(62px + env(safe-area-inset-top,0px));padding:5px 10px;font-size:10px}
+  #map{width:96px;height:96px;left:auto;right:calc(22px + env(safe-area-inset-right,0px));top:calc(100px + env(safe-area-inset-top,0px));bottom:auto;border-width:3px}
+  #stick{left:calc(36px + env(safe-area-inset-left,0px));bottom:calc(28px + env(safe-area-inset-bottom,0px))}
+  #tbtns{bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+  #tbtns button{width:56px;height:56px}
+  #prompt{bottom:calc(22px + env(safe-area-inset-bottom,0px));font-size:15px;padding:8px 14px}
+  #dlg,#stUI,#soccerUI{left:auto;right:calc(10px + env(safe-area-inset-right,0px));top:50%;bottom:auto;transform:translateY(-50%);max-height:calc(100vh - 20px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));width:min(360px,44vw);padding:12px 14px;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px}
+  #dlg[hidden],#stUI[hidden],#soccerUI[hidden]{display:none!important}
+  body.side #chips,body.side #musicBtn,body.side #map,body.side #help,body.side #tbtns,body.side #touch{display:none!important}
+  #dlg p,#stUI p{margin:4px 0 6px;font-size:15px;line-height:1.4;min-height:0}
+  #dlg .who,#stUI .who{font-size:10px}
+  #more{margin:0 0 6px;grid-template-columns:1fr;gap:6px}#more div{padding:6px 10px;font-size:13px}
+  .acts{gap:8px}
+  .act{font-size:11px}.act .chip{width:52px;height:52px;font-size:14px;border-width:4px;box-shadow:0 4px 0 rgba(0,0,0,.5)}
+  #acts{display:grid;grid-template-columns:1fr 1fr;justify-items:center}
+  .btn{min-height:40px;padding:8px 14px;font-size:13px}
+  #soccerUI .row{gap:8px}#soccerUI .cap span{font-size:13px}#soccerUI .arrow{width:40px;height:40px}
+  #soccerUI .acts{flex-direction:column;align-items:stretch}
+  #card{padding:22px 26px 18px 46px;border-width:4px;max-height:calc(100vh - 20px)}
+  #modal{padding:10px}
+  #card h2{font-size:34px;margin:4px 0 8px}#card p{font-size:15px}#card .idx{font-size:20px;left:10px;top:8px}
+  #card .grid{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px}#card .grid div{padding:6px 10px}
+  #reader .book{width:calc(100vw - 20px);padding:14px 22px 8px}
+  #rdPages{height:calc(100vh - 92px)}
+  #rdFlow{font-size:15px;line-height:1.5}#rdFlow h1{font-size:26px;margin-bottom:10px}
+  .rdNav{margin-top:6px}.rdNav button:not(.btn){width:36px;height:36px}
+  #title{gap:3vw;padding-top:12px;padding-bottom:12px;flex-wrap:nowrap}
+  #title .copy{flex:1;min-width:0;max-width:380px}
+  #title::before{width:44%}#title::after{width:50%}
+  #title img{height:86vh;max-width:36vw}
+  #title h1{font-size:clamp(48px,19vh,120px)}
+  #title .eyebrow{font-size:12px}#title .tag{margin-top:8px;font-size:15px}
+  #title .btn{margin-top:16px;padding:12px 22px;font-size:16px}
+  #title .ctl{margin-top:10px;font-size:12px}
+}
 /* library reader */
 #reader{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:rgba(8,4,2,.72);backdrop-filter:blur(3px)}
 #reader[hidden]{display:none}
@@ -153,6 +211,7 @@ body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt,body.st
   <div class="foot"><button class="btn" id="cardClose" type="button">Back to the room</button></div>
 </div></div>
 
+<div id="rotate" role="alert"><div class="ph"></div><b>TURN YOUR PHONE SIDEWAYS</b><span>The card room is built for landscape. Rotate your device to deal in.</span></div>
 <div id="touch"><div id="stick"><div id="knob"></div></div></div>
 <div id="tbtns" hidden><button type="button" id="tV" aria-label="Dog's eye view">V</button><button type="button" id="tE" class="e" aria-label="Interact">E</button></div>
 
@@ -163,7 +222,8 @@ body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt,body.st
     <h1>CARD<br>ROOM</h1>
     <p class="tag">A life, one hand at a time. You play as the dog.</p>
     <button class="btn" id="startBtn" type="button" disabled>Loading the room…</button>
-    <div class="ctl"><span><kbd>WASD</kbd> move</span><span>mouse to look</span><span><kbd>E</kbd> interact</span><span><kbd>V</kbd> dog's eyes</span></div>
+    <div class="ctl kOnly"><span><kbd>WASD</kbd> move</span><span>mouse to look</span><span><kbd>E</kbd> interact</span><span><kbd>V</kbd> dog's eyes</span></div>
+    <div class="ctl tOnly"><span>Left thumb: walk (push far to run)</span><span>Right thumb: look</span><span>Tap things, or <kbd>E</kbd>, to interact</span></div>
   </div>
 </div>
 
@@ -245,7 +305,8 @@ mark; document.getElementById('chipNum').textContent = '00/' + TOTAL;
 /* ---------------- renderer ---------------- */
 const stage = document.getElementById('stage');
 const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const COARSE = matchMedia('(pointer:coarse)').matches;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, COARSE ? 1.5 : 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -1303,16 +1364,59 @@ cvs.addEventListener('click', e => {
   const hit = ray.intersectObjects(scene.children, true).find(h => h.object.userData.act !== undefined && h.object.userData.act !== null);
   if (hit && hit.distance < 7) doAct(hit.object.userData.act);
 });
-/* touch: left half = stick, right half = look */
+/* touch: left half = a stick that appears under your thumb, right half = look; a quick tap on the right picks what you tapped */
 const stick = document.getElementById('stick'), knob = document.getElementById('knob');
-let stickId = null, lookId = null, lookX = 0, lookY = 0;
+let stickId = null, lookId = null, lookX = 0, lookY = 0, sx = 0, sy = 0, tap = null;
 const touchLayer = document.getElementById('touch');
-touchLayer.addEventListener('touchstart', e => { for (const t of e.changedTouches){ if (t.clientX < innerWidth / 2 && stickId === null){ stickId = t.identifier; } else if (lookId === null){ lookId = t.identifier; lookX = t.clientX; lookY = t.clientY; } } }, { passive:true });
-touchLayer.addEventListener('touchmove', e => { for (const t of e.changedTouches){
-  if (t.identifier === stickId){ const r = stick.getBoundingClientRect(); let dx = (t.clientX - (r.left + 60)) / 50, dy = (t.clientY - (r.top + 60)) / 50; const L = Math.hypot(dx, dy); if (L > 1){ dx /= L; dy /= L; } stickVec = { x:dx, y:dy }; knob.style.transform = `translate(${dx * 35}px,${dy * 35}px)`; }
-  if (t.identifier === lookId && mode === 'walk'){ yaw -= (t.clientX - lookX) * .005; pitch = THREE.MathUtils.clamp(pitch + (t.clientY - lookY) * .004, -.35, .7); lookX = t.clientX; lookY = t.clientY; }
+function tapPick(x, y){
+  const ray = new THREE.Raycaster(); ray.setFromCamera(new THREE.Vector2(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1), camera);
+  const hit = ray.intersectObjects(scene.children, true).find(h => h.object.userData.act !== undefined && h.object.userData.act !== null);
+  if (hit && hit.distance < 7) doAct(hit.object.userData.act); else interact();
+}
+touchLayer.addEventListener('touchstart', e => { for (const t of e.changedTouches){
+  if (t.clientX < innerWidth * .45 && stickId === null){
+    stickId = t.identifier; sx = Math.max(70, t.clientX); sy = Math.min(innerHeight - 70, Math.max(70, t.clientY));
+    stick.style.left = (sx - 60) + 'px'; stick.style.top = (sy - 60) + 'px'; stick.style.bottom = 'auto'; stick.classList.add('on');
+  } else if (lookId === null){ lookId = t.identifier; lookX = t.clientX; lookY = t.clientY; tap = { x:t.clientX, y:t.clientY, t:performance.now() }; }
 } }, { passive:true });
-touchLayer.addEventListener('touchend', e => { for (const t of e.changedTouches){ if (t.identifier === stickId){ stickId = null; stickVec = { x:0, y:0 }; knob.style.transform = ''; } if (t.identifier === lookId) lookId = null; } });
+touchLayer.addEventListener('touchmove', e => { for (const t of e.changedTouches){
+  if (t.identifier === stickId){ let dx = (t.clientX - sx) / 50, dy = (t.clientY - sy) / 50; const L = Math.hypot(dx, dy); if (L > 1){ dx /= L; dy /= L; } stickVec = { x:dx, y:dy }; knob.style.transform = `translate(${dx * 35}px,${dy * 35}px)`; }
+  if (t.identifier === lookId){
+    if (tap && Math.hypot(t.clientX - tap.x, t.clientY - tap.y) > 12) tap = null;
+    if (mode === 'walk'){ yaw -= (t.clientX - lookX) * .006; pitch = THREE.MathUtils.clamp(pitch + (t.clientY - lookY) * .004, -.35, .7); }
+    lookX = t.clientX; lookY = t.clientY;
+  }
+} }, { passive:true });
+const touchEnd = e => { for (const t of e.changedTouches){
+  if (t.identifier === stickId){ stickId = null; stickVec = { x:0, y:0 }; knob.style.transform = ''; stick.style.left = stick.style.top = stick.style.bottom = ''; stick.classList.remove('on'); }
+  if (t.identifier === lookId){ lookId = null; if (e.type === 'touchend' && tap && performance.now() - tap.t < 300 && mode === 'walk') tapPick(tap.x, tap.y); tap = null; }
+} };
+touchLayer.addEventListener('touchend', touchEnd); touchLayer.addEventListener('touchcancel', touchEnd);
+document.getElementById('prompt').addEventListener('click', () => interact());
+/* swipe to turn pages in a book */
+{ let rx = null; const rd = document.getElementById('reader');
+  rd.addEventListener('touchstart', e => { rx = e.touches.length === 1 ? e.touches[0].clientX : null; }, { passive:true });
+  rd.addEventListener('touchend', e => { if (rx === null) return; const dx = e.changedTouches[0].clientX - rx; rx = null; if (Math.abs(dx) > 50) document.getElementById(dx < 0 ? 'rdNext' : 'rdPrev').click(); }); }
+/* on phones, go full screen and hold landscape where the browser allows it (Android; iPhone Safari ignores both) */
+function phoneLandscape(){
+  if (!COARSE) return;
+  const el = document.documentElement, fs = el.requestFullscreen || el.webkitRequestFullscreen;
+  const lock = () => { try { const r = screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape'); if (r && r.catch) r.catch(() => {}); } catch (_) {} };
+  try { const r = fs && fs.call(el, { navigationUI:'hide' }); if (r && r.then) r.then(lock, () => {}); else lock(); } catch (_) { lock(); }
+}
+/* when a panel sits on the right edge (short landscape screens), slide the 3D view left so the subject stays in the open area */
+const shortLand = matchMedia('(max-height:500px) and (orientation:landscape)');
+const sidePanels = ['dlg', 'stUI', 'soccerUI'].map(id => document.getElementById(id));
+let viewShift = 0;
+function updateViewShift(dt){
+  let w = 0;
+  if (shortLand.matches) for (const el of sidePanels) if (!el.hidden){ w = el.offsetWidth + 10; break; }
+  document.body.classList.toggle('side', w > 0);
+  const tgt = w / 2;
+  if (viewShift === tgt) return;
+  viewShift += (tgt - viewShift) * Math.min(1, dt * 7); if (Math.abs(tgt - viewShift) < .5) viewShift = tgt;
+  if (viewShift > .5) camera.setViewOffset(innerWidth, innerHeight, viewShift, 0, innerWidth, innerHeight); else camera.clearViewOffset();
+}
 document.getElementById('tE').addEventListener('click', () => interact());
 document.getElementById('tV').addEventListener('click', () => { if (mode === 'walk' || mode === 'seated') togglePov(); });
 
@@ -1453,7 +1557,7 @@ const Music = (() => {
 document.getElementById('musicBtn').addEventListener('click', e => { e.currentTarget.blur(); Music.toggle(); });
 
 function togglePov(){ pov = !pov; document.getElementById('viewLbl').textContent = pov ? 'VIEW · DOG’S EYES' : 'VIEW · CHASE CAM'; }
-function start(){ document.getElementById('title').hidden = true; mode = 'walk'; Music.set(true); document.getElementById('tbtns').hidden = false; }
+function start(){ phoneLandscape(); document.getElementById('title').hidden = true; mode = 'walk'; Music.set(true); document.getElementById('tbtns').hidden = false; }
 startBtn.addEventListener('click', start);
 
 /* ---------------- interactions ---------------- */
@@ -2586,7 +2690,7 @@ function frame(){
     const fwd = tmp.set(-Math.sin(yaw), 0, -Math.cos(yaw)), right = tmp2.set(Math.cos(yaw), 0, -Math.sin(yaw));
     const mv = new THREE.Vector3().addScaledVector(fwd, f).addScaledVector(right, r);
     const L = Math.min(1, mv.length());
-    const target = L > .05 ? (keys.shift ? 1.7 : 1.0) * L : 0;
+    const target = L > .05 ? (keys.shift || Math.hypot(stickVec.x, stickVec.y) > .93 ? 1.7 : 1.0) * L : 0;
     speed += (target - speed) * Math.min(1, dt * 8);
     if (L > .05){
       mv.normalize();
@@ -2606,7 +2710,7 @@ function frame(){
     nearSpot = null;
     for (const s of SPOTS){ if (Math.hypot(dog.position.x - s.pos.x, dog.position.z - s.pos.z) < s.r){ nearSpot = s; break; } }
     if (!nearSpot) players.forEach(p => { if (!nearSpot && Math.hypot(dog.position.x - p.group.position.x, dog.position.z - p.group.position.z) < .95) nearSpot = { id:'player:' + p.idx, label:'meet ' + p.name }; });
-    if (nearSpot){ prompt.hidden = false; prompt.innerHTML = 'Press <kbd>E</kbd> to ' + nearSpot.label; } else prompt.hidden = true;
+    if (nearSpot){ prompt.hidden = false; prompt.innerHTML = (COARSE ? 'Tap <kbd>E</kbd> to ' : 'Press <kbd>E</kbd> to ') + nearSpot.label; } else prompt.hidden = true;
   } else { prompt.hidden = true; if (dogChar && ((mode === 'modal' && modal.dataset.prev !== 'seated') || mode === 'soccer')){ speed = 0; pose(dogChar, { idle:1 }); } }
   runAnim(dt);
   const atTable = mode === 'seated' || (mode === 'modal' && modal.dataset.prev === 'seated');
@@ -2660,6 +2764,7 @@ function frame(){
   }
   puffs.forEach(p => { if (p.life <= 0) return; p.life -= dt * .35; p.s.position.addScaledVector(p.v, dt); p.v.x += Math.sin(t * 3 + p.life * 9) * dt * .03; const sc = .03 + (1 - p.life) * .22; p.s.scale.setScalar(sc); p.s.material.opacity = Math.max(0, p.life) * .35; if (p.life <= 0) p.s.visible = false; });
 
+  updateViewShift(dt);
   composer.render();
   if (mode !== 'title') drawMap();
   requestAnimationFrame(frame);
@@ -2667,7 +2772,7 @@ function frame(){
 requestAnimationFrame(frame);
 
 addEventListener('resize', () => {
-  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  camera.aspect = innerWidth / innerHeight; if (camera.view && camera.view.enabled) camera.setViewOffset(innerWidth, innerHeight, viewShift, 0, innerWidth, innerHeight); camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight);
 });
 </script>
