@@ -21,7 +21,7 @@ jobs:
       - name: Collect site files
         run: |
           mkdir dist
-          cp -R index.html dog.webp dog_head.glb.b64.txt dog_rigged.glb.b64.txt soccer dist/
+          cp -R index.html dog.webp dog_head.glb.b64.txt dog_rigged.glb.b64.txt soccer essays dist/
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
