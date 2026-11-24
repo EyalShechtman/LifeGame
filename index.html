@@ -105,10 +105,10 @@ body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt{display
 <div id="help" class="hud">Find out who Eyal is. Walk up to the flag, the frames on the walls, or the empty chair at the table.</div>
 <div id="chips" class="hud"><b id="chipNum">00/12</b><span>CHIPS FOUND</span><i id="viewLbl">VIEW · CHASE CAM</i></div>
 <button type="button" id="musicBtn" aria-pressed="false">♪ MUSIC OFF</button>
-<div id="tvWrap" hidden><iframe id="tvFrame" title="Bellevue Athletic highlights video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a id="tvOpen" href="https://youtu.be/uBo_WEquynA" target="_blank" rel="noopener">Open on YouTube ↗</a></div>
+<div id="tvWrap" hidden><iframe id="tvFrame" title="Soccer highlights video" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a id="tvOpen" href="https://youtu.be/uBo_WEquynA" target="_blank" rel="noopener">Open on YouTube ↗</a></div>
 <div id="soccerUI" class="hud" hidden role="region" aria-label="Soccer album">
   <div class="row"><button type="button" class="arrow" id="sPrev" aria-label="Previous photo">‹</button><div class="cap" aria-live="polite"><small id="sCount">1 / 7</small><span id="sCap"></span></div><button type="button" class="arrow" id="sNext" aria-label="Next photo">›</button></div>
-  <div class="row acts"><button type="button" class="btn" id="sWatch">▶ Watch the highlights</button><button type="button" class="btn ghost" id="sStory">Read the story</button><button type="button" class="btn ghost" id="sBack">Back · Esc</button></div>
+  <div class="row acts"><button type="button" class="btn" id="sWatch0">▶ High school highlights</button><button type="button" class="btn" id="sWatch1">▶ Bellevue Athletic highlights</button><button type="button" class="btn ghost" id="sStory">Read the story</button><button type="button" class="btn ghost" id="sBack">Back · Esc</button></div>
 </div>
 <canvas id="map" class="hud" width="170" height="170" aria-hidden="true"></canvas>
 <div id="keys" class="hud"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move</span><span>Mouse look</span><span><kbd>Shift</kbd> run</span><span><kbd>E</kbd> interact</span><span><kbd>V</kbd> dog's eyes</span><span><kbd>M</kbd> music</span></div>
@@ -1232,7 +1232,7 @@ addEventListener('keydown', e => {
   const k = e.key.toLowerCase();
   if (mode === 'title'){ if (!startBtn.disabled) start(); return; }
   if (k === 'escape'){ if (mode === 'modal') closeCard(); else if (mode === 'seated') standUp(); else if (mode === 'soccer') soccerKey('back'); return; }
-  if (mode === 'soccer'){ if (k === 'arrowleft' || k === 'a') soccerKey('prev'); else if (k === 'arrowright' || k === 'd') soccerKey('next'); else if (k === 'enter' || k === 'e') soccerKey('watch'); else if (k === 'm') Music.toggle(); e.preventDefault(); return; }
+  if (mode === 'soccer'){ if (k === 'arrowleft' || k === 'a') soccerKey('prev'); else if (k === 'arrowright' || k === 'd') soccerKey('next'); else if (k === 'enter' || k === 'e') soccerKey('watch'); else if (k === '1' || k === '2') soccerKey('watch' + (+k - 1)); else if (k === 'm') Music.toggle(); e.preventDefault(); return; }
   if (mode === 'modal') return;
   if (['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','shift'].includes(k)){ keys[k] = true; e.preventDefault(); }
   if (k === 'v' && (mode === 'walk' || mode === 'seated')) togglePov();
@@ -1534,7 +1534,10 @@ const SOCCER_PHOTOS = [
   { src:'soccer/tackle.jpg', cap:'Going to ground for it' },
   { src:'soccer/fifa.jpg', cap:'FIFA 20: #1,033 in the world, January (41 wins)' }
 ];
-const VIDEO_ID = 'uBo_WEquynA';
+const VIDEOS = [
+  { id:'PNwCJ091ctc', name:'High school', title:'HIGH SCHOOL' },
+  { id:'uBo_WEquynA', name:'Bellevue Athletic', title:'BELLEVUE ATHLETIC FC' }
+];
 /* the album: two planes over the frame's picture crossfade from photo to photo */
 const albumTex = SOCCER_PHOTOS.map(() => null);
 const albumCanvas = img => {
@@ -1563,17 +1566,23 @@ const TV = { x:-RW / 2 + .07, y:1.3, z:-3.15, w:1.16, h:.653 };
 const tvIdle = canvasTex(1024, 576, (g, w, h) => {
   const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#0e1a12'); gr.addColorStop(1, '#050806'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
   g.strokeStyle = 'rgba(214,180,120,.25)'; g.lineWidth = 2; for (let x = -h; x < w; x += 46){ g.beginPath(); g.moveTo(x, h); g.lineTo(x + h, 0); g.stroke(); }
-  g.fillStyle = '#d8b878'; g.textAlign = 'center'; g.font = '800 30px Nunito, sans-serif'; g.fillText('BELLEVUE ATHLETIC FC', w * .62, h * .42);
-  g.fillStyle = '#f3e9d8'; g.font = '64px Anton, Impact, sans-serif'; g.fillText('HIGHLIGHTS', w * .62, h * .56);
-  g.beginPath(); g.arc(w * .62, h * .76, 42, 0, Math.PI * 2); g.fillStyle = 'rgba(216,184,120,.9)'; g.fill();
-  g.fillStyle = '#101010'; g.beginPath(); g.moveTo(w * .62 - 13, h * .76 - 20); g.lineTo(w * .62 + 22, h * .76); g.lineTo(w * .62 - 13, h * .76 + 20); g.fill();
+  g.fillStyle = '#f3e9d8'; g.textAlign = 'left'; g.font = '44px Anton, Impact, sans-serif'; g.fillText('HIGHLIGHTS', w * .43, h * .17);
+  VIDEOS.forEach((v, k) => {
+    const y = h * (.27 + k * .36), bh = h * .29, bx = w * .43, bw = w * .52;
+    g.fillStyle = 'rgba(0,0,0,.45)'; g.fillRect(bx, y, bw, bh); g.strokeStyle = 'rgba(216,184,120,.7)'; g.lineWidth = 3; g.strokeRect(bx, y, bw, bh);
+    const cx = bx + 62, cy = y + bh / 2;
+    g.beginPath(); g.arc(cx, cy, 34, 0, Math.PI * 2); g.fillStyle = 'rgba(216,184,120,.95)'; g.fill();
+    g.fillStyle = '#101010'; g.beginPath(); g.moveTo(cx - 10, cy - 16); g.lineTo(cx + 18, cy); g.lineTo(cx - 10, cy + 16); g.fill();
+    g.fillStyle = '#d8b878'; g.font = '800 22px Nunito, sans-serif'; g.fillText('CHANNEL ' + (k + 1), bx + 116, cy - 14);
+    g.fillStyle = '#f3e9d8'; g.font = (v.title.length > 14 ? '30px' : '40px') + ' Anton, Impact, sans-serif'; g.fillText(v.title, bx + 116, cy + 26);
+  });
 });
 const tv = new THREE.Group(); tv.position.set(TV.x, TV.y, TV.z); tv.rotation.y = Math.PI / 2; scene.add(tv);
 const tvBody = new THREE.Mesh(new RoundedBoxGeometry(TV.w + .05, TV.h + .05, .045, 3, .012), std({ color:'#0b0b0c', roughness:.25, metalness:.4 })); tv.add(tvBody);
 const tvScreen = new THREE.Mesh(new THREE.PlaneGeometry(TV.w, TV.h), new THREE.MeshBasicMaterial({ map:tvIdle, toneMapped:false })); tvScreen.position.z = .024; tv.add(tvScreen);
 const crestTex = new THREE.TextureLoader().load('soccer/crest.jpg', t => { t.colorSpace = THREE.SRGBColorSpace; });
 const crest = new THREE.Mesh(new THREE.CircleGeometry(.2, 48), new THREE.MeshBasicMaterial({ map:crestTex, toneMapped:false, color:new THREE.Color(.85, .85, .85) }));
-crest.position.set(-TV.w * .26, .02, .026); tv.add(crest);
+crest.position.set(-TV.w * .3, 0, .026); tv.add(crest);
 const tvGlow = new THREE.PointLight('#9fc0ff', 0, 2.2, 2); tvGlow.position.set(.4, 0, .3); tv.add(tvGlow);
 tv.traverse(o => { if (o.isMesh) o.userData.act = 'soccer'; });
 COLLIDERS_LATE.push({ x:TV.x + .2, z:TV.z, r:.12 });
@@ -1593,17 +1602,24 @@ function enterSoccer(){
 }
 function stopVideo(){
   if (!tvWrap.hidden){ tvWrap.hidden = true; tvFrame.src = 'about:blank'; tvGlow.intensity = 0; if (musicWas) Music.set(true); }
-  document.getElementById('sWatch').textContent = '▶ Watch the highlights';
+  playing = -1; watchLabels();
 }
+let playing = -1;
+const NO_EMBED = /claudeusercontent\.com$|claude\.ai$/.test(location.hostname);
+function watchLabels(){ VIDEOS.forEach((v, k) => { document.getElementById('sWatch' + k).textContent = (playing === k ? '■ Stop ' : '▶ ') + v.name + ' highlights' + (NO_EMBED ? ' ↗' : ''); }); }
+watchLabels();
 function soccerKey(a){
   if (a === 'prev') showPhoto(album.i - 1);
   else if (a === 'next') showPhoto(album.i + 1);
-  else if (a === 'watch'){
-    if (!tvWrap.hidden){ stopVideo(); setSoccerView('album'); return; }
-    setSoccerView('tv'); musicWas = Music.on; if (musicWas) Music.set(false);
-    tvFrame.src = `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
-    tvWrap.hidden = false; tvWrap.style.opacity = 0; tvGlow.intensity = .8;
-    document.getElementById('sWatch').textContent = '■ Stop the video';
+  else if (a === 'watch' || a === 'watch0' || a === 'watch1'){
+    const k = a === 'watch' ? (playing >= 0 ? playing : 0) : +a.slice(-1);
+    /* Claude's artifact viewer blocks embedded players, so there the video opens on YouTube instead */
+    if (NO_EMBED){ window.open('https://youtu.be/' + VIDEOS[k].id, '_blank', 'noopener'); if (Music.on) Music.set(false); return; }
+    if (playing === k){ stopVideo(); setSoccerView('album'); return; }
+    if (tvWrap.hidden){ setSoccerView('tv'); musicWas = Music.on; if (musicWas) Music.set(false); tvWrap.style.opacity = 0; }
+    tvFrame.src = `https://www.youtube-nocookie.com/embed/${VIDEOS[k].id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
+    document.getElementById('tvOpen').href = 'https://youtu.be/' + VIDEOS[k].id;
+    tvWrap.hidden = false; tvGlow.intensity = .8; playing = k; watchLabels();
   }
   else if (a === 'story') openCard(CHAPTERS.soccer, 'soccer');
   else if (a === 'back'){
@@ -1613,7 +1629,8 @@ function soccerKey(a){
 }
 document.getElementById('sPrev').onclick = () => soccerKey('prev');
 document.getElementById('sNext').onclick = () => soccerKey('next');
-document.getElementById('sWatch').onclick = () => soccerKey('watch');
+document.getElementById('sWatch0').onclick = () => soccerKey('watch0');
+document.getElementById('sWatch1').onclick = () => soccerKey('watch1');
 document.getElementById('sStory').onclick = () => soccerKey('story');
 document.getElementById('sBack').onclick = () => soccerKey('back');
 const _c = new THREE.Vector3();
