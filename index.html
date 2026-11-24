@@ -1589,7 +1589,7 @@ const SOCCER_PHOTOS = [
   { src:'soccer/fifa.jpg', cap:'FIFA 20: #1,033 in the world, January (41 wins)' }
 ];
 const VIDEOS = [
-  { id:'PNwCJ091ctc', name:'High school', title:'HIGH SCHOOL', crest:'soccer/highschool.png', fit:.82 },
+  { id:'PNwCJ091ctc', name:'High school', title:'HIGH SCHOOL', crest:'soccer/highschool.png', fit:.68 },
   { id:'uBo_WEquynA', name:'Bellevue Athletic', title:'BELLEVUE ATHLETIC FC', crest:'soccer/crest.jpg', fit:1 }
 ];
 /* the album: two planes over the frame's picture crossfade from photo to photo */
@@ -1636,7 +1636,7 @@ const TVS = VIDEOS.map((v, k) => {
   new THREE.TextureLoader().load(v.crest, t => {
     t.colorSpace = THREE.SRGBColorSpace;
     const disc = new THREE.Mesh(new THREE.CircleGeometry(.17, 48), new THREE.MeshBasicMaterial({ color:'#d9d9d9', toneMapped:false })); disc.position.set(-TVW * .3, 0, .0255);
-    const crest = new THREE.Mesh(new THREE.CircleGeometry(.17 * v.fit, 48), new THREE.MeshBasicMaterial({ map:t, toneMapped:false, color:new THREE.Color(.85, .85, .85) })); crest.position.set(-TVW * .3, 0, .026);
+    const crest = new THREE.Mesh(v.fit < 1 ? new THREE.PlaneGeometry(.34 * v.fit, .34 * v.fit) : new THREE.CircleGeometry(.17, 48), new THREE.MeshBasicMaterial({ map:t, toneMapped:false, color:new THREE.Color(.85, .85, .85) })); crest.position.set(-TVW * .3, 0, .026);
     disc.userData.act = crest.userData.act = 'soccer'; grp.add(disc, crest);
     screen.material.map = idleTex(true); screen.material.needsUpdate = true;
   });
