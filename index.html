@@ -112,9 +112,9 @@ body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt,body.st
 #rotate span{max-width:280px;font-size:15px;font-weight:700;color:var(--muted);line-height:1.45}
 @keyframes turn{0%,25%{transform:rotate(0)}55%,85%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
 @media (pointer:coarse) and (orientation:portrait){#rotate{display:flex}}
-.tOnly{display:none}
+.tOnly,#title .tOnly,.sheet .tOnly{display:none}
 @media (pointer:coarse){
-  .tOnly{display:flex}.kOnly{display:none!important}
+  .tOnly,#title .tOnly{display:flex}.sheet .tOnly{display:grid}.kOnly{display:none!important}
   #prompt{pointer-events:auto;cursor:pointer}
   #stick{opacity:.55;transition:opacity .15s}#stick.on{opacity:1}
   body.station #touch,body.soccer #touch,body.station #tbtns,body.soccer #tbtns{display:none!important}
@@ -173,6 +173,77 @@ body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt,body.st
 .rdNav button:not(.btn){width:40px;height:40px;border-radius:50%;border:2px solid #8a5a1a;background:none;color:#5b1620;font-size:22px;cursor:pointer}
 .rdNav button:disabled{opacity:.3;cursor:default}
 @media (max-width:700px){#reader .book{padding:24px 20px 14px;background:#f3e8cf}}
+/* contact bar: pinned top-centre on every screen, above everything but the rotate screen */
+#contactBar{position:fixed;z-index:45;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:5px 5px 5px 16px;background:rgba(10,6,5,.9);border:2px solid rgba(226,181,82,.75);border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.45);white-space:nowrap}
+#cbWho{display:flex;flex-direction:column;align-items:flex-start;margin-right:6px;padding:0;background:none;border:0;color:var(--ink);cursor:pointer;text-align:left}
+#cbWho b{font:400 17px/1 var(--display);letter-spacing:.04em}
+#cbWho small{margin-top:3px;font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--muted)}
+.cbBtn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:34px;min-width:34px;padding:0 9px;box-sizing:border-box;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:var(--ink);font:800 12px var(--body);text-decoration:none;cursor:pointer}
+.cbBtn svg{width:16px;height:16px;flex:none}
+.cbBtn:hover,.cbBtn:focus-visible{border-color:var(--gold);color:var(--gold);outline:none}
+.cbBtn .lbl{display:none}
+#cbRec{background:var(--gold);border-color:var(--gold);color:#1c120b;padding:0 14px}
+#cbRec:hover,#cbRec:focus-visible{background:#f0c766;color:#1c120b}
+@media (min-width:1180px){#contactBar .mail .lbl{display:inline}}
+@media (max-width:1100px){#cbWho small{display:none}}
+@media (max-width:960px){#cbWho{display:none}#contactBar{padding-left:5px}}
+@media (pointer:coarse){#cbCopy{display:none}}
+#toast{position:fixed;z-index:60;top:calc(62px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);padding:8px 16px;border-radius:999px;background:var(--gold);color:#1c120b;font:800 13px var(--body);pointer-events:none;opacity:0;transition:opacity .2s}
+#toast.on{opacity:1}
+/* recruiter view and the tour share one paper sheet */
+.sheet{position:fixed;inset:0;z-index:44;display:flex;align-items:flex-start;justify-content:center;padding:calc(64px + env(safe-area-inset-top,0px)) 16px 16px;box-sizing:border-box;background:rgba(5,3,2,.78);overflow-y:auto;overscroll-behavior:contain}
+.sheet .paper{position:relative;width:min(760px,100%);box-sizing:border-box;padding:30px 36px 24px;background:var(--paper);color:var(--paperInk);border-radius:16px;border:5px solid var(--gold);box-shadow:0 40px 80px rgba(0,0,0,.6);margin-bottom:16px}
+.sheet .x{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:50%;border:2px solid #cdb68e;background:none;color:var(--paperInk);font:800 20px var(--body);cursor:pointer}
+.sheet .kick{margin:0;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#8a5a14}
+.sheet h2{margin:4px 0 6px;font:400 44px/1 var(--display);text-transform:uppercase}
+.sheet h3{margin:22px 0 8px;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#8a5a14}
+.sheet p{margin:0 0 10px;font-size:16px;line-height:1.5;color:#3d2b1e}
+.sheet .lede{font-size:17px;font-weight:700;color:#2a1a10}
+.sheet a{color:#8e2630;font-weight:800}
+.sheet .row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.pbtn{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 14px;box-sizing:border-box;border-radius:999px;border:2px solid var(--paperInk);background:none;color:var(--paperInk)!important;font:800 14px var(--body);text-decoration:none;cursor:pointer}
+.pbtn svg{width:16px;height:16px}
+.pbtn.solid{background:var(--paperInk);color:var(--paper)!important}
+.pbtn.gold{background:var(--gold);border-color:var(--gold)}
+.wins{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.wins div{padding:10px 12px;border-radius:10px;background:#efe2c9;border:1px solid #dcc8a4}
+.wins b{display:block;font:400 26px/1 var(--display);color:#8e2630}
+.wins span{font-size:13px;font-weight:700;color:#4a3626}
+.plist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.plist li{display:grid;grid-template-columns:140px 1fr auto;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid #e2d2b3;font-size:14px;line-height:1.4}
+.plist li b{font-size:15px}
+.plist li a{white-space:nowrap;font-size:13px}
+.stack{display:flex;flex-wrap:wrap;gap:6px}
+.stack span{padding:4px 10px;border-radius:999px;background:#2a1a10;color:var(--paper);font-size:12px;font-weight:800}
+.sheet .foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-top:22px}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:12px}
+.feat div{padding:12px 14px;border-radius:12px;background:#efe2c9;border:1px solid #dcc8a4}
+.feat b{display:flex;align-items:center;gap:8px;font-size:15px}
+.feat b i{font-style:normal;font-size:20px;color:#8e2630}
+.feat span{display:block;margin-top:4px;font-size:13.5px;line-height:1.45;color:#4a3626}
+.dots{display:flex;gap:6px}.dots i{width:8px;height:8px;border-radius:50%;background:#d6c3a0}.dots i.on{background:#8e2630}
+.ctrls{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;align-items:center;font-size:15px;font-weight:700}
+.ctrls kbd{margin-right:2px}
+@media (max-width:640px){.plist li{grid-template-columns:1fr auto}.plist li span{grid-column:1 / -1;order:3}.sheet .paper{padding:24px 20px 20px}.sheet h2{font-size:34px}}
+@media (max-height:500px) and (orientation:landscape){
+  #contactBar{top:calc(8px + env(safe-area-inset-top,0px));gap:4px;padding:4px}
+  .cbBtn{height:30px;min-width:30px;padding:0 7px}.cbBtn svg{width:14px;height:14px}
+  #cbRec{padding:0 10px;font-size:11px}
+  #help{max-width:min(240px,30vw)}
+  #dlg,#stUI,#soccerUI{top:calc(52px + env(safe-area-inset-top,0px));transform:none;max-height:calc(100vh - 62px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+  #chips{top:calc(10px + env(safe-area-inset-top,0px))}
+  #title{padding-top:calc(56px + env(safe-area-inset-top,0px));align-items:flex-start}#title img{height:78vh}
+  #reader,#modal{padding-top:calc(48px + env(safe-area-inset-top,0px));box-sizing:border-box}
+  #rdPages{height:calc(100vh - 140px)}
+  #card{max-height:calc(100vh - 60px)}
+  .sheet{padding-top:calc(50px + env(safe-area-inset-top,0px))}
+  .sheet .paper{padding:18px 22px 16px}.sheet h2{font-size:30px}.sheet h3{margin-top:14px}.sheet p{font-size:14px}
+  .feat{grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.feat div{padding:7px 10px}.feat b{font-size:13px}.feat b i{font-size:16px}.feat span{font-size:11.5px;line-height:1.35}
+  .sheet .foot{position:sticky;bottom:-16px;margin:12px -22px -16px;padding:10px 22px 12px;background:var(--paper);border-radius:0 0 12px 12px;box-shadow:0 -8px 12px -8px rgba(0,0,0,.15)}
+  .sheet .lede{font-size:15px}.ctrls{font-size:13px;gap:6px 12px}
+  #title h1{font-size:clamp(44px,15vh,110px)}
+}
+
 
 </style>
 
@@ -211,6 +282,74 @@ body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt,body.st
   <div class="foot"><button class="btn" id="cardClose" type="button">Back to the room</button></div>
 </div></div>
 
+<nav id="contactBar" aria-label="Contact Eyal">
+  <button type="button" id="cbWho" aria-label="Open the recruiter view"><b>EYAL SHECHTMAN</b><small>FOUNDING ENGINEER · SEATTLE</small></button>
+  <a class="cbBtn mail" href="mailto:eyal.shechtman@gmail.com" aria-label="Email eyal.shechtman@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span class="lbl">eyal.shechtman@gmail.com</span></a>
+  <button type="button" class="cbBtn" id="cbCopy" aria-label="Copy email address" title="Copy email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
+  <a class="cbBtn" href="https://www.linkedin.com/in/eyal-shechtman" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.48 2.48 0 1 1-4.96 0 2.48 2.48 0 0 1 4.96 0zM.24 8.25h4.5V23H.24V8.25zm7.32 0h4.31v2.02h.06c.6-1.14 2.07-2.34 4.26-2.34 4.56 0 5.4 3 5.4 6.9V23h-4.5v-7.2c0-1.72-.03-3.93-2.4-3.93-2.4 0-2.76 1.87-2.76 3.8V23h-4.5V8.25z"/></svg></a>
+  <a class="cbBtn" href="https://x.com/EyalShechtman" target="_blank" rel="noopener" aria-label="X (Twitter)" title="X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg></a>
+  <a class="cbBtn" href="https://github.com/EyalShechtman" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 8.36 22.9c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a>
+  <button type="button" class="cbBtn" id="cbRec">Recruiter view</button>
+</nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="quick" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="qTitle"><div class="paper">
+  <button type="button" class="x" data-close aria-label="Close">×</button>
+  <p class="kick">The one-page version</p>
+  <h2 id="qTitle">Eyal Shechtman</h2>
+  <p class="lede">Founding engineer at Arkero, building AI agents and data infrastructure for professional football clubs. I study Informatics and Economics at the University of Washington, in Seattle.</p>
+  <div class="row">
+    <a class="pbtn solid" href="mailto:eyal.shechtman@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>eyal.shechtman@gmail.com</a>
+    <button type="button" class="pbtn" data-copy><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy email</button>
+    <a class="pbtn" href="https://www.linkedin.com/in/eyal-shechtman" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.48 2.48 0 1 1-4.96 0 2.48 2.48 0 0 1 4.96 0zM.24 8.25h4.5V23H.24V8.25zm7.32 0h4.31v2.02h.06c.6-1.14 2.07-2.34 4.26-2.34 4.56 0 5.4 3 5.4 6.9V23h-4.5v-7.2c0-1.72-.03-3.93-2.4-3.93-2.4 0-2.76 1.87-2.76 3.8V23h-4.5V8.25z"/></svg>LinkedIn</a>
+    <a class="pbtn" href="https://x.com/EyalShechtman" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg>X</a>
+    <a class="pbtn" href="https://github.com/EyalShechtman" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 8.36 22.9c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>GitHub</a>
+  </div>
+  <h3>Track record</h3>
+  <div class="wins">
+    <div><b>1st of ~350</b><span>Google DeepMind × YC hackathon · BeamBell</span></div>
+    <div><b>4th of ~800</b><span>OpenAI GPT-5 hackathon · Dress to Impress</span></div>
+    <div><b>7th of 300+</b><span>Meta hackathon · StyleList, ~150k views on Reddit</span></div>
+    <div><b>Engineer #2</b><span>Arkero · live with pro clubs, $6M pre-seed</span></div>
+  </div>
+  <h3>Right now</h3>
+  <p>At Arkero I own Match Day Planning end to end, the AI agents clubs use every day, and the data warehouse that pulls in their ticketing and operations systems. Next.js, Supabase, Trigger.dev, MCP.</p>
+  <h3>Things I've built</h3>
+  <ul class="plist" id="qProjects"></ul>
+  <h3>Tools I ship with</h3>
+  <div class="stack"><span>TypeScript</span><span>React · Next.js</span><span>Supabase · Postgres</span><span>Cloudflare Workers</span><span>Trigger.dev</span><span>AI agents · MCP</span><span>OpenAI · Gemini</span><span>Rust</span><span>Swift</span><span>Python · ONNX</span><span>Three.js</span></div>
+  <div class="foot"><a class="pbtn solid" href="mailto:eyal.shechtman@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email me</a><button type="button" class="pbtn gold" data-close>Back to the game</button></div>
+</div></div>
+<div id="tour" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="tourTitle"><div class="paper">
+  <button type="button" class="x" data-close aria-label="Skip the tour">×</button>
+  <div data-step="0">
+    <p class="kick">Welcome to the card room</p>
+    <h2 id="tourTitle">A portfolio you can walk around</h2>
+    <p class="lede">I'm Eyal, a founding engineer at Arkero and a student at the University of Washington. Everything I've built is in this room, and you play as my dog.</p>
+    <p>Wander the room, take a seat, and the people and things in it will tell you about my work. It's all hand-built in the browser with Three.js.</p>
+    <div class="foot"><button type="button" class="pbtn" data-rec>I'm hiring: just the highlights</button><button type="button" class="pbtn solid" data-next>Show me around →</button></div>
+  </div>
+  <div data-step="1" hidden>
+    <p class="kick">What's in the room</p>
+    <h2>Five places to stop</h2>
+    <div class="feat">
+      <div><b><i>♠</i>The poker table</b><span>Take the empty chair. Every player is a project I built and deals you its story. Fold, call, raise, or go all in.</span></div>
+      <div><b><i>♥</i>Chess with EyalBot</b><span>A neural net trained on 6,606 of my real chess.com games. It runs in your browser and plays like me, blunders included.</span></div>
+      <div><b><i>♦</i>The library</b><span>Pull a book off the shelf to read my essays, page by page.</span></div>
+      <div><b><i>♣</i>The soccer wall</b><span>Photos and highlight videos from club soccer in the ECNL and my high school team.</span></div>
+      <div><b><i>♠</i>The bar</b><span>Order my pint. The bartender knows what I'd have.</span></div>
+      <div><b><i>♥</i>17 chips</b><span>Each place you discover earns a chip. See if you can find them all.</span></div>
+    </div>
+    <div class="foot"><div class="dots"><i></i><i class="on"></i><i></i></div><button type="button" class="pbtn solid" data-next>Next →</button></div>
+  </div>
+  <div data-step="2" hidden>
+    <p class="kick">How to play</p>
+    <h2>Deal yourself in</h2>
+    <div class="ctrls kOnly"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><span>Walk (hold <kbd>Shift</kbd> to run)</span><span>Mouse</span><span>Look around (click to lock it)</span><span><kbd>E</kbd></span><span>Sit down, talk, interact. Or just click things.</span><span><kbd>V</kbd> <kbd>M</kbd> <kbd>Esc</kbd></span><span>Dog's-eye view · music · get up</span></div>
+    <div class="ctrls tOnly"><span>Left thumb</span><span>Walk. Push to the edge to run.</span><span>Right thumb</span><span>Drag to look. Tap anything to use it.</span><span>E button</span><span>Sit down or interact with what's nearby</span></div>
+    <p style="margin-top:14px">My email, LinkedIn and X stay pinned to the top of the screen the whole time, and <b>Recruiter view</b> has everything on one page.</p>
+    <div class="foot"><div class="dots"><i></i><i></i><i class="on"></i></div><button type="button" class="pbtn gold" data-close>Deal me in</button></div>
+  </div>
+</div></div>
 <div id="rotate" role="alert"><div class="ph"></div><b>TURN YOUR PHONE SIDEWAYS</b><span>The card room is built for landscape. Rotate your device to deal in.</span></div>
 <div id="touch"><div id="stick"><div id="knob"></div></div></div>
 <div id="tbtns" hidden><button type="button" id="tV" aria-label="Dog's eye view">V</button><button type="button" id="tE" class="e" aria-label="Interact">E</button></div>
@@ -295,7 +434,7 @@ const CHAPTERS = {
   projects:{ rank:'A', suit:'♦', kick:'Behind the flag', title:'The projects', body:'Every player in this room is something I built. Sit in the empty chair and they’ll deal you in one by one, or read the whole hand here.', grid:PLAYERS.map(p => [p.name, p.short]).concat([['Also built', 'mdxx · AWS Hack Day · RoamRich (DubHacks) · Sammamish Pickleball app · VideoArchive · AutomatedAds · ArtistOS · Casca'], ['All the code', 'https://github.com/EyalShechtman']]) },
   soccer:{ rank:'10', suit:'♣', kick:'Chapter · The pitch', title:'The soccer years', body:'Most of my weekends growing up were spent on a pitch: club soccer with Bellevue Athletic FC in the ECNL, and my high school team. The album on the wall has the photos. The TV has the highlights.', grid:[['Club','Bellevue Athletic FC'],['League','ECNL'],['Number','12'],['Highlights','https://www.youtube.com/@eyalshechtman7050']] },
   pickle:{ rank:'7', suit:'♥', kick:'Chapter · The kitchen line', title:'Pickleball', body:'Pickleball got me off the screen, and then right back on it: I built a court-scheduling app for the City of Sammamish.', grid:[['The app','Court scheduling'],['Built for','City of Sammamish'],['Stack','Swift, iOS'],['Year','2024']] },
-  contact:{ rank:'J', suit:'♥', kick:'All in', title:'Let’s talk', body:'You pushed your chips in. Here’s where to find me.', grid:[['LinkedIn','https://www.linkedin.com/in/eyal-shechtman'],['GitHub','https://github.com/EyalShechtman'],['YouTube','https://www.youtube.com/@eyalshechtman7050'],['Chess.com','https://www.chess.com/member/EyalShechtman12']] }
+  contact:{ rank:'J', suit:'♥', kick:'All in', title:'Let’s talk', body:'You pushed your chips in. Here’s where to find me.', grid:[['Email','mailto:eyal.shechtman@gmail.com'],['LinkedIn','https://www.linkedin.com/in/eyal-shechtman'],['X','https://x.com/EyalShechtman'],['GitHub','https://github.com/EyalShechtman'],['YouTube','https://www.youtube.com/@eyalshechtman7050'],['Chess.com','https://www.chess.com/member/EyalShechtman12']] }
 };
 const TOTAL = 3 + PLAYERS.length + 1 + 1 + 3; // flag, soccer, pickle, players, sat down, contact, bar, library, chess
 const found = new Set();
@@ -1340,6 +1479,7 @@ let yaw = 0, pitch = .08, pov = false, mode = 'title'; // title | walk | seated 
 let dragging = false, stickVec = { x:0, y:0 };
 addEventListener('keydown', e => {
   const k = e.key.toLowerCase();
+  if (mode === 'sheet' || ((k === 'enter' || k === ' ') && e.target.closest && e.target.closest('#contactBar'))) return;
   if (mode === 'title'){ if (!startBtn.disabled) start(); return; }
   if (mode === 'station'){ if (k === 'm') Music.toggle(); else if (station) station.key(k, e); if (k !== 'tab') e.preventDefault(); return; }
   if (k === 'escape'){ if (mode === 'modal') closeCard(); else if (mode === 'seated') standUp(); else if (mode === 'soccer') soccerKey('back'); return; }
@@ -1561,7 +1701,51 @@ const Music = (() => {
 document.getElementById('musicBtn').addEventListener('click', e => { e.currentTarget.blur(); Music.toggle(); });
 
 function togglePov(){ pov = !pov; document.getElementById('viewLbl').textContent = pov ? 'VIEW · DOG’S EYES' : 'VIEW · CHASE CAM'; }
-function start(){ phoneLandscape(); document.getElementById('title').hidden = true; mode = 'walk'; Music.set(true); document.getElementById('tbtns').hidden = false; }
+
+/* ---------------- contact bar, recruiter view, first-visit tour ---------------- */
+const EMAIL = 'eyal.shechtman@gmail.com';
+const quick = document.getElementById('quick'), tour = document.getElementById('tour'), toastEl = document.getElementById('toast');
+let toastT = 0, modeBeforeSheet = null;
+function toast(msg){ toastEl.textContent = msg; toastEl.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('on'), 1800); }
+function copyEmail(){
+  const done = () => toast('Email copied: ' + EMAIL);
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(EMAIL).then(done, () => toast(EMAIL));
+  else toast(EMAIL);
+}
+const linkOf = p => p.facts.find(([k, v]) => /^https?:/.test(v) && ['Link', 'Demo', 'Code'].includes(k));
+document.getElementById('qProjects').innerHTML = PLAYERS.map(p => {
+  const f = linkOf(p), u = f && f[1], lbl = !f ? '' : f[0] === 'Demo' ? 'demo video' : f[0] === 'Code' ? 'code' : u.replace(/^https?:\/\/(www\.)?/, '').split(/[/?]/)[0];
+  return `<li><b>${p.name}</b><span>${p.short}</span>${u ? `<a href="${u}" target="_blank" rel="noopener">${lbl} ↗</a>` : '<span></span>'}</li>`;
+}).join('') + `<li><b>EyalBot</b><span>This site's chess opponent: a neural net trained on 6,606 of my chess.com games, exported to ONNX and run in your browser.</span><span></span></li>`;
+function openSheet(el){
+  if (document.pointerLockElement) document.exitPointerLock();
+  for (const s of [quick, tour]) if (s !== el) s.hidden = true;
+  if (modeBeforeSheet === null){ modeBeforeSheet = mode; mode = 'sheet'; }
+  for (const k in keys) keys[k] = false;
+  el.hidden = false; el.scrollTop = 0;
+  const f = el.querySelector('[data-next],[data-close]'); if (f && !COARSE) f.focus({ preventScroll:true });
+}
+function closeSheets(){
+  quick.hidden = tour.hidden = true;
+  if (modeBeforeSheet !== null){ mode = modeBeforeSheet; modeBeforeSheet = null; }
+  try { localStorage.setItem('cr_toured', '1'); } catch (_) {}
+}
+function tourStep(i){ tour.querySelectorAll('[data-step]').forEach(d => d.hidden = +d.dataset.step !== i); tour.scrollTop = 0; }
+function openTour(){ tourStep(0); openSheet(tour); }
+function openQuick(){ openSheet(quick); }
+document.getElementById('cbRec').addEventListener('click', openQuick);
+document.getElementById('cbWho').addEventListener('click', openQuick);
+document.getElementById('cbCopy').addEventListener('click', copyEmail);
+quick.querySelector('[data-copy]').addEventListener('click', copyEmail);
+for (const s of [quick, tour]){
+  s.addEventListener('click', e => { if (e.target === s || e.target.closest('[data-close]')) closeSheets(); });
+  s.addEventListener('keydown', e => e.stopPropagation());
+}
+tour.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', () => tourStep(+b.closest('[data-step]').dataset.step + 1)));
+tour.querySelector('[data-rec]').addEventListener('click', () => { closeSheets(); openQuick(); });
+addEventListener('keydown', e => { if (modeBeforeSheet !== null && e.key === 'Escape') closeSheets(); }, true);
+function maybeTour(){ let seen = false; try { seen = localStorage.getItem('cr_toured') === '1'; } catch (_) {} if (!seen) openTour(); }
+function start(){ phoneLandscape(); document.getElementById('title').hidden = true; mode = 'walk'; Music.set(true); document.getElementById('tbtns').hidden = false; maybeTour(); }
 startBtn.addEventListener('click', start);
 
 /* ---------------- interactions ---------------- */
@@ -1577,6 +1761,7 @@ function doAct(act){
 const modal = document.getElementById('modal');
 /* a fact's value: plain text, or a link when it is a URL */
 function factVal(v){
+  if (/^mailto:/.test(v)){ const a = document.createElement('a'); a.href = v; a.textContent = v.slice(7); return a; }
   if (!/^https?:\/\//.test(v)) { const sp = document.createElement('span'); sp.textContent = v; return sp; }
   const a = document.createElement('a'); a.href = v; a.target = '_blank'; a.rel = 'noopener';
   a.textContent = v.replace(/^https?:\/\/(www\.)?/, '').replace(/\?.*$/, '').replace(/\/$/, '') + ' ↗'; return a;
