@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0a0507">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,7 +16,8 @@
   color-scheme:dark;
 }
 [hidden]{display:none!important}
-html,body{height:100%;margin:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;background:#07040a;color:var(--ink);font-family:var(--body);overflow:hidden}
+html,body{height:100%;margin:0;touch-action:pan-x pan-y;overscroll-behavior:none;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;background:#07040a;color:var(--ink);font-family:var(--body);overflow:hidden}
+body{position:fixed;inset:0;width:100%}
 #stage{position:fixed;inset:0}
 #stage canvas{display:block;width:100%;height:100%;touch-action:none}
 .hud{position:fixed;z-index:5;pointer-events:none}
@@ -1701,6 +1702,13 @@ const Music = (() => {
 document.getElementById('musicBtn').addEventListener('click', e => { e.currentTarget.blur(); Music.toggle(); });
 
 function togglePov(){ pov = !pov; document.getElementById('viewLbl').textContent = pov ? 'VIEW · DOG’S EYES' : 'VIEW · CHASE CAM'; }
+
+/* ---------------- the page never zooms or scrolls: no pinch, no double-tap, no ctrl+wheel or ctrl +/- ---------------- */
+for (const ev of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(ev, e => e.preventDefault(), { passive:false });
+document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive:false });
+addEventListener('wheel', e => { if (e.ctrlKey || e.metaKey) e.preventDefault(); }, { passive:false });
+addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && ['+', '-', '=', '_', '0'].includes(e.key)) e.preventDefault(); }, true);
+addEventListener('scroll', () => { if (scrollX || scrollY) scrollTo(0, 0); });
 
 /* ---------------- contact bar, recruiter view, first-visit tour ---------------- */
 const EMAIL = 'eyal.shechtman@gmail.com';
