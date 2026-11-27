@@ -1,416 +1,3 @@
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#0a0507">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Eyal's Card Room</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Nunito:wght@400;700;800&display=swap">
-<style>
-/* Layout: full-bleed WebGL scene with a game HUD floating over it. Single dark look on purpose. */
-:root{
-  --ink:#f3e9d8; --muted:#d9c5a3; --gold:#e2b552; --panel:rgba(10,6,5,0.8);
-  --paper:#f7efe0; --paperInk:#1c120b; --red:#b8323c; --blue:#2f5d8a; --green:#8be08b;
-  --display:'Anton', Impact, 'Arial Narrow', sans-serif; --body:'Nunito', system-ui, -apple-system, sans-serif;
-  color-scheme:dark;
-}
-[hidden]{display:none!important}
-html,body{height:100%;margin:0;touch-action:pan-x pan-y;overscroll-behavior:none;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;background:#07040a;color:var(--ink);font-family:var(--body);overflow:hidden}
-body{position:fixed;inset:0;width:100%}
-#stage{position:fixed;inset:0}
-#stage canvas{display:block;width:100%;height:100%;touch-action:none}
-.hud{position:fixed;z-index:5;pointer-events:none}
-kbd{display:inline-block;min-width:20px;padding:1px 7px;border-radius:5px;background:#fff;color:#111;font:800 12px/1.5 var(--body);text-align:center;box-shadow:0 2px 0 #888}
-#help{left:calc(20px + env(safe-area-inset-left,0px));top:calc(18px + env(safe-area-inset-top,0px));max-width:min(380px,70vw);padding:12px 16px;background:var(--panel);border-radius:4px;font-size:15px;font-weight:700;line-height:1.45}
-#chips{right:calc(22px + env(safe-area-inset-right,0px));top:calc(14px + env(safe-area-inset-top,0px));text-align:right}
-#chips b{display:block;font:400 48px/1 var(--display);color:var(--green);text-shadow:3px 3px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000;font-variant-numeric:tabular-nums}
-#chips span{display:block;font-size:12px;font-weight:800;letter-spacing:.18em;text-shadow:0 2px 0 #000}
-#soccerUI{left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(680px,calc(100vw - 32px));box-sizing:border-box;padding:14px 18px;background:var(--panel);border:2px solid rgba(226,181,82,.6);border-radius:10px;pointer-events:auto;display:flex;flex-direction:column;gap:12px}
-#soccerUI .row{display:flex;align-items:center;gap:12px}
-#soccerUI .cap{flex:1;display:flex;flex-direction:column;gap:2px;text-align:center;min-height:44px;justify-content:center}
-#soccerUI .cap small{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--gold)}
-#soccerUI .cap span{font-size:16px;font-weight:700;line-height:1.35}
-#soccerUI .arrow{width:44px;height:44px;border-radius:50%;border:2px solid var(--gold);background:transparent;color:var(--gold);font:800 22px var(--body);cursor:pointer;flex:none}
-#soccerUI .acts{justify-content:center;flex-wrap:wrap}
-#soccerUI .btn.ghost{background:transparent;color:var(--ink);border:2px solid rgba(255,255,255,.35)}
-body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt,body.station #keys,body.station #map,body.station #help,body.station #prompt{display:none!important}
-#jam{position:fixed;z-index:6;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;align-items:center;gap:12px;width:max-content;max-width:calc(100vw - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));box-sizing:border-box;padding:7px 8px 7px 16px;background:var(--panel);border:2px solid rgba(226,181,82,.6);border-radius:999px;user-select:none;-webkit-user-select:none}
-#jam[hidden]{display:none}
-#jamWho{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--gold);white-space:nowrap}
-#jamHint{flex:0 1 auto;min-width:0;font-size:13px;font-weight:700;color:var(--muted);line-height:1.3}#jamHint kbd{font-size:11px;min-width:14px;padding:0 5px}
-#jam .pBtns{display:flex;align-items:center;gap:6px;white-space:nowrap}
-#jam .pBtns button{padding:5px 11px;border-radius:999px;border:2px solid var(--gold);background:transparent;color:var(--gold);font:800 12px var(--body);cursor:pointer}
-#jam .pBtns #jamExit{border-color:rgba(255,255,255,.35);color:var(--ink)}
-#jam.guitar .pnOnly{display:none}
-#pnOct{font:800 12px var(--body);font-style:normal;color:var(--ink);min-width:52px;text-align:center}
-body.jam #chips i,body.jam #coach,body.jam #coachArrow{display:none!important}
-body.jam canvas{touch-action:none}
-#tvWrap{position:fixed;z-index:4;background:#000;box-shadow:0 0 40px rgba(120,160,255,.25)}
-#tvWrap iframe{width:100%;height:100%;border:0;display:block}
-#tvOpen{position:absolute;right:0;top:calc(100% + 8px);font:800 13px var(--body);color:var(--gold);background:rgba(0,0,0,.6);padding:6px 10px;border-radius:999px;text-decoration:none}
-#musicBtn{position:fixed;z-index:6;right:calc(22px + env(safe-area-inset-right,0px));top:calc(112px + env(safe-area-inset-top,0px));padding:6px 12px;border-radius:999px;border:2px solid var(--gold);background:rgba(0,0,0,.6);color:var(--gold);font:800 11px var(--body);letter-spacing:.14em;cursor:pointer}
-#musicBtn[aria-pressed="false"]{border-color:rgba(255,255,255,.35);color:rgba(255,255,255,.7)}
-#chips i{display:block;margin-top:6px;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--gold);text-shadow:0 2px 0 #000}
-#map{left:calc(20px + env(safe-area-inset-left,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));width:170px;height:170px;border-radius:50%;border:4px solid #000;box-shadow:0 0 0 2px rgba(255,255,255,.25);background:rgba(12,16,22,.85)}
-#keys{left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:12px;padding:7px 14px;background:rgba(0,0,0,.6);border-radius:4px;font-size:13px;font-weight:700;white-space:nowrap}
-#prompt{left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);padding:10px 18px;background:var(--panel);border:2px solid var(--gold);border-radius:6px;font-size:17px;font-weight:800;white-space:nowrap}
-#vignette{inset:0;background:radial-gradient(ellipse at 50% 55%,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%)}
-
-/* seated conversation */
-#dlg,#stUI{left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(760px,calc(100vw - 32px));box-sizing:border-box;padding:18px 22px 16px;background:var(--panel);border:2px solid rgba(226,181,82,.6);border-radius:10px;pointer-events:auto}
-#dlg .who,#stUI .who{display:flex;justify-content:space-between;gap:12px;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--gold)}
-#dlg p,#stUI p{margin:8px 0 14px;font-size:19px;font-weight:700;line-height:1.45;min-height:56px}
-#more{margin:-4px 0 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
-#more div{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.07)}
-#more small{display:block;font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--muted)}
-#more span{font-weight:700}
-.acts{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
-.act{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:0;color:var(--ink);cursor:pointer;font:800 12px var(--body)}
-.act .chip{width:74px;height:74px;border-radius:50%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:400 19px var(--display);letter-spacing:.04em;box-shadow:0 6px 0 rgba(0,0,0,.5);transition:transform .12s}
-.act:hover .chip,.act:focus-visible .chip{transform:translateY(-4px)}
-.act:focus-visible{outline:none}.act:focus-visible .chip{outline:3px solid #fff;outline-offset:3px}
-.fold .chip{background:#5b5b5b;border:5px dashed #d9d9d9;color:#fff}
-.call .chip{background:var(--blue);border:5px dashed #fff;color:#fff}
-.raise .chip{background:var(--red);border:5px dashed #fff;color:#fff}
-.allin .chip{background:var(--gold);border:5px dashed #1c120b;color:#1c120b}
-.btn{min-height:44px;padding:10px 18px;border-radius:999px;border:0;background:var(--gold);color:#1c120b;font:800 15px var(--body);cursor:pointer}
-.btn.ghost{background:transparent;color:var(--ink);border:2px solid rgba(255,255,255,.4)}
-.btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
-
-/* playing-card modal */
-#modal{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(5,3,2,.7);padding:16px;box-sizing:border-box}
-#card{position:relative;width:min(620px,100%);max-height:calc(100vh - 32px);overflow:auto;box-sizing:border-box;padding:42px 56px 30px;background:var(--paper);color:var(--paperInk);border-radius:20px;border:6px solid var(--gold);box-shadow:0 40px 80px rgba(0,0,0,.7)}
-#card .idx{position:absolute;left:16px;top:12px;display:flex;flex-direction:column;align-items:center;line-height:1;font:400 26px var(--display)}
-#card .kick{margin:0;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8a5a14}
-#card h2{margin:6px 0 10px;font:400 52px/1 var(--display);text-transform:uppercase;text-wrap:balance}
-#card p{margin:0 0 14px;font-size:17px;line-height:1.5;color:#3d2b1e}
-#card .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
-#card .grid div{padding:10px 14px;border-radius:12px;background:#efe2c9;border:1px solid #dcc8a4}
-#card .grid small{display:block;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#6b5440}
-#card .grid span,#card .grid a{font-size:15px;font-weight:700;overflow-wrap:anywhere}
-#card .grid a{color:#8e2630}
-#more a{color:var(--gold);font-weight:700;overflow-wrap:anywhere}
-#card .foot{display:flex;justify-content:flex-end;margin-top:18px}
-#card .btn{background:var(--paperInk);color:var(--paper)}
-
-/* title + loading */
-#title{position:fixed;inset:0;z-index:30;background:#0a0507;display:flex;align-items:center;justify-content:center;gap:4vw;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));box-sizing:border-box;flex-wrap:wrap;overflow:auto}
-#title::before{content:"";position:absolute;left:-10%;top:-10%;width:55%;height:130%;background:#efe4d0;clip-path:polygon(0 0,100% 0,70% 100%,0 100%)}
-#title::after{content:"";position:absolute;left:-10%;top:-10%;width:62%;height:130%;background:var(--gold);clip-path:polygon(0 0,100% 0,72% 100%,0 100%);z-index:-1}
-#title img{position:relative;height:min(78vh,620px);max-width:44vw;object-fit:contain;mix-blend-mode:multiply;filter:drop-shadow(0 20px 30px rgba(0,0,0,.4))}
-#title .copy{position:relative;display:flex;flex-direction:column;gap:6px;max-width:560px}
-#title .eyebrow{font-weight:800;letter-spacing:.4em;color:var(--gold);font-size:16px}
-#title h1{margin:0;font:400 clamp(64px,11vw,150px)/.88 var(--display);color:#fff}
-#title .tag{margin:14px 0 0;font-size:20px;font-weight:700;color:var(--muted)}
-#title .btn{margin-top:30px;align-self:flex-start;font-size:18px;padding:14px 26px}
-#title .btn:disabled{opacity:.6;cursor:wait}
-#title .ctl{margin-top:14px;font-size:13px;font-weight:700;color:var(--muted);display:flex;flex-wrap:wrap;gap:10px}
-
-/* touch */
-#touch{position:fixed;inset:0;z-index:4;display:none}
-#stick{position:fixed;left:calc(40px + env(safe-area-inset-left,0px));bottom:calc(200px + env(safe-area-inset-bottom,0px));width:120px;height:120px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:rgba(0,0,0,.3)}
-#knob{position:absolute;left:35px;top:35px;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.6)}
-#tbtns{position:fixed;right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(30px + env(safe-area-inset-bottom,0px));display:none;gap:10px;z-index:6}
-#tbtns button{width:60px;height:60px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.55);color:#fff;font:400 22px var(--display)}
-#tbtns .e{background:var(--gold);color:#1c120b}
-@media (pointer:coarse){#touch,#tbtns{display:block}#tbtns{display:flex}#keys{display:none}#map{width:120px;height:120px;bottom:auto;top:calc(110px + env(safe-area-inset-top,0px))}}
-@media (max-width:700px){#chips b{font-size:34px}#help{font-size:13px}#title img{max-width:80vw;height:42vh}}
-@media (prefers-reduced-motion:reduce){.act .chip{transition:none}}
-/* phones and tablets: landscape only */
-#rotate{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:24px;background:#0a0507;color:var(--ink);text-align:center}
-#rotate .ph{width:54px;height:92px;box-sizing:border-box;border:4px solid var(--gold);border-radius:12px;animation:turn 2.4s ease-in-out infinite}
-#rotate b{font:400 34px/1 var(--display);letter-spacing:.03em}
-#rotate span{max-width:280px;font-size:15px;font-weight:700;color:var(--muted);line-height:1.45}
-@keyframes turn{0%,25%{transform:rotate(0)}55%,85%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
-@media (pointer:coarse) and (orientation:portrait){#rotate{display:flex}}
-.tOnly,#title .tOnly,.sheet .tOnly{display:none}
-@media (pointer:coarse){
-  .tOnly,#title .tOnly{display:flex}.sheet .tOnly{display:grid}.kOnly{display:none!important}
-  #prompt{pointer-events:auto;cursor:pointer}
-  #stick{opacity:.55;transition:opacity .15s}#stick.on{opacity:1}
-  body.station #touch,body.soccer #touch,body.station #tbtns,body.soccer #tbtns{display:none!important}
-}
-/* short landscape screens (phones on their side): compact HUD, panels move to the right edge */
-@media (max-height:500px) and (orientation:landscape){
-  #help{max-width:min(300px,38vw);padding:8px 12px;font-size:12px;line-height:1.4}
-  #chips b{font-size:28px}#chips span{font-size:10px}#chips i{display:none}
-  #musicBtn{top:calc(62px + env(safe-area-inset-top,0px));padding:5px 10px;font-size:10px}
-  #map{width:96px;height:96px;left:auto;right:calc(22px + env(safe-area-inset-right,0px));top:calc(100px + env(safe-area-inset-top,0px));bottom:auto;border-width:3px}
-  #stick{left:calc(36px + env(safe-area-inset-left,0px));bottom:calc(28px + env(safe-area-inset-bottom,0px))}
-  #tbtns{bottom:calc(20px + env(safe-area-inset-bottom,0px))}
-  #tbtns button{width:56px;height:56px}
-  #prompt{bottom:calc(22px + env(safe-area-inset-bottom,0px));font-size:15px;padding:8px 14px}
-  #dlg,#stUI,#soccerUI{left:auto;right:calc(10px + env(safe-area-inset-right,0px));top:50%;bottom:auto;transform:translateY(-50%);max-height:calc(100vh - 20px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));width:min(360px,44vw);padding:12px 14px;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px}
-  #dlg[hidden],#stUI[hidden],#soccerUI[hidden]{display:none!important}
-  #jam{bottom:calc(6px + env(safe-area-inset-bottom,0px));gap:8px;padding:4px 5px 4px 12px}#jamWho{display:none}#jamHint{font-size:11px}#jam .pBtns button{padding:4px 9px;font-size:11px}
-  body.side #chips,body.side #musicBtn,body.side #map,body.side #help,body.side #tbtns,body.side #touch{display:none!important}
-  #dlg p,#stUI p{margin:4px 0 6px;font-size:15px;line-height:1.4;min-height:0}
-  #dlg .who,#stUI .who{font-size:10px}
-  #more{margin:0 0 6px;grid-template-columns:1fr;gap:6px}#more div{padding:6px 10px;font-size:13px}
-  .acts{gap:8px}
-  .act{font-size:11px}.act .chip{width:52px;height:52px;font-size:14px;border-width:4px;box-shadow:0 4px 0 rgba(0,0,0,.5)}
-  #acts{display:grid;grid-template-columns:1fr 1fr;justify-items:center}
-  .btn{min-height:40px;padding:8px 14px;font-size:13px}
-  #soccerUI .row{gap:8px}#soccerUI .cap span{font-size:13px}#soccerUI .arrow{width:40px;height:40px}
-  #soccerUI .acts{flex-direction:column;align-items:stretch}
-  #card{padding:22px 26px 18px 46px;border-width:4px;max-height:calc(100vh - 20px)}
-  #modal{padding:10px}
-  #card h2{font-size:34px;margin:4px 0 8px}#card p{font-size:15px}#card .idx{font-size:20px;left:10px;top:8px}
-  #card .grid{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px}#card .grid div{padding:6px 10px}
-  #reader .book{width:calc(100vw - 20px);padding:14px 22px 8px}
-  #rdPages{height:calc(100vh - 92px)}
-  #rdFlow{font-size:15px;line-height:1.5}#rdFlow h1{font-size:26px;margin-bottom:10px}
-  .rdNav{margin-top:6px}.rdNav button:not(.btn){width:36px;height:36px}
-  #title{gap:3vw;padding-top:12px;padding-bottom:12px;flex-wrap:nowrap}
-  #title .copy{flex:1;min-width:0;max-width:380px}
-  #title::before{width:44%}#title::after{width:50%}
-  #title img{height:86vh;max-width:36vw}
-  #title h1{font-size:clamp(48px,19vh,120px)}
-  #title .eyebrow{font-size:12px}#title .tag{margin-top:8px;font-size:15px}
-  #title .btn{margin-top:16px;padding:12px 22px;font-size:16px}
-  #title .ctl{margin-top:10px;font-size:12px}
-}
-/* library reader */
-#reader{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:rgba(8,4,2,.72);backdrop-filter:blur(3px)}
-#reader[hidden]{display:none}
-#reader .book{width:min(1040px,calc(100vw - 32px));box-sizing:border-box;padding:38px 46px 18px;border-radius:6px;background:linear-gradient(90deg,#efe2c4 0%,#f6ecd4 48%,#d9c9a6 50%,#f6ecd4 52%,#efe2c4 100%);box-shadow:0 0 0 10px #4a1a12,0 0 0 12px #c9a24a,0 30px 80px rgba(0,0,0,.6);color:#2a1a10}
-#rdPages{height:min(560px,calc(100vh - 200px));overflow:hidden}
-#rdFlow{height:100%;font:400 18px/1.6 Georgia,'Times New Roman',serif;transition:transform .45s ease}
-#rdFlow h1{font:400 40px/1.1 var(--display);letter-spacing:.03em;color:#5b1620;margin:0 0 18px}
-#rdFlow h2{font:800 13px var(--body);letter-spacing:.16em;text-transform:uppercase;color:#8a5a1a;margin:22px 0 6px;break-after:avoid}
-#rdFlow p{margin:0 0 12px}#rdFlow a{color:#5b1620}
-#rdFlow blockquote{margin:0 0 12px;padding-left:14px;border-left:3px solid #c9a24a;font-style:italic}
-#rdFlow ul{margin:0 0 12px;padding-left:20px}
-.rdNav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px;font:800 13px var(--body);color:#6a4a2a}
-.rdNav button:not(.btn){width:40px;height:40px;border-radius:50%;border:2px solid #8a5a1a;background:none;color:#5b1620;font-size:22px;cursor:pointer}
-.rdNav button:disabled{opacity:.3;cursor:default}
-@media (max-width:700px){#reader .book{padding:24px 20px 14px;background:#f3e8cf}}
-/* contact bar: pinned top-centre on every screen, above everything but the rotate screen */
-#contactBar{position:fixed;z-index:45;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:5px 5px 5px 16px;background:rgba(10,6,5,.9);border:2px solid rgba(226,181,82,.75);border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.45);white-space:nowrap}
-#cbWho{display:flex;flex-direction:column;align-items:flex-start;margin-right:6px;padding:0;background:none;border:0;color:var(--ink);cursor:pointer;text-align:left}
-#cbWho b{font:400 17px/1 var(--display);letter-spacing:.04em}
-#cbWho small{margin-top:3px;font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--muted)}
-.cbBtn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:34px;min-width:34px;padding:0 9px;box-sizing:border-box;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:var(--ink);font:800 12px var(--body);text-decoration:none;cursor:pointer}
-.cbBtn svg{width:16px;height:16px;flex:none}
-.cbBtn:hover,.cbBtn:focus-visible{border-color:var(--gold);color:var(--gold);outline:none}
-.cbBtn .lbl{display:none}
-#cbRec{background:var(--gold);border-color:var(--gold);color:#1c120b;padding:0 14px}
-#cbRec:hover,#cbRec:focus-visible{background:#f0c766;color:#1c120b}
-@media (min-width:1180px){#contactBar .mail .lbl{display:inline}}
-@media (max-width:1100px){#cbWho small{display:none}}
-@media (max-width:960px){#cbWho{display:none}#contactBar{padding-left:5px}}
-@media (pointer:coarse){#cbCopy{display:none}}
-#toast{position:fixed;z-index:60;top:calc(62px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);padding:8px 16px;border-radius:999px;background:var(--gold);color:#1c120b;font:800 13px var(--body);pointer-events:none;opacity:0;transition:opacity .2s}
-#toast.on{opacity:1}
-/* recruiter view and the tour share one paper sheet */
-.sheet{position:fixed;inset:0;z-index:44;display:flex;align-items:flex-start;justify-content:center;padding:calc(64px + env(safe-area-inset-top,0px)) 16px 16px;box-sizing:border-box;background:rgba(5,3,2,.78);overflow-y:auto;overscroll-behavior:contain}
-.sheet .paper{position:relative;width:min(760px,100%);box-sizing:border-box;padding:30px 36px 24px;background:var(--paper);color:var(--paperInk);border-radius:16px;border:5px solid var(--gold);box-shadow:0 40px 80px rgba(0,0,0,.6);margin-bottom:16px}
-.sheet .x{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:50%;border:2px solid #cdb68e;background:none;color:var(--paperInk);font:800 20px var(--body);cursor:pointer}
-.sheet .kick{margin:0;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#8a5a14}
-.sheet h2{margin:4px 0 6px;font:400 44px/1 var(--display);text-transform:uppercase}
-.sheet h3{margin:22px 0 8px;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#8a5a14}
-.sheet p{margin:0 0 10px;font-size:16px;line-height:1.5;color:#3d2b1e}
-.sheet .lede{font-size:17px;font-weight:700;color:#2a1a10}
-.sheet a{color:#8e2630;font-weight:800}
-.sheet .row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
-.pbtn{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 14px;box-sizing:border-box;border-radius:999px;border:2px solid var(--paperInk);background:none;color:var(--paperInk)!important;font:800 14px var(--body);text-decoration:none;cursor:pointer}
-.pbtn svg{width:16px;height:16px}
-.pbtn.solid{background:var(--paperInk);color:var(--paper)!important}
-.pbtn.gold{background:var(--gold);border-color:var(--gold)}
-.wins{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
-.wins div{padding:10px 12px;border-radius:10px;background:#efe2c9;border:1px solid #dcc8a4}
-.wins b{display:block;font:400 26px/1 var(--display);color:#8e2630}
-.wins span{font-size:13px;font-weight:700;color:#4a3626}
-.plist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
-.plist li{display:grid;grid-template-columns:140px 1fr auto;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid #e2d2b3;font-size:14px;line-height:1.4}
-.plist li b{font-size:15px}
-.plist li a{white-space:nowrap;font-size:13px}
-.plist.xp li em{font-style:normal;white-space:nowrap;font-size:12px;font-weight:800;color:#8a5a14}
-#coach{left:calc(20px + env(safe-area-inset-left,0px));top:calc(18px + env(safe-area-inset-top,0px));width:min(340px,70vw);box-sizing:border-box;padding:12px 16px 14px;background:var(--panel);border:2px solid var(--gold);border-radius:8px;pointer-events:auto;box-shadow:0 10px 30px rgba(0,0,0,.45);transition:opacity .25s,transform .25s}
-#coach.pop{animation:coachPop .45s ease}
-@keyframes coachPop{0%{transform:scale(.94);opacity:.4}60%{transform:scale(1.03)}100%{transform:scale(1);opacity:1}}
-#coach .cTop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
-#coach small{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--gold)}
-#coach button{background:none;border:0;color:rgba(255,255,255,.6);font:800 11px var(--body);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:4px 0}
-#coach button:hover,#coach button:focus-visible{color:#fff}
-#coach b{display:block;font:400 24px/1.05 var(--display);letter-spacing:.02em;margin-bottom:4px}
-#coach span{display:block;font-size:14px;font-weight:700;line-height:1.45;color:rgba(255,255,255,.88)}
-#coach .cBar{height:4px;margin-top:10px;border-radius:2px;background:rgba(255,255,255,.15);overflow:hidden}
-#coach .cBar i{display:block;height:100%;width:0;background:var(--gold);transition:width .4s}
-body.coaching #help{display:none!important}
-#coachArrow{width:46px;height:46px;margin:-23px 0 0 -23px;left:0;top:0;border-radius:50%;background:var(--gold);color:#1c120b;display:flex;align-items:center;justify-content:center;font:800 22px var(--body);box-shadow:0 4px 0 rgba(0,0,0,.45),0 0 0 4px rgba(0,0,0,.35)}
-#coachArrow[hidden]{display:none}
-body.soccer #coach,body.station #coach,body.side #coach,body.soccer #coachArrow,body.station #coachArrow,body.side #coachArrow{display:none!important}
-#help,#coach{top:calc(74px + env(safe-area-inset-top,0px))}
-@media (max-height:500px) and (orientation:landscape){#help,#coach{top:calc(54px + env(safe-area-inset-top,0px))}#coach{width:min(280px,36vw);padding:8px 12px 10px}#coach b{font-size:19px}#coach span{font-size:12px;line-height:1.35}#coach .cTop{margin-bottom:3px}#coachArrow{width:38px;height:38px;margin:-19px 0 0 -19px;font-size:18px}}
-.stack{display:flex;flex-wrap:wrap;gap:6px}
-.stack span{padding:4px 10px;border-radius:999px;background:#2a1a10;color:var(--paper);font-size:12px;font-weight:800}
-.sheet .foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-top:22px}
-.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:12px}
-.feat div{padding:12px 14px;border-radius:12px;background:#efe2c9;border:1px solid #dcc8a4}
-.feat b{display:flex;align-items:center;gap:8px;font-size:15px}
-.feat b i{font-style:normal;font-size:20px;color:#8e2630}
-.feat span{display:block;margin-top:4px;font-size:13.5px;line-height:1.45;color:#4a3626}
-.dots{display:flex;gap:6px}.dots i{width:8px;height:8px;border-radius:50%;background:#d6c3a0}.dots i.on{background:#8e2630}
-.ctrls{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;align-items:center;font-size:15px;font-weight:700}
-.ctrls kbd{margin-right:2px}
-@media (max-width:640px){.plist li{grid-template-columns:1fr auto}.plist li span{grid-column:1 / -1;order:3}.sheet .paper{padding:24px 20px 20px}.sheet h2{font-size:34px}}
-@media (max-height:500px) and (orientation:landscape){
-  #contactBar{top:calc(8px + env(safe-area-inset-top,0px));gap:4px;padding:4px}
-  .cbBtn{height:30px;min-width:30px;padding:0 7px}.cbBtn svg{width:14px;height:14px}
-  #cbRec{padding:0 10px;font-size:11px}
-  #help{max-width:min(240px,30vw)}
-  #dlg,#stUI,#soccerUI{top:calc(52px + env(safe-area-inset-top,0px));transform:none;max-height:calc(100vh - 62px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
-  #chips{top:calc(10px + env(safe-area-inset-top,0px))}
-  #title{padding-top:calc(56px + env(safe-area-inset-top,0px));align-items:flex-start}#title img{height:78vh}
-  #reader,#modal{padding-top:calc(48px + env(safe-area-inset-top,0px));box-sizing:border-box}
-  #rdPages{height:calc(100vh - 140px)}
-  #card{max-height:calc(100vh - 60px)}
-  .sheet{padding-top:calc(50px + env(safe-area-inset-top,0px))}
-  .sheet .paper{padding:18px 22px 16px}.sheet h2{font-size:30px}.sheet h3{margin-top:14px}.sheet p{font-size:14px}
-  .feat{grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.feat div{padding:7px 10px}.feat b{font-size:13px}.feat b i{font-size:16px}.feat span{font-size:11.5px;line-height:1.35}
-  .sheet .foot{position:sticky;bottom:-16px;margin:12px -22px -16px;padding:10px 22px 12px;background:var(--paper);border-radius:0 0 12px 12px;box-shadow:0 -8px 12px -8px rgba(0,0,0,.15)}
-  .sheet .lede{font-size:15px}.ctrls{font-size:13px;gap:6px 12px}
-  #title h1{font-size:clamp(44px,15vh,110px)}
-}
-
-
-</style>
-
-<div id="stage"></div>
-<div id="vignette" class="hud"></div>
-<div id="help" class="hud">Find out who Eyal is. Take the empty chair at the table, get a drink at the bar, pull a book from the library, play the piano or the guitar, or sit down for a game of chess.</div>
-<div id="coach" class="hud" hidden role="status" aria-live="polite"><div class="cTop"><small id="coachStep"></small><button type="button" id="coachSkip">Skip guide</button></div><b id="coachTitle"></b><span id="coachText"></span><div class="cBar"><i id="coachFill"></i></div></div>
-<div id="coachArrow" class="hud" hidden aria-hidden="true">➜</div>
-<div id="chips" class="hud"><b id="chipNum">00/12</b><span>CHIPS FOUND</span><i id="viewLbl">VIEW · CHASE CAM</i></div>
-<button type="button" id="musicBtn" aria-pressed="false">♪ MUSIC OFF</button>
-<div id="tvWrap" hidden><iframe id="tvFrame" title="Soccer highlights video" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a id="tvOpen" href="https://youtu.be/uBo_WEquynA" target="_blank" rel="noopener">Open on YouTube ↗</a></div>
-<div id="soccerUI" class="hud" hidden role="region" aria-label="Soccer album">
-  <div class="row"><button type="button" class="arrow" id="sPrev" aria-label="Previous photo">‹</button><div class="cap" aria-live="polite"><small id="sCount">1 / 7</small><span id="sCap"></span></div><button type="button" class="arrow" id="sNext" aria-label="Next photo">›</button></div>
-  <div class="row acts"><button type="button" class="btn" id="sWatch0">▶ High school highlights</button><button type="button" class="btn" id="sWatch1">▶ Bellevue Athletic highlights</button><button type="button" class="btn ghost" id="sStory">Read the story</button><button type="button" class="btn ghost" id="sBack">Back · Esc</button></div>
-</div>
-<div id="stUI" class="hud" hidden role="dialog" aria-label="Conversation"><div class="who"><span id="stWho"></span><span id="stSub"></span></div><p id="stText" aria-live="polite"></p><div class="acts" id="stActs"></div></div>
-<div id="jam" hidden role="region" aria-label="Music corner controls"><span id="jamWho">THE MUSIC CORNER</span><span id="jamHint"></span><span class="pBtns"><button type="button" class="pnOnly" id="pnDown" aria-label="Octave down">‹ <span class="kOnly">Z</span></button><em class="pnOnly" id="pnOct">C3–F4</em><button type="button" class="pnOnly" id="pnUp" aria-label="Octave up"><span class="kOnly">X</span> ›</button><button type="button" id="jamExit">Stand up<span class="kOnly"> · Esc</span></button></span></div>
-<div id="reader" hidden role="dialog" aria-label="Book"><div class="book"><div class="pages" id="rdPages"><div id="rdFlow"></div></div><div class="rdNav"><button type="button" id="rdPrev" aria-label="Previous page">‹</button><span id="rdNum"></span><button type="button" id="rdNext" aria-label="Next page">›</button><button type="button" id="rdClose" class="btn">Put it back · Esc</button></div></div></div>
-<canvas id="map" class="hud" width="170" height="170" aria-hidden="true"></canvas>
-<div id="keys" class="hud"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move</span><span>Mouse look</span><span><kbd>Shift</kbd> run</span><span><kbd>E</kbd> interact</span><span><kbd>V</kbd> dog's eyes</span><span><kbd>M</kbd> music</span><span><kbd>H</kbd> help</span></div>
-<div id="prompt" class="hud" hidden></div>
-
-<div id="dlg" class="hud" hidden role="dialog" aria-label="Conversation at the table">
-  <div class="who"><span id="dlgName">ARKERO</span><span id="dlgCount">PLAYER 1 OF 7</span></div>
-  <p id="dlgText"></p>
-  <div id="more" hidden></div>
-  <div class="acts" id="acts">
-    <button class="act fold" type="button" data-a="fold"><span class="chip">FOLD</span>Skip</button>
-    <button class="act call" type="button" data-a="call"><span class="chip">CALL</span>Tell me more</button>
-    <button class="act raise" type="button" data-a="raise"><span class="chip">RAISE</span>Show me everything</button>
-    <button class="act allin" type="button" data-a="allin"><span class="chip">ALL IN</span>Let's talk</button>
-  </div>
-  <div class="acts" id="nextRow" hidden><button class="btn" id="nextBtn" type="button">Next player</button><button class="btn ghost" id="standBtn" type="button">Stand up</button></div>
-</div>
-
-<div id="modal" hidden><div id="card" role="dialog" aria-modal="true" aria-labelledby="cardTitle">
-  <div class="idx" id="cardIdx"><span>A</span><span>♦</span></div>
-  <p class="kick" id="cardKick"></p><h2 id="cardTitle"></h2><p id="cardBody"></p><div class="grid" id="cardGrid"></div>
-  <div class="foot"><button class="btn" id="cardClose" type="button">Back to the room</button></div>
-</div></div>
-
-<nav id="contactBar" aria-label="Contact Eyal">
-  <button type="button" id="cbWho" aria-label="Open the recruiter view"><b>EYAL SHECHTMAN</b><small>FOUNDING ENGINEER · SEATTLE</small></button>
-  <a class="cbBtn mail" href="mailto:eyal.shechtman@gmail.com" aria-label="Email eyal.shechtman@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span class="lbl">eyal.shechtman@gmail.com</span></a>
-  <button type="button" class="cbBtn" id="cbCopy" aria-label="Copy email address" title="Copy email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
-  <a class="cbBtn" href="https://www.linkedin.com/in/eyal-shechtman" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.48 2.48 0 1 1-4.96 0 2.48 2.48 0 0 1 4.96 0zM.24 8.25h4.5V23H.24V8.25zm7.32 0h4.31v2.02h.06c.6-1.14 2.07-2.34 4.26-2.34 4.56 0 5.4 3 5.4 6.9V23h-4.5v-7.2c0-1.72-.03-3.93-2.4-3.93-2.4 0-2.76 1.87-2.76 3.8V23h-4.5V8.25z"/></svg></a>
-  <a class="cbBtn" href="https://x.com/EyalShechtman" target="_blank" rel="noopener" aria-label="X (Twitter)" title="X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg></a>
-  <a class="cbBtn" href="https://github.com/EyalShechtman" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 8.36 22.9c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a>
-  <button type="button" class="cbBtn" id="cbHelp" aria-label="How to play" title="How to play">?</button>
-  <button type="button" class="cbBtn" id="cbRec">Recruiter view</button>
-</nav>
-<div id="toast" role="status" aria-live="polite"></div>
-<div id="quick" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="qTitle"><div class="paper">
-  <button type="button" class="x" data-close aria-label="Close">×</button>
-  <p class="kick">The one-page version</p>
-  <h2 id="qTitle">Eyal Shechtman</h2>
-  <p class="lede">Founding engineer and FDE at Arkero, building AI agents and a sponsorship CRM for professional football clubs. B.S. in Informatics and Economics at the University of Washington, graduating December 2026.</p>
-  <div class="row">
-    <a class="pbtn solid" href="mailto:eyal.shechtman@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>eyal.shechtman@gmail.com</a>
-    <button type="button" class="pbtn" data-copy><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy email</button>
-    <a class="pbtn" href="https://www.linkedin.com/in/eyal-shechtman" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.48 2.48 0 1 1-4.96 0 2.48 2.48 0 0 1 4.96 0zM.24 8.25h4.5V23H.24V8.25zm7.32 0h4.31v2.02h.06c.6-1.14 2.07-2.34 4.26-2.34 4.56 0 5.4 3 5.4 6.9V23h-4.5v-7.2c0-1.72-.03-3.93-2.4-3.93-2.4 0-2.76 1.87-2.76 3.8V23h-4.5V8.25z"/></svg>LinkedIn</a>
-    <a class="pbtn" href="https://x.com/EyalShechtman" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg>X</a>
-    <a class="pbtn" href="https://github.com/EyalShechtman" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 8.36 22.9c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>GitHub</a>
-  </div>
-  <h3>Track record</h3>
-  <div class="wins">
-    <div><b>1st of ~350</b><span>Google DeepMind × YC hackathon · BeamBell</span></div>
-    <div><b>4th of ~800</b><span>OpenAI GPT-5 hackathon · Dress2Impress</span></div>
-    <div><b>7th of 300+</b><span>Meta hackathon · OpenStylist, 150k Reddit views</span></div>
-    <div><b>Engineer #2</b><span>Arkero · $6M seed · 5 live clubs and 2 MLS pilots in 3 months</span></div>
-  </div>
-  <h3>Experience</h3>
-  <ul class="plist xp">
-    <li><b>Arkero</b><span>Founding Engineer / FDE. Co-led an AI-native sponsorship CRM from discovery to 5 live clubs and 2 MLS pilots. Agent infrastructure at 400+ runs per customer a day (RAG, a custom MCP server), human-in-the-loop agents with 889 approvals at 94% acceptance, and on-site demos and deployments across Europe.</span><em>Feb 2026 – now</em></li>
-    <li><b>Chewy</b><span>Software Engineer I. An agentic Airflow framework with 11 automated workflows (3rd of 200 in an internal hackathon), 30% faster order batch imports, and an AWS SNS/SQS pipeline in Terraform.</span><em>Jun 2025 – Feb 2026</em></li>
-    <li><b>UW iSchool</b><span>Undergraduate researcher. A Chrome extension that adds context to news headlines, with 20+ interviews and a 35+ person study; submitted to CHI 2025.</span><em>Dec 2023 – Jun 2024</em></li>
-    <li><b>TAMID at UW</b><span>Founder and president. Grew it to 80+ members supporting 6+ startups, and hosted UW's first Startupathon, with 200+ participants.</span><em>Oct 2024 – now</em></li>
-  </ul>
-  <h3>Education</h3>
-  <p><b>University of Washington, Seattle</b>: B.S. Informatics and Economics, expected December 2026. Dean's List: Winter 2023, Spring 2023, Fall 2024.</p>
-  <h3>Things I've built</h3>
-  <ul class="plist" id="qProjects"></ul>
-  <h3>Tools I ship with</h3>
-  <div class="stack"><span>TypeScript</span><span>Python</span><span>SQL</span><span>React · Next.js</span><span>FastAPI</span><span>Postgres · Supabase</span><span>LLM agents · RAG · MCP</span><span>Trigger.dev · Airflow</span><span>AWS · Terraform · Docker</span><span>Cloudflare Workers</span><span>Rust · Swift</span><span>Three.js</span></div>
-  <div class="foot"><a class="pbtn solid" href="mailto:eyal.shechtman@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email me</a><button type="button" class="pbtn gold" data-close>Back to the game</button></div>
-</div></div>
-<div id="tour" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="tourTitle"><div class="paper">
-  <button type="button" class="x" data-close aria-label="Skip the tour">×</button>
-  <div data-step="0">
-    <p class="kick">Welcome to the card room</p>
-    <h2 id="tourTitle">A portfolio you can walk around</h2>
-    <p class="lede">I'm Eyal, a founding engineer at Arkero and a student at the University of Washington. Everything I've built is in this room, and you play as my dog.</p>
-    <p>Wander the room, take a seat, and the people and things in it will tell you about my work. It's all hand-built in the browser with Three.js.</p>
-    <div class="foot"><button type="button" class="pbtn" data-rec>I'm hiring: just the highlights</button><button type="button" class="pbtn solid" data-next>Show me around →</button></div>
-  </div>
-  <div data-step="1" hidden>
-    <p class="kick">What's in the room</p>
-    <h2>Six places to stop</h2>
-    <div class="feat">
-      <div><b><i>♠</i>The poker table</b><span>Take the empty chair. Every player is a project I built and deals you its story. Fold, call, raise, or go all in.</span></div>
-      <div><b><i>♥</i>Chess with EyalBot</b><span>A neural net trained on 6,606 of my real chess.com games. It runs in your browser and plays like me, blunders included.</span></div>
-      <div><b><i>♦</i>The library</b><span>Pull a book off the shelf to read my essays, page by page.</span></div>
-      <div><b><i>♣</i>The soccer wall</b><span>Photos and highlight videos from club soccer in the ECNL and my high school team.</span></div>
-      <div><b><i>♠</i>The bar</b><span>Order my pint. The bartender knows what I'd have.</span></div>
-      <div><b><i>♦</i>The Music Corner</b><span>Sit at the grand piano and play the keys, or pick up the guitar and strum some chords.</span></div>
-      <div><b><i>♥</i>16 chips</b><span>Each place you discover earns a chip. See if you can find them all.</span></div>
-    </div>
-    <div class="foot"><div class="dots"><i></i><i class="on"></i><i></i></div><button type="button" class="pbtn solid" data-next>Next →</button></div>
-  </div>
-  <div data-step="2" hidden>
-    <p class="kick">How to play</p>
-    <h2>Deal yourself in</h2>
-    <div class="ctrls kOnly"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><span>Walk (hold <kbd>Shift</kbd> to run)</span><span>Mouse</span><span>Look around (click to lock it)</span><span><kbd>E</kbd></span><span>Sit down, talk, interact. Or just click things.</span><span><kbd>V</kbd> <kbd>M</kbd> <kbd>Esc</kbd></span><span>Dog's-eye view · music · get up</span></div>
-    <div class="ctrls tOnly"><span>Left thumb</span><span>Walk. Push to the edge to run.</span><span>Right thumb</span><span>Drag to look. Tap anything to use it.</span><span>E button</span><span>Sit down or interact with what's nearby</span></div>
-    <p style="margin-top:14px">My email, LinkedIn and X stay pinned to the top of the screen the whole time, and <b>Recruiter view</b> has everything on one page.</p>
-    <div class="foot"><div class="dots"><i></i><i></i><i class="on"></i></div><button type="button" class="pbtn gold" data-close>Deal me in</button></div>
-  </div>
-</div></div>
-<div id="rotate" role="alert"><div class="ph"></div><b>TURN YOUR PHONE SIDEWAYS</b><span>The card room is built for landscape. Rotate your device to deal in.</span></div>
-<div id="touch"><div id="stick"><div id="knob"></div></div></div>
-<div id="tbtns" hidden><button type="button" id="tV" aria-label="Dog's eye view">V</button><button type="button" id="tE" class="e" aria-label="Interact">E</button></div>
-
-<div id="title">
-  <img src="dog.webp" alt="The dog: fedora, suspenders, cigarette">
-  <div class="copy">
-    <span class="eyebrow">EYAL'S</span>
-    <h1>CARD<br>ROOM</h1>
-    <p class="tag">A life, one hand at a time. You play as the dog.</p>
-    <button class="btn" id="startBtn" type="button" disabled>Loading the room…</button>
-    <div class="ctl kOnly"><span><kbd>WASD</kbd> move</span><span>mouse to look</span><span><kbd>E</kbd> interact</span><span><kbd>V</kbd> dog's eyes</span></div>
-    <div class="ctl tOnly"><span>Left thumb: walk (push far to run)</span><span>Right thumb: look</span><span>Tap things, or <kbd>E</kbd>, to interact</span></div>
-  </div>
-</div>
-
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module">
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
@@ -421,52 +8,10 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { PLAYERS, DEALER_LOOK, DOG_LOOK, CHAPTERS } from './content.js';
+import { Chess } from './chess-engine.js';
 
 /* ---------------- content ---------------- */
-const PLAYERS = [
-  { id:'arkero', name:'Arkero', rank:'A', suit:'♠', short:'AI agents and a sponsorship CRM for pro football clubs. My day job.',
-    line:'Football clubs still run their business on spreadsheets and group chats. At Arkero we’re replacing them with AI, and I was the second engineer through the door. Want to see my hand?',
-    more:'I co-led our AI-native sponsorship CRM from the first customer interviews to 5 live clubs and 2 MLS pilots in three months. I built the agents behind it: 400+ runs per customer a day, with RAG and a custom MCP server, and agents that turn emails and meetings into CRM updates (889 approved, 94% acceptance). I also run the demos and deployments on-site with clubs in Europe.',
-    facts:[['Built with','Next.js, TypeScript, Postgres, Trigger.dev, LLM agents, MCP'],['My role','Founding engineer / FDE, since Feb 2026'],['Status','5 live clubs · 2 MLS pilots · $6M seed'],['Link','https://arkero.ai']],
-    look:{fur:'#8b5a2b', hat:'#16161a', vest:'#15171d', shirt:'#f7f5f0', pants:'#15171d'} },
-  { id:'chewy', name:'Chewy', rank:'K', suit:'♣', short:'Software engineer on the data platform. 3rd of 200 at the internal hackathon.',
-    line:'Before Arkero I was a software engineer at Chewy, in Bellevue. I built an agentic Airflow framework that took 3rd of 200 at the company hackathon, and made order imports 30% faster. Want the details?',
-    more:'The Airflow framework runs 11 automated workflows that used to be manual, built with ML and BI engineers. I sped up order batch imports by 30%, and built an event pipeline on AWS SNS and SQS, all in Terraform.',
-    facts:[['Built with','Python, Apache Airflow, AWS SNS/SQS, Terraform'],['My role','Software Engineer I · Jun 2025 – Feb 2026'],['Hackathon','3rd of 200 · agentic Airflow framework'],['Impact','11 automated workflows · 30% faster imports']],
-    look:{fur:'#c9a27a', hat:'#0d2a6b', vest:'#1c49c2', shirt:'#f5f6fa', pants:'#13234a'} },
-  { id:'hackathons', name:'Hackathons', rank:'Q', suit:'♥', short:'1st of ~350 (DeepMind × YC), 4th of ~800 (OpenAI), 7th of 300+ (Meta).',
-    line:'I’m the weekends. BeamBell took 1st of about 350 at Google DeepMind × YC, Dress2Impress came 4th of about 800 at OpenAI’s GPT-5 hackathon, and OpenStylist was 7th of 300+ at Meta’s. Want to hear how?',
-    more:'BeamBell is a fleet of AI phone agents that call around and gather competitive intel, and it won a guaranteed YC interview. Dress2Impress turns your webcam into an avatar, has you shop real clothes against a GPT stylist and walks the look down a generated runway. OpenStylist plans outfits with Gemini and puts you in the real products; its launch post drew 150k views on Reddit and 75 GitHub stars.',
-    facts:[['1st of ~350','BeamBell · Google DeepMind × YC · Oct 2025'],['4th of ~800','Dress2Impress · OpenAI GPT-5 · Aug 2025'],['7th of 300+','OpenStylist · Meta · Jun 2025'],['Demo · Dress2Impress','https://youtu.be/s8o59vPj6kY'],['Code · OpenStylist','https://github.com/parsakhaz/open-ai-stylist'],['Link · BeamBell','https://beambell.com']],
-    look:{fur:'#d9b48a', hat:'#1d1a14', vest:'#6a4a1a', shirt:'#f7f2e8', pants:'#2a2218'} },
-  { id:'pictur', name:'Pictur.ai', rank:'J', suit:'♦', short:'An AI image studio: 45+ tools, built solo.',
-    line:'Pictur is my AI image studio: more than 45 tools to remove backgrounds, sharpen photos and generate art, all in one place. I built the whole thing myself. Feeling lucky?',
-    more:'Next.js 15 and Supabase on the web, with rate limiting and analytics built in, plus Glimmr, a companion iPhone app written in Swift. It launched in September 2025, has made 1,200+ images for hundreds of users, and I’m still shipping to it.',
-    facts:[['Built with','Next.js 15, TypeScript, Supabase, Swift'],['My role','Solo: design, code, launch'],['Reach','1,200+ generations from hundreds of users'],['Link','https://pictur.ai']],
-    look:{fur:'#efe9de', hat:'#2a1015', vest:'#5e1626', shirt:'#f6f1e7', pants:'#5e1626'} },
-  { id:'panenka', name:'Panenka', rank:'10', suit:'♠', short:'A daily football quiz where every answer is a penalty.',
-    line:'A daily football quiz where every answer is a penalty kick. The keeper dives where everyone else answered, so the rarer your right answer, the better your finish. Want to step up?',
-    more:'Five prompts a day, 25 seconds each, plus an unlimited mode and live rooms for up to ten friends. It runs on Cloudflare Workers with Durable Objects and WebSockets, the animation is drawn on a canvas, and every sound is synthesized in the browser.',
-    facts:[['Built with','React, Cloudflare Workers, Durable Objects'],['My role','Creator'],['Status','Live, new questions every day'],['Link','https://dailypanenka.com']],
-    look:{fur:'#8d9096', hat:'#161b26', vest:'#1b2b48', shirt:'#f4f2ee', pants:'#1b2b48'} },
-  { id:'blitz', name:'Blitz', rank:'9', suit:'♥', short:'Mass texting and email for student orgs and a city.',
-    line:'I co-founded Blitz, a mass texting and email platform. It started as the tool I built to reach my TAMID members, and now student groups and a city government send through it. Interested?',
-    more:'Bulk SMS and email that’s simple enough for a club president: contact lists, templates, scheduled sends. Seven student organizations and the City of Medina use it.',
-    facts:[['Built with','Web app · SMS and email'],['My role','Co-founder & founding engineer'],['Status','In use since 2025'],['Users','7 student orgs · City of Medina']],
-    look:{fur:'#c98b4f', hat:'#0c1f18', vest:'#0f3d2e', shirt:'#f5f0e6', pants:'#0f3d2e'} },
-  { id:'vid', name:'VidUnderstand', rank:'8', suit:'♣', short:'Search hours of video for the moment you need.',
-    line:'I watch your videos so you don’t have to. Upload hours of footage, jump straight to the moment you need, and I’ll write the document from what happened. Want a look?',
-    more:'A Rust backend does the heavy lifting, Gemini does the watching, and a Next.js front end ties it together. Search is by meaning, not file names.',
-    facts:[['Built with','Rust, Next.js, Gemini'],['Built','Oct–Nov 2025'],['Demo','https://youtu.be/LovM-rcPZ-I?t=55'],['Code','https://github.com/EyalShechtman/open-ai-video-understanding']],
-    look:{fur:'#e0bd86', hat:'#201a26', vest:'#3d2b4e', shirt:'#f6f2ea', pants:'#3d2b4e'} }
-];
-const DEALER_LOOK = {fur:'#a87443', hat:'#121212', vest:'#101012', shirt:'#fbfaf6', pants:'#101012'};
-const DOG_LOOK = {fur:'#ddb683', hat:'#6b4226', vest:'#4c5631', shirt:'#e7d8b8', pants:'#4a5230'};
-const CHAPTERS = {
-  projects:{ rank:'A', suit:'♦', kick:'Behind the flag', title:'The projects', body:'Every player at the table is a chapter of my work. Sit in the empty chair and they’ll deal you in one by one, or read the whole hand here.', grid:PLAYERS.map(p => [p.name, p.short]).concat([['Also built', 'mdxx · AWS Hack Day · RoamRich (DubHacks) · Sammamish Pickleball app · VideoArchive · AutomatedAds · ArtistOS · Casca'], ['All the code', 'https://github.com/EyalShechtman']]) },
-  soccer:{ rank:'10', suit:'♣', kick:'Chapter · The pitch', title:'The soccer years', body:'Most of my weekends growing up were spent on a pitch: club soccer with Bellevue Athletic FC in the ECNL, and my high school team. The album on the wall has the photos. The TV has the highlights.', grid:[['Club','Bellevue Athletic FC'],['League','ECNL'],['Number','12'],['Highlights','https://www.youtube.com/@eyalshechtman7050']] },
-  contact:{ rank:'J', suit:'♥', kick:'All in', title:'Let’s talk', body:'You pushed your chips in. Here’s where to find me.', grid:[['Email','mailto:eyal.shechtman@gmail.com'],['LinkedIn','https://www.linkedin.com/in/eyal-shechtman'],['X','https://x.com/EyalShechtman'],['GitHub','https://github.com/EyalShechtman'],['YouTube','https://www.youtube.com/@eyalshechtman7050'],['Chess.com','https://www.chess.com/member/EyalShechtman12']] }
-};
 const TOTAL = 4 + PLAYERS.length + 1 + 1 + 3; // flag, soccer, piano, guitar, players, sat down, contact, bar, library, chess
 const found = new Set();
 function mark(id){ found.add(id); coach.seen.add(id); document.getElementById('chipNum').textContent = String(found.size).padStart(2,'0') + '/' + TOTAL; }
@@ -839,7 +384,7 @@ const portrait = add(new THREE.Mesh(new THREE.PlaneGeometry(.86, 1.11), std({ ma
   const v = g.createRadialGradient(w / 2, h * .42, h * .25, w / 2, h * .5, h * .72); v.addColorStop(0, 'rgba(10,5,2,0)'); v.addColorStop(1, 'rgba(10,5,2,.75)');
   g.fillStyle = v; g.fillRect(0, 0, w, h); g.fillStyle = 'rgba(120,70,20,.12)'; g.fillRect(0, 0, w, h); // varnish
   portraitTex.needsUpdate = true;
-}; img.src = 'dog.webp'; }
+}; img.src = 'assets/dog.webp'; }
 K.gilt.at = WALLS.back; ornateFrame(K.gilt, 1.12, 1.37, -3.1, 1.92, .05, .12, .09);
 picLight(WALLS.back, -3.1, 2.72, .6, .9);
 add(plaque('THE HOUSE · [DOG’S NAME]', .7), -3.1, 1.15, -RD / 2 + .045, false, false);
@@ -1573,7 +1118,7 @@ const loadGlb = url => fetch(url).then(r => { if (!r.ok) throw new Error(r.statu
   const pump = () => rd.read().then(({ done, value }) => { if (done) return new Blob(parts).text(); parts.push(value); loadGot += value.length; startBtn.textContent = "Loading the room… " + Math.min(99, Math.round(loadGot / LOAD_TOTAL * 100)) + '%'; return pump(); });
   return pump(); })
 .then(b64 => { const bin = atob(b64.replace(/\s+/g, '')); const buf = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i); return new Promise((res, rej) => loader.parse(buf.buffer, '', res, rej)); });
-Promise.all([loadGlb('dog_rigged.glb.b64.txt'), loadGlb('dog_head.glb.b64.txt')])
+Promise.all([loadGlb('assets/dog_rigged.glb.b64.txt'), loadGlb('assets/dog_head.glb.b64.txt')])
 .then(([gltf, headGltf]) => {
   baseScene = gltf.scene;
   gltf.animations.forEach(a => clips[a.name] = a);
@@ -1873,7 +1418,7 @@ const Synth = (() => {
 })();
 /* the song: plays the track on loop; falls back to the generated jazz if it can't load */
 const Music = (() => {
-  const song = new Audio('autumn-leaves.mp3'); song.loop = true; song.preload = 'auto'; song.volume = 0;
+  const song = new Audio('assets/autumn-leaves.mp3'); song.loop = true; song.preload = 'auto'; song.volume = 0;
   let on = false, broken = false, fade = null;
   song.addEventListener('error', () => { broken = true; if (on) Synth.set(true); });
   const ramp = to => { clearInterval(fade); fade = setInterval(() => { const v = song.volume + Math.sign(to - song.volume) * .03; song.volume = Math.min(1, Math.max(0, Math.abs(to - v) < .03 ? to : v)); if (song.volume === to){ clearInterval(fade); if (!to) song.pause(); } }, 40); };
@@ -2144,17 +1689,17 @@ function runAnim(dt){
 
 /* ---------------- soccer corner: the photo album and the highlights TV ---------------- */
 const SOCCER_PHOTOS = [
-  { src:'soccer/dribble.jpg', cap:'On the ball for Bellevue Athletic FC' },
-  { src:'soccer/card.jpg', cap:'Thumbs up for the ref. He went to the pocket anyway.' },
-  { src:'soccer/trophy.jpg', cap:'Trophy night. Bellevue 3, Guest 0.' },
-  { src:'soccer/away.jpg', cap:'Number 12, away whites' },
-  { src:'soccer/ecnl.jpg', cap:'ECNL: racing down the line' },
-  { src:'soccer/tackle.jpg', cap:'Going to ground for it' },
-  { src:'soccer/fifa.jpg', cap:'FIFA 20: #1,033 in the world, January (41 wins)' }
+  { src:'assets/soccer/dribble.jpg', cap:'On the ball for Bellevue Athletic FC' },
+  { src:'assets/soccer/card.jpg', cap:'Thumbs up for the ref. He went to the pocket anyway.' },
+  { src:'assets/soccer/trophy.jpg', cap:'Trophy night. Bellevue 3, Guest 0.' },
+  { src:'assets/soccer/away.jpg', cap:'Number 12, away whites' },
+  { src:'assets/soccer/ecnl.jpg', cap:'ECNL: racing down the line' },
+  { src:'assets/soccer/tackle.jpg', cap:'Going to ground for it' },
+  { src:'assets/soccer/fifa.jpg', cap:'FIFA 20: #1,033 in the world, January (41 wins)' }
 ];
 const VIDEOS = [
-  { id:'PNwCJ091ctc', name:'High school', title:'HIGH SCHOOL', crest:'soccer/highschool.png', fit:.68 },
-  { id:'uBo_WEquynA', name:'Bellevue Athletic', title:'BELLEVUE ATHLETIC FC', crest:'soccer/crest.jpg', fit:1 }
+  { id:'PNwCJ091ctc', name:'High school', title:'HIGH SCHOOL', crest:'assets/soccer/highschool.png', fit:.68 },
+  { id:'uBo_WEquynA', name:'Bellevue Athletic', title:'BELLEVUE ATHLETIC FC', crest:'assets/soccer/crest.jpg', fit:1 }
 ];
 /* the album: two planes over the frame's picture crossfade from photo to photo */
 const albumTex = SOCCER_PHOTOS.map(() => null);
@@ -2555,7 +2100,7 @@ function shelveBooks(){
 }
 shelveBooks();
 /* essays from essays/index.json join the shelf when present: [{ "file":"my-essay.md", "title":"…", "sub":"2026" }] */
-fetch('essays/index.json').then(r => r.ok ? r.json() : []).then(list => Promise.all((list || []).map(e => fetch('essays/' + e.file).then(r => r.ok ? r.text() : '').then(body => ({ title:e.title, sub:e.sub || '', color:e.color || ['#4a2a12', '#26324a', '#3a2a40', '#2a4030'][BOOKS.length % 4], body })))))
+fetch('assets/essays/index.json').then(r => r.ok ? r.json() : []).then(list => Promise.all((list || []).map(e => fetch('assets/essays/' + e.file).then(r => r.ok ? r.text() : '').then(body => ({ title:e.title, sub:e.sub || '', color:e.color || ['#4a2a12', '#26324a', '#3a2a40', '#2a4030'][BOOKS.length % 4], body })))))
   .then(found => { const real = found.filter(b => b.body); if (!real.length) return; const k = BOOKS.findIndex(b => b.title === 'Essays'); if (k >= 0) BOOKS.splice(k, 1); BOOKS.push(...real); shelveBooks(); }).catch(() => {});
 
 /* reading: a two-page spread, flowed into columns and turned a spread at a time */
@@ -2640,7 +2185,7 @@ function maiaLoad(){
   maiaP = (async () => {
     if (!window.ort) await new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = MAIA.ort + 'ort.min.js'; sc.onload = ok; sc.onerror = no; document.head.append(sc); });
     ort.env.wasm.wasmPaths = MAIA.ort; ort.env.wasm.numThreads = 1;
-    const [sess, moves] = await Promise.all([ort.InferenceSession.create('chess/bot.onnx', { executionProviders:['wasm'] }), fetch('chess/moves.json').then(r => r.json())]);
+    const [sess, moves] = await Promise.all([ort.InferenceSession.create('assets/chess/bot.onnx', { executionProviders:['wasm'] }), fetch('assets/chess/moves.json').then(r => r.json())]);
     return { sess, idx:new Map(moves.map((m, i) => [m, i])) };
   })();
   maiaP.catch(() => {});
@@ -2670,170 +2215,6 @@ function maiaMove(M, s){
   });
 }
 const CHESS_COM = 'https://www.chess.com/member/EyalShechtman12';
-const Chess = (() => {
-  const P = 1, N = 2, B = 3, R = 4, Q = 5, K = 6, DBL = 1, EP = 2, CASTLE = 3;
-  const VAL = [0, 100, 320, 330, 500, 900, 0];
-  const KN = [[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]], DI = [[1,1],[1,-1],[-1,1],[-1,-1]], OR = [[1,0],[-1,0],[0,1],[0,-1]], KG = DI.concat(OR);
-  /* piece-square tables, drawn from White's side with rank 8 at the top */
-  const T = s => s.trim().split(/[\s,]+/).map(Number);
-  const PST = [null,
-    T(`0 0 0 0 0 0 0 0 50 50 50 50 50 50 50 50 10 10 20 30 30 20 10 10 5 5 10 25 25 10 5 5 0 0 0 20 20 0 0 0 5 -5 -10 0 0 -10 -5 5 5 10 10 -20 -20 10 10 5 0 0 0 0 0 0 0 0`),
-    T(`-50 -40 -30 -30 -30 -30 -40 -50 -40 -20 0 0 0 0 -20 -40 -30 0 10 15 15 10 0 -30 -30 5 15 20 20 15 5 -30 -30 0 15 20 20 15 0 -30 -30 5 10 15 15 10 5 -30 -40 -20 0 5 5 0 -20 -40 -50 -40 -30 -30 -30 -30 -40 -50`),
-    T(`-20 -10 -10 -10 -10 -10 -10 -20 -10 0 0 0 0 0 0 -10 -10 0 5 10 10 5 0 -10 -10 5 5 10 10 5 5 -10 -10 0 10 10 10 10 0 -10 -10 10 10 10 10 10 10 -10 -10 5 0 0 0 0 5 -10 -20 -10 -10 -10 -10 -10 -10 -20`),
-    T(`0 0 0 0 0 0 0 0 5 10 10 10 10 10 10 5 -5 0 0 0 0 0 0 -5 -5 0 0 0 0 0 0 -5 -5 0 0 0 0 0 0 -5 -5 0 0 0 0 0 0 -5 -5 0 0 0 0 0 0 -5 0 0 0 5 5 0 0 0`),
-    T(`-20 -10 -10 -5 -5 -10 -10 -20 -10 0 0 0 0 0 0 -10 -10 0 5 5 5 5 0 -10 -5 0 5 5 5 5 0 -5 0 0 5 5 5 5 0 -5 -10 5 5 5 5 5 0 -10 -10 0 5 0 0 0 0 -10 -20 -10 -10 -5 -5 -10 -10 -20`),
-    T(`-30 -40 -40 -50 -50 -40 -40 -30 -30 -40 -40 -50 -50 -40 -40 -30 -30 -40 -40 -50 -50 -40 -40 -30 -30 -40 -40 -50 -50 -40 -40 -30 -20 -30 -30 -40 -40 -30 -30 -20 -10 -20 -20 -20 -20 -20 -20 -10 20 20 0 0 0 0 20 20 20 30 10 0 0 10 30 20`)];
-  const KEND = T(`-50 -40 -30 -20 -20 -30 -40 -50 -30 -20 -10 0 0 -10 -20 -30 -30 -10 20 30 30 20 -10 -30 -30 -10 30 40 40 30 -10 -30 -30 -10 30 40 40 30 -10 -30 -30 -10 20 30 30 20 -10 -30 -30 -30 0 0 0 0 -30 -30 -50 -30 -30 -30 -30 -30 -30 -50`);
-  const on = (r, f) => r >= 0 && r < 8 && f >= 0 && f < 8;
-  function start(){
-    const b = new Int8Array(64), back = [R, N, B, Q, K, B, N, R];
-    for (let f = 0; f < 8; f++){ b[f] = back[f]; b[8 + f] = P; b[48 + f] = P | 8; b[56 + f] = back[f] | 8; }
-    return { b, side:0, castle:15, ep:-1, half:0, full:1 };
-  }
-  function attacked(b, sq, by){
-    const r = sq >> 3, f = sq & 7, pr = by ? r + 1 : r - 1;
-    if (pr >= 0 && pr < 8) for (const df of [-1, 1]) if (on(pr, f + df) && b[pr * 8 + f + df] === (P | by)) return true;
-    for (const [dr, df] of KN) if (on(r + dr, f + df) && b[(r + dr) * 8 + f + df] === (N | by)) return true;
-    for (const [dr, df] of KG) if (on(r + dr, f + df) && b[(r + dr) * 8 + f + df] === (K | by)) return true;
-    for (const [dirs, a, c] of [[DI, B, Q], [OR, R, Q]]) for (const [dr, df] of dirs){
-      let rr = r + dr, ff = f + df;
-      while (on(rr, ff)){ const pc = b[rr * 8 + ff]; if (pc){ if (pc === (a | by) || pc === (c | by)) return true; break; } rr += dr; ff += df; }
-    }
-    return false;
-  }
-  const kingSq = (b, side) => b.indexOf(K | side);
-  const inCheck = s => attacked(s.b, kingSq(s.b, s.side), s.side ^ 8);
-  function pseudo(s, capsOnly){
-    const b = s.b, me = s.side, them = me ^ 8, out = [];
-    const add = (from, to, flag = 0, promo = 0) => out.push({ from, to, flag, promo, cap:flag === EP ? (P | them) : b[to] });
-    for (let sq = 0; sq < 64; sq++){
-      const pc = b[sq]; if (!pc || (pc & 8) !== me) continue;
-      const t = pc & 7, r = sq >> 3, f = sq & 7;
-      if (t === P){
-        const dir = me ? -1 : 1, r1 = r + dir, last = me ? 0 : 7;
-        if (r1 < 0 || r1 > 7) continue;
-        const to = r1 * 8 + f;
-        if (!b[to]){
-          if (r1 === last) add(sq, to, 0, Q);
-          else if (!capsOnly){ add(sq, to); const to2 = (r + 2 * dir) * 8 + f; if (r === (me ? 6 : 1) && !b[to2]) add(sq, to2, DBL); }
-        }
-        for (const df of [-1, 1]){
-          if (!on(r1, f + df)) continue; const t2 = r1 * 8 + f + df;
-          if (b[t2] && (b[t2] & 8) === them) add(sq, t2, 0, r1 === last ? Q : 0);
-          else if (t2 === s.ep) add(sq, t2, EP);
-        }
-      } else if (t === N || t === K){
-        for (const [dr, df] of t === N ? KN : KG){
-          if (!on(r + dr, f + df)) continue; const to = (r + dr) * 8 + f + df, c = b[to];
-          if (!c){ if (!capsOnly) add(sq, to); } else if ((c & 8) === them) add(sq, to);
-        }
-        if (t === K && !capsOnly){
-          const base = me ? 56 : 0, ks = me ? 4 : 1, qs = me ? 8 : 2;
-          if (sq === base + 4 && !attacked(b, sq, them)){
-            if (s.castle & ks && !b[base + 5] && !b[base + 6] && b[base + 7] === (R | me) && !attacked(b, base + 5, them) && !attacked(b, base + 6, them)) add(sq, base + 6, CASTLE);
-            if (s.castle & qs && !b[base + 3] && !b[base + 2] && !b[base + 1] && b[base] === (R | me) && !attacked(b, base + 3, them) && !attacked(b, base + 2, them)) add(sq, base + 2, CASTLE);
-          }
-        }
-      } else {
-        for (const [dr, df] of t === B ? DI : t === R ? OR : KG){
-          let rr = r + dr, ff = f + df;
-          while (on(rr, ff)){
-            const to = rr * 8 + ff, c = b[to];
-            if (!c){ if (!capsOnly) add(sq, to); } else { if ((c & 8) === them) add(sq, to); break; }
-            rr += dr; ff += df;
-          }
-        }
-      }
-    }
-    return out;
-  }
-  function make(s, m){
-    const b = s.b.slice(), pc = b[m.from], t = pc & 7, me = s.side;
-    b[m.to] = m.promo ? (m.promo | me) : pc; b[m.from] = 0;
-    if (m.flag === EP) b[m.to + (me ? 8 : -8)] = 0;
-    if (m.flag === CASTLE){ if (m.to > m.from){ b[m.from + 1] = b[m.from + 3]; b[m.from + 3] = 0; } else { b[m.from - 1] = b[m.from - 4]; b[m.from - 4] = 0; } }
-    let c = s.castle; if (t === K) c &= me ? ~12 : ~3;
-    for (const sq of [m.from, m.to]){ if (sq === 0) c &= ~2; if (sq === 7) c &= ~1; if (sq === 56) c &= ~8; if (sq === 63) c &= ~4; }
-    return { b, side:me ^ 8, castle:c, ep:m.flag === DBL ? (m.from + m.to) >> 1 : -1, half:(t === P || m.cap) ? 0 : s.half + 1, full:s.full + (me ? 1 : 0) };
-  }
-  const legalAfter = (s, m) => { const n = make(s, m); return attacked(n.b, kingSq(n.b, s.side), n.side) ? null : n; };
-  const legal = s => pseudo(s).filter(m => legalAfter(s, m));
-  function evaluate(s){
-    const b = s.b; let np = 0, sc = 0;
-    for (let i = 0; i < 64; i++){ const t = b[i] & 7; if (t && t !== P && t !== K) np += VAL[t]; }
-    const end = np <= 2600;
-    for (let i = 0; i < 64; i++){
-      const pc = b[i]; if (!pc) continue; const t = pc & 7, white = !(pc & 8);
-      const idx = white ? (7 - (i >> 3)) * 8 + (i & 7) : i;
-      const v = VAL[t] + (t === K && end ? KEND[idx] : PST[t][idx]);
-      sc += white ? v : -v;
-    }
-    return s.side ? -sc : sc;
-  }
-  const order = ms => ms.sort((a, b) => ((b.cap ? VAL[b.cap & 7] * 10 : 0) + (b.promo ? 800 : 0)) - ((a.cap ? VAL[a.cap & 7] * 10 : 0) + (a.promo ? 800 : 0)));
-  let nodes = 0;
-  function qs(s, a, b, d){
-    nodes++; const stand = evaluate(s); if (stand >= b) return b; if (stand > a) a = stand; if (d <= 0) return a;
-    for (const m of order(pseudo(s, true))){ const n = legalAfter(s, m); if (!n) continue; const v = -qs(n, -b, -a, d - 1); if (v >= b) return b; if (v > a) a = v; }
-    return a;
-  }
-  function nm(s, depth, a, b, ply){
-    if (s.half >= 100) return 0;
-    if (depth <= 0) return qs(s, a, b, 4);
-    nodes++; let any = false;
-    for (const m of order(pseudo(s))){
-      const n = legalAfter(s, m); if (!n) continue; any = true;
-      const v = -nm(n, depth - 1, -b, -a, ply + 1); if (v >= b) return b; if (v > a) a = v;
-    }
-    if (!any) return inCheck(s) ? -100000 + ply : 0;
-    return a;
-  }
-  function best(s, depth = 3){
-    nodes = 0; let bestM = null, bestV = -Infinity;
-    const ms = order(legal(s));
-    for (const m of ms){
-      const v = -nm(make(s, m), depth - 1, -Infinity, -bestV + 12, 1) + Math.random() * 12;
-      if (v > bestV){ bestV = v; bestM = m; }
-    }
-    return bestM;
-  }
-  const sqName = sq => 'abcdefgh'[sq & 7] + ((sq >> 3) + 1);
-  const uci = m => sqName(m.from) + sqName(m.to) + (m.promo ? 'q' : '');
-  function san(s, m){
-    const t = s.b[m.from] & 7, n = make(s, m);
-    let out;
-    if (m.flag === CASTLE) out = m.to > m.from ? 'O-O' : 'O-O-O';
-    else {
-      const cap = m.cap ? 'x' : '';
-      if (t === P) out = (cap ? 'abcdefgh'[m.from & 7] : '') + cap + sqName(m.to) + (m.promo ? '=Q' : '');
-      else {
-        const twins = legal(s).filter(o => o.to === m.to && o.from !== m.from && (s.b[o.from] & 7) === t);
-        let dis = ''; if (twins.length) dis = twins.some(o => (o.from & 7) === (m.from & 7)) ? String((m.from >> 3) + 1) : 'abcdefgh'[m.from & 7];
-        out = ' PNBRQK'[t] + dis + cap + sqName(m.to);
-      }
-    }
-    if (inCheck(n)) out += legal(n).length ? '+' : '#';
-    return out;
-  }
-  function fen(s){
-    let o = '';
-    for (let r = 7; r >= 0; r--){
-      let run = 0;
-      for (let f = 0; f < 8; f++){ const pc = s.b[r * 8 + f]; if (!pc){ run++; continue; } if (run){ o += run; run = 0; } const ch = ' pnbrqk'[pc & 7]; o += pc & 8 ? ch : ch.toUpperCase(); }
-      if (run) o += run; if (r) o += '/';
-    }
-    const c = (s.castle & 1 ? 'K' : '') + (s.castle & 2 ? 'Q' : '') + (s.castle & 4 ? 'k' : '') + (s.castle & 8 ? 'q' : '');
-    return `${o} ${s.side ? 'b' : 'w'} ${c || '-'} ${s.ep >= 0 ? sqName(s.ep) : '-'} ${s.half} ${s.full}`;
-  }
-  function status(s){
-    if (!legal(s).length) return inCheck(s) ? 'mate' : 'stalemate';
-    if (s.half >= 100) return 'fifty';
-    const rest = [...s.b].filter(pc => pc && (pc & 7) !== K);
-    if (!rest.length || (rest.length === 1 && [N, B].includes(rest[0] & 7))) return 'material';
-    return null;
-  }
-  return { start, legal, make, best, san, uci, fen, sqName, status, inCheck, VAL, P, N, B, R, Q, K, EP, CASTLE, get nodes(){ return nodes; } };
-})();
 
 const CH = { cx:-2.7, cz:-3.15, top:.4, S:.058 };
 CH.surf = CH.top + .016;
@@ -3546,4 +2927,3 @@ addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight; if (camera.view && camera.view.enabled) camera.setViewOffset(innerWidth, innerHeight, viewShift, 0, innerWidth, innerHeight); camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight); if (composer) composer.setSize(innerWidth, innerHeight);
 });
-</script>

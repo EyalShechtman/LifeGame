@@ -1,0 +1,144 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0a0507">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Eyal's Card Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Nunito:wght@400;700;800&display=swap">
+<link rel="stylesheet" href="src/styles.css">
+
+<div id="stage"></div>
+<div id="vignette" class="hud"></div>
+<div id="help" class="hud">Find out who Eyal is. Take the empty chair at the table, get a drink at the bar, pull a book from the library, play the piano or the guitar, or sit down for a game of chess.</div>
+<div id="coach" class="hud" hidden role="status" aria-live="polite"><div class="cTop"><small id="coachStep"></small><button type="button" id="coachSkip">Skip guide</button></div><b id="coachTitle"></b><span id="coachText"></span><div class="cBar"><i id="coachFill"></i></div></div>
+<div id="coachArrow" class="hud" hidden aria-hidden="true">➜</div>
+<div id="chips" class="hud"><b id="chipNum">00/12</b><span>CHIPS FOUND</span><i id="viewLbl">VIEW · CHASE CAM</i></div>
+<button type="button" id="musicBtn" aria-pressed="false">♪ MUSIC OFF</button>
+<div id="tvWrap" hidden><iframe id="tvFrame" title="Soccer highlights video" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a id="tvOpen" href="https://youtu.be/uBo_WEquynA" target="_blank" rel="noopener">Open on YouTube ↗</a></div>
+<div id="soccerUI" class="hud" hidden role="region" aria-label="Soccer album">
+  <div class="row"><button type="button" class="arrow" id="sPrev" aria-label="Previous photo">‹</button><div class="cap" aria-live="polite"><small id="sCount">1 / 7</small><span id="sCap"></span></div><button type="button" class="arrow" id="sNext" aria-label="Next photo">›</button></div>
+  <div class="row acts"><button type="button" class="btn" id="sWatch0">▶ High school highlights</button><button type="button" class="btn" id="sWatch1">▶ Bellevue Athletic highlights</button><button type="button" class="btn ghost" id="sStory">Read the story</button><button type="button" class="btn ghost" id="sBack">Back · Esc</button></div>
+</div>
+<div id="stUI" class="hud" hidden role="dialog" aria-label="Conversation"><div class="who"><span id="stWho"></span><span id="stSub"></span></div><p id="stText" aria-live="polite"></p><div class="acts" id="stActs"></div></div>
+<div id="jam" hidden role="region" aria-label="Music corner controls"><span id="jamWho">THE MUSIC CORNER</span><span id="jamHint"></span><span class="pBtns"><button type="button" class="pnOnly" id="pnDown" aria-label="Octave down">‹ <span class="kOnly">Z</span></button><em class="pnOnly" id="pnOct">C3–F4</em><button type="button" class="pnOnly" id="pnUp" aria-label="Octave up"><span class="kOnly">X</span> ›</button><button type="button" id="jamExit">Stand up<span class="kOnly"> · Esc</span></button></span></div>
+<div id="reader" hidden role="dialog" aria-label="Book"><div class="book"><div class="pages" id="rdPages"><div id="rdFlow"></div></div><div class="rdNav"><button type="button" id="rdPrev" aria-label="Previous page">‹</button><span id="rdNum"></span><button type="button" id="rdNext" aria-label="Next page">›</button><button type="button" id="rdClose" class="btn">Put it back · Esc</button></div></div></div>
+<canvas id="map" class="hud" width="170" height="170" aria-hidden="true"></canvas>
+<div id="keys" class="hud"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move</span><span>Mouse look</span><span><kbd>Shift</kbd> run</span><span><kbd>E</kbd> interact</span><span><kbd>V</kbd> dog's eyes</span><span><kbd>M</kbd> music</span><span><kbd>H</kbd> help</span></div>
+<div id="prompt" class="hud" hidden></div>
+
+<div id="dlg" class="hud" hidden role="dialog" aria-label="Conversation at the table">
+  <div class="who"><span id="dlgName">ARKERO</span><span id="dlgCount">PLAYER 1 OF 7</span></div>
+  <p id="dlgText"></p>
+  <div id="more" hidden></div>
+  <div class="acts" id="acts">
+    <button class="act fold" type="button" data-a="fold"><span class="chip">FOLD</span>Skip</button>
+    <button class="act call" type="button" data-a="call"><span class="chip">CALL</span>Tell me more</button>
+    <button class="act raise" type="button" data-a="raise"><span class="chip">RAISE</span>Show me everything</button>
+    <button class="act allin" type="button" data-a="allin"><span class="chip">ALL IN</span>Let's talk</button>
+  </div>
+  <div class="acts" id="nextRow" hidden><button class="btn" id="nextBtn" type="button">Next player</button><button class="btn ghost" id="standBtn" type="button">Stand up</button></div>
+</div>
+
+<div id="modal" hidden><div id="card" role="dialog" aria-modal="true" aria-labelledby="cardTitle">
+  <div class="idx" id="cardIdx"><span>A</span><span>♦</span></div>
+  <p class="kick" id="cardKick"></p><h2 id="cardTitle"></h2><p id="cardBody"></p><div class="grid" id="cardGrid"></div>
+  <div class="foot"><button class="btn" id="cardClose" type="button">Back to the room</button></div>
+</div></div>
+
+<nav id="contactBar" aria-label="Contact Eyal">
+  <button type="button" id="cbWho" aria-label="Open the recruiter view"><b>EYAL SHECHTMAN</b><small>FOUNDING ENGINEER · SEATTLE</small></button>
+  <a class="cbBtn mail" href="mailto:eyal.shechtman@gmail.com" aria-label="Email eyal.shechtman@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span class="lbl">eyal.shechtman@gmail.com</span></a>
+  <button type="button" class="cbBtn" id="cbCopy" aria-label="Copy email address" title="Copy email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
+  <a class="cbBtn" href="https://www.linkedin.com/in/eyal-shechtman" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.48 2.48 0 1 1-4.96 0 2.48 2.48 0 0 1 4.96 0zM.24 8.25h4.5V23H.24V8.25zm7.32 0h4.31v2.02h.06c.6-1.14 2.07-2.34 4.26-2.34 4.56 0 5.4 3 5.4 6.9V23h-4.5v-7.2c0-1.72-.03-3.93-2.4-3.93-2.4 0-2.76 1.87-2.76 3.8V23h-4.5V8.25z"/></svg></a>
+  <a class="cbBtn" href="https://x.com/EyalShechtman" target="_blank" rel="noopener" aria-label="X (Twitter)" title="X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg></a>
+  <a class="cbBtn" href="https://github.com/EyalShechtman" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 8.36 22.9c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a>
+  <button type="button" class="cbBtn" id="cbHelp" aria-label="How to play" title="How to play">?</button>
+  <button type="button" class="cbBtn" id="cbRec">Recruiter view</button>
+</nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="quick" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="qTitle"><div class="paper">
+  <button type="button" class="x" data-close aria-label="Close">×</button>
+  <p class="kick">The one-page version</p>
+  <h2 id="qTitle">Eyal Shechtman</h2>
+  <p class="lede">Founding engineer and FDE at Arkero, building AI agents and a sponsorship CRM for professional football clubs. B.S. in Informatics and Economics at the University of Washington, graduating December 2026.</p>
+  <div class="row">
+    <a class="pbtn solid" href="mailto:eyal.shechtman@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>eyal.shechtman@gmail.com</a>
+    <button type="button" class="pbtn" data-copy><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy email</button>
+    <a class="pbtn" href="https://www.linkedin.com/in/eyal-shechtman" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.48 2.48 0 1 1-4.96 0 2.48 2.48 0 0 1 4.96 0zM.24 8.25h4.5V23H.24V8.25zm7.32 0h4.31v2.02h.06c.6-1.14 2.07-2.34 4.26-2.34 4.56 0 5.4 3 5.4 6.9V23h-4.5v-7.2c0-1.72-.03-3.93-2.4-3.93-2.4 0-2.76 1.87-2.76 3.8V23h-4.5V8.25z"/></svg>LinkedIn</a>
+    <a class="pbtn" href="https://x.com/EyalShechtman" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg>X</a>
+    <a class="pbtn" href="https://github.com/EyalShechtman" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 8.36 22.9c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>GitHub</a>
+  </div>
+  <h3>Track record</h3>
+  <div class="wins">
+    <div><b>1st of ~350</b><span>Google DeepMind × YC hackathon · BeamBell</span></div>
+    <div><b>4th of ~800</b><span>OpenAI GPT-5 hackathon · Dress2Impress</span></div>
+    <div><b>7th of 300+</b><span>Meta hackathon · OpenStylist, 150k Reddit views</span></div>
+    <div><b>Engineer #2</b><span>Arkero · $6M seed · 5 live clubs and 2 MLS pilots in 3 months</span></div>
+  </div>
+  <h3>Experience</h3>
+  <ul class="plist xp">
+    <li><b>Arkero</b><span>Founding Engineer / FDE. Co-led an AI-native sponsorship CRM from discovery to 5 live clubs and 2 MLS pilots. Agent infrastructure at 400+ runs per customer a day (RAG, a custom MCP server), human-in-the-loop agents with 889 approvals at 94% acceptance, and on-site demos and deployments across Europe.</span><em>Feb 2026 – now</em></li>
+    <li><b>Chewy</b><span>Software Engineer I. An agentic Airflow framework with 11 automated workflows (3rd of 200 in an internal hackathon), 30% faster order batch imports, and an AWS SNS/SQS pipeline in Terraform.</span><em>Jun 2025 – Feb 2026</em></li>
+    <li><b>UW iSchool</b><span>Undergraduate researcher. A Chrome extension that adds context to news headlines, with 20+ interviews and a 35+ person study; submitted to CHI 2025.</span><em>Dec 2023 – Jun 2024</em></li>
+    <li><b>TAMID at UW</b><span>Founder and president. Grew it to 80+ members supporting 6+ startups, and hosted UW's first Startupathon, with 200+ participants.</span><em>Oct 2024 – now</em></li>
+  </ul>
+  <h3>Education</h3>
+  <p><b>University of Washington, Seattle</b>: B.S. Informatics and Economics, expected December 2026. Dean's List: Winter 2023, Spring 2023, Fall 2024.</p>
+  <h3>Things I've built</h3>
+  <ul class="plist" id="qProjects"></ul>
+  <h3>Tools I ship with</h3>
+  <div class="stack"><span>TypeScript</span><span>Python</span><span>SQL</span><span>React · Next.js</span><span>FastAPI</span><span>Postgres · Supabase</span><span>LLM agents · RAG · MCP</span><span>Trigger.dev · Airflow</span><span>AWS · Terraform · Docker</span><span>Cloudflare Workers</span><span>Rust · Swift</span><span>Three.js</span></div>
+  <div class="foot"><a class="pbtn solid" href="mailto:eyal.shechtman@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email me</a><button type="button" class="pbtn gold" data-close>Back to the game</button></div>
+</div></div>
+<div id="tour" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="tourTitle"><div class="paper">
+  <button type="button" class="x" data-close aria-label="Skip the tour">×</button>
+  <div data-step="0">
+    <p class="kick">Welcome to the card room</p>
+    <h2 id="tourTitle">A portfolio you can walk around</h2>
+    <p class="lede">I'm Eyal, a founding engineer at Arkero and a student at the University of Washington. Everything I've built is in this room, and you play as my dog.</p>
+    <p>Wander the room, take a seat, and the people and things in it will tell you about my work. It's all hand-built in the browser with Three.js.</p>
+    <div class="foot"><button type="button" class="pbtn" data-rec>I'm hiring: just the highlights</button><button type="button" class="pbtn solid" data-next>Show me around →</button></div>
+  </div>
+  <div data-step="1" hidden>
+    <p class="kick">What's in the room</p>
+    <h2>Six places to stop</h2>
+    <div class="feat">
+      <div><b><i>♠</i>The poker table</b><span>Take the empty chair. Every player is a project I built and deals you its story. Fold, call, raise, or go all in.</span></div>
+      <div><b><i>♥</i>Chess with EyalBot</b><span>A neural net trained on 6,606 of my real chess.com games. It runs in your browser and plays like me, blunders included.</span></div>
+      <div><b><i>♦</i>The library</b><span>Pull a book off the shelf to read my essays, page by page.</span></div>
+      <div><b><i>♣</i>The soccer wall</b><span>Photos and highlight videos from club soccer in the ECNL and my high school team.</span></div>
+      <div><b><i>♠</i>The bar</b><span>Order my pint. The bartender knows what I'd have.</span></div>
+      <div><b><i>♦</i>The Music Corner</b><span>Sit at the grand piano and play the keys, or pick up the guitar and strum some chords.</span></div>
+      <div><b><i>♥</i>16 chips</b><span>Each place you discover earns a chip. See if you can find them all.</span></div>
+    </div>
+    <div class="foot"><div class="dots"><i></i><i class="on"></i><i></i></div><button type="button" class="pbtn solid" data-next>Next →</button></div>
+  </div>
+  <div data-step="2" hidden>
+    <p class="kick">How to play</p>
+    <h2>Deal yourself in</h2>
+    <div class="ctrls kOnly"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><span>Walk (hold <kbd>Shift</kbd> to run)</span><span>Mouse</span><span>Look around (click to lock it)</span><span><kbd>E</kbd></span><span>Sit down, talk, interact. Or just click things.</span><span><kbd>V</kbd> <kbd>M</kbd> <kbd>Esc</kbd></span><span>Dog's-eye view · music · get up</span></div>
+    <div class="ctrls tOnly"><span>Left thumb</span><span>Walk. Push to the edge to run.</span><span>Right thumb</span><span>Drag to look. Tap anything to use it.</span><span>E button</span><span>Sit down or interact with what's nearby</span></div>
+    <p style="margin-top:14px">My email, LinkedIn and X stay pinned to the top of the screen the whole time, and <b>Recruiter view</b> has everything on one page.</p>
+    <div class="foot"><div class="dots"><i></i><i></i><i class="on"></i></div><button type="button" class="pbtn gold" data-close>Deal me in</button></div>
+  </div>
+</div></div>
+<div id="rotate" role="alert"><div class="ph"></div><b>TURN YOUR PHONE SIDEWAYS</b><span>The card room is built for landscape. Rotate your device to deal in.</span></div>
+<div id="touch"><div id="stick"><div id="knob"></div></div></div>
+<div id="tbtns" hidden><button type="button" id="tV" aria-label="Dog's eye view">V</button><button type="button" id="tE" class="e" aria-label="Interact">E</button></div>
+
+<div id="title">
+  <img src="assets/dog.webp" alt="The dog: fedora, suspenders, cigarette">
+  <div class="copy">
+    <span class="eyebrow">EYAL'S</span>
+    <h1>CARD<br>ROOM</h1>
+    <p class="tag">A life, one hand at a time. You play as the dog.</p>
+    <button class="btn" id="startBtn" type="button" disabled>Loading the room…</button>
+    <div class="ctl kOnly"><span><kbd>WASD</kbd> move</span><span>mouse to look</span><span><kbd>E</kbd> interact</span><span><kbd>V</kbd> dog's eyes</span></div>
+    <div class="ctl tOnly"><span>Left thumb: walk (push far to run)</span><span>Right thumb: look</span><span>Tap things, or <kbd>E</kbd>, to interact</span></div>
+  </div>
+</div>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module" src="src/main.js"></script>
