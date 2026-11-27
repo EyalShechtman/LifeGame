@@ -35,23 +35,17 @@ kbd{display:inline-block;min-width:20px;padding:1px 7px;border-radius:5px;backgr
 #soccerUI .acts{justify-content:center;flex-wrap:wrap}
 #soccerUI .btn.ghost{background:transparent;color:var(--ink);border:2px solid rgba(255,255,255,.35)}
 body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt,body.station #keys,body.station #map,body.station #help,body.station #prompt{display:none!important}
-#piano{position:fixed;z-index:6;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(940px,calc(100vw - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)));box-sizing:border-box;padding:10px 12px 12px;background:var(--panel);border:2px solid rgba(226,181,82,.6);border-radius:10px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none}
-#piano .pTop{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-#piano .who{font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--gold);white-space:nowrap}
-#pnHint{flex:1;min-width:0;font-size:13px;font-weight:700;color:var(--muted);line-height:1.3}#pnHint kbd{font-size:11px;min-width:14px;padding:0 5px}
-#piano .pBtns{display:flex;align-items:center;gap:6px;white-space:nowrap}
-#piano .pBtns button{padding:5px 11px;border-radius:999px;border:2px solid var(--gold);background:transparent;color:var(--gold);font:800 12px var(--body);cursor:pointer}
-#piano .pBtns #pnExit{border-color:rgba(255,255,255,.35);color:var(--ink)}
-#pnOct{font:800 12px var(--body);font-style:normal;color:var(--ink);min-width:58px;text-align:center}
-#pnKeys{position:relative;display:flex;height:clamp(120px,22vh,190px);touch-action:none}
-#pnKeys b{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;cursor:pointer;font-weight:800}
-#pnKeys .w{flex:1;margin:0 1px;padding-bottom:9px;border-radius:0 0 6px 6px;background:linear-gradient(#fffdf6,#ebe2cf);box-shadow:inset 0 -7px 0 #d3c6aa,0 2px 0 #000;color:#5a4630}
-#pnKeys .b{position:absolute;top:0;z-index:2;width:4%;height:60%;margin-left:-2%;padding-bottom:6px;border-radius:0 0 4px 4px;background:linear-gradient(#34333a,#0b0b0d);box-shadow:inset 0 -5px 0 #000,0 3px 4px rgba(0,0,0,.55);color:#d8cfbd}
-#pnKeys .w.on{background:linear-gradient(#ffe7a0,#e2b552);box-shadow:inset 0 -3px 0 #b8892e,0 1px 0 #000}
-#pnKeys .b.on{background:linear-gradient(#e2b552,#9c7426);box-shadow:inset 0 -2px 0 #6b4d14}
-#pnKeys i{font-style:normal;font-size:13px;line-height:1}#pnKeys .b i{font-size:11px}
-#pnKeys small{font-size:10px;letter-spacing:.06em;opacity:.6}
-body.piano #chips i,body.piano #coach,body.piano #coachArrow{display:none!important}
+#jam{position:fixed;z-index:6;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;align-items:center;gap:12px;width:max-content;max-width:calc(100vw - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));box-sizing:border-box;padding:7px 8px 7px 16px;background:var(--panel);border:2px solid rgba(226,181,82,.6);border-radius:999px;user-select:none;-webkit-user-select:none}
+#jam[hidden]{display:none}
+#jamWho{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--gold);white-space:nowrap}
+#jamHint{flex:0 1 auto;min-width:0;font-size:13px;font-weight:700;color:var(--muted);line-height:1.3}#jamHint kbd{font-size:11px;min-width:14px;padding:0 5px}
+#jam .pBtns{display:flex;align-items:center;gap:6px;white-space:nowrap}
+#jam .pBtns button{padding:5px 11px;border-radius:999px;border:2px solid var(--gold);background:transparent;color:var(--gold);font:800 12px var(--body);cursor:pointer}
+#jam .pBtns #jamExit{border-color:rgba(255,255,255,.35);color:var(--ink)}
+#jam.guitar .pnOnly{display:none}
+#pnOct{font:800 12px var(--body);font-style:normal;color:var(--ink);min-width:52px;text-align:center}
+body.jam #chips i,body.jam #coach,body.jam #coachArrow{display:none!important}
+body.jam canvas{touch-action:none}
 #tvWrap{position:fixed;z-index:4;background:#000;box-shadow:0 0 40px rgba(120,160,255,.25)}
 #tvWrap iframe{width:100%;height:100%;border:0;display:block}
 #tvOpen{position:absolute;right:0;top:calc(100% + 8px);font:800 13px var(--body);color:var(--gold);background:rgba(0,0,0,.6);padding:6px 10px;border-radius:999px;text-decoration:none}
@@ -132,7 +126,6 @@ body.piano #chips i,body.piano #coach,body.piano #coachArrow{display:none!import
 @media (pointer:coarse) and (orientation:portrait){#rotate{display:flex}}
 .tOnly,#title .tOnly,.sheet .tOnly{display:none}
 @media (pointer:coarse){
-  #pnKeys i{display:none}
   .tOnly,#title .tOnly{display:flex}.sheet .tOnly{display:grid}.kOnly{display:none!important}
   #prompt{pointer-events:auto;cursor:pointer}
   #stick{opacity:.55;transition:opacity .15s}#stick.on{opacity:1}
@@ -150,9 +143,7 @@ body.piano #chips i,body.piano #coach,body.piano #coachArrow{display:none!import
   #prompt{bottom:calc(22px + env(safe-area-inset-bottom,0px));font-size:15px;padding:8px 14px}
   #dlg,#stUI,#soccerUI{left:auto;right:calc(10px + env(safe-area-inset-right,0px));top:50%;bottom:auto;transform:translateY(-50%);max-height:calc(100vh - 20px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));width:min(360px,44vw);padding:12px 14px;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px}
   #dlg[hidden],#stUI[hidden],#soccerUI[hidden]{display:none!important}
-  #piano{bottom:calc(6px + env(safe-area-inset-bottom,0px));padding:6px 8px 8px;width:calc(100vw - 12px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))}
-  #piano .pTop{margin-bottom:5px;gap:8px}#piano .who{font-size:10px}#pnHint{font-size:11px}#piano .pBtns button{padding:4px 9px;font-size:11px}
-  #pnKeys{height:38vh}#pnKeys .w{padding-bottom:6px}
+  #jam{bottom:calc(6px + env(safe-area-inset-bottom,0px));gap:8px;padding:4px 5px 4px 12px}#jamWho{display:none}#jamHint{font-size:11px}#jam .pBtns button{padding:4px 9px;font-size:11px}
   body.side #chips,body.side #musicBtn,body.side #map,body.side #help,body.side #tbtns,body.side #touch{display:none!important}
   #dlg p,#stUI p{margin:4px 0 6px;font-size:15px;line-height:1.4;min-height:0}
   #dlg .who,#stUI .who{font-size:10px}
@@ -289,7 +280,7 @@ body.soccer #coach,body.station #coach,body.side #coach,body.soccer #coachArrow,
 
 <div id="stage"></div>
 <div id="vignette" class="hud"></div>
-<div id="help" class="hud">Find out who Eyal is. Take the empty chair at the table, get a drink at the bar, pull a book from the library, play the piano, or sit down for a game of chess.</div>
+<div id="help" class="hud">Find out who Eyal is. Take the empty chair at the table, get a drink at the bar, pull a book from the library, play the piano or the guitar, or sit down for a game of chess.</div>
 <div id="coach" class="hud" hidden role="status" aria-live="polite"><div class="cTop"><small id="coachStep"></small><button type="button" id="coachSkip">Skip guide</button></div><b id="coachTitle"></b><span id="coachText"></span><div class="cBar"><i id="coachFill"></i></div></div>
 <div id="coachArrow" class="hud" hidden aria-hidden="true">➜</div>
 <div id="chips" class="hud"><b id="chipNum">00/12</b><span>CHIPS FOUND</span><i id="viewLbl">VIEW · CHASE CAM</i></div>
@@ -300,7 +291,7 @@ body.soccer #coach,body.station #coach,body.side #coach,body.soccer #coachArrow,
   <div class="row acts"><button type="button" class="btn" id="sWatch0">▶ High school highlights</button><button type="button" class="btn" id="sWatch1">▶ Bellevue Athletic highlights</button><button type="button" class="btn ghost" id="sStory">Read the story</button><button type="button" class="btn ghost" id="sBack">Back · Esc</button></div>
 </div>
 <div id="stUI" class="hud" hidden role="dialog" aria-label="Conversation"><div class="who"><span id="stWho"></span><span id="stSub"></span></div><p id="stText" aria-live="polite"></p><div class="acts" id="stActs"></div></div>
-<div id="piano" hidden role="region" aria-label="Piano keyboard"><div class="pTop"><span class="who">THE MUSIC CORNER</span><span id="pnHint"></span><span class="pBtns"><button type="button" id="pnDown" aria-label="Octave down">‹ <span class="kOnly">Z</span></button><em id="pnOct">C3–C5</em><button type="button" id="pnUp" aria-label="Octave up"><span class="kOnly">X</span> ›</button><button type="button" id="pnExit">Stand up<span class="kOnly"> · Esc</span></button></span></div><div id="pnKeys"></div></div>
+<div id="jam" hidden role="region" aria-label="Music corner controls"><span id="jamWho">THE MUSIC CORNER</span><span id="jamHint"></span><span class="pBtns"><button type="button" class="pnOnly" id="pnDown" aria-label="Octave down">‹ <span class="kOnly">Z</span></button><em class="pnOnly" id="pnOct">C3–F4</em><button type="button" class="pnOnly" id="pnUp" aria-label="Octave up"><span class="kOnly">X</span> ›</button><button type="button" id="jamExit">Stand up<span class="kOnly"> · Esc</span></button></span></div>
 <div id="reader" hidden role="dialog" aria-label="Book"><div class="book"><div class="pages" id="rdPages"><div id="rdFlow"></div></div><div class="rdNav"><button type="button" id="rdPrev" aria-label="Previous page">‹</button><span id="rdNum"></span><button type="button" id="rdNext" aria-label="Next page">›</button><button type="button" id="rdClose" class="btn">Put it back · Esc</button></div></div></div>
 <canvas id="map" class="hud" width="170" height="170" aria-hidden="true"></canvas>
 <div id="keys" class="hud"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move</span><span>Mouse look</span><span><kbd>Shift</kbd> run</span><span><kbd>E</kbd> interact</span><span><kbd>V</kbd> dog's eyes</span><span><kbd>M</kbd> music</span><span><kbd>H</kbd> help</span></div>
@@ -388,8 +379,8 @@ body.soccer #coach,body.station #coach,body.side #coach,body.soccer #coachArrow,
       <div><b><i>♦</i>The library</b><span>Pull a book off the shelf to read my essays, page by page.</span></div>
       <div><b><i>♣</i>The soccer wall</b><span>Photos and highlight videos from club soccer in the ECNL and my high school team.</span></div>
       <div><b><i>♠</i>The bar</b><span>Order my pint. The bartender knows what I'd have.</span></div>
-      <div><b><i>♦</i>The Music Corner</b><span>Sit at the grand piano and play it with your keyboard, mouse or fingers.</span></div>
-      <div><b><i>♥</i>15 chips</b><span>Each place you discover earns a chip. See if you can find them all.</span></div>
+      <div><b><i>♦</i>The Music Corner</b><span>Sit at the grand piano and play the keys, or pick up the guitar and strum some chords.</span></div>
+      <div><b><i>♥</i>16 chips</b><span>Each place you discover earns a chip. See if you can find them all.</span></div>
     </div>
     <div class="foot"><div class="dots"><i></i><i class="on"></i><i></i></div><button type="button" class="pbtn solid" data-next>Next →</button></div>
   </div>
@@ -476,7 +467,7 @@ const CHAPTERS = {
   soccer:{ rank:'10', suit:'♣', kick:'Chapter · The pitch', title:'The soccer years', body:'Most of my weekends growing up were spent on a pitch: club soccer with Bellevue Athletic FC in the ECNL, and my high school team. The album on the wall has the photos. The TV has the highlights.', grid:[['Club','Bellevue Athletic FC'],['League','ECNL'],['Number','12'],['Highlights','https://www.youtube.com/@eyalshechtman7050']] },
   contact:{ rank:'J', suit:'♥', kick:'All in', title:'Let’s talk', body:'You pushed your chips in. Here’s where to find me.', grid:[['Email','mailto:eyal.shechtman@gmail.com'],['LinkedIn','https://www.linkedin.com/in/eyal-shechtman'],['X','https://x.com/EyalShechtman'],['GitHub','https://github.com/EyalShechtman'],['YouTube','https://www.youtube.com/@eyalshechtman7050'],['Chess.com','https://www.chess.com/member/EyalShechtman12']] }
 };
-const TOTAL = 3 + PLAYERS.length + 1 + 1 + 3; // flag, soccer, piano, players, sat down, contact, bar, library, chess
+const TOTAL = 4 + PLAYERS.length + 1 + 1 + 3; // flag, soccer, piano, guitar, players, sat down, contact, bar, library, chess
 const found = new Set();
 function mark(id){ found.add(id); coach.seen.add(id); document.getElementById('chipNum').textContent = String(found.size).padStart(2,'0') + '/' + TOTAL; }
 mark; document.getElementById('chipNum').textContent = '00/' + TOTAL;
@@ -1202,7 +1193,7 @@ add(new THREE.Mesh(new THREE.SphereGeometry(.11, 40, 24), std({ map:ballTex, rou
 const PN = { x0:3.54, z:-1.6, W:.86, L:1.18, bot:.3, keyY:.4, face:Math.PI / 2 };
 PN.seat = new THREE.Vector3(PN.x0 - .42, 0, PN.z);
 const pianoG = new THREE.Group(); pianoG.position.set(PN.x0, 0, PN.z); pianoG.rotation.y = -Math.PI / 2; scene.add(pianoG);
-const PK = { idx:{}, white:null, black:null, m4:new THREE.Matrix4() };
+const PK = { idx:{}, rev:new Map(), white:null, black:null, m4:new THREE.Matrix4(), cW:new THREE.Color('#f4eee0'), cB:new THREE.Color('#141317'), cOnW:new THREE.Color('#f0b941'), cOnB:new THREE.Color('#c8932e') };
 {
   const { W, L, bot } = PN, seg = LITE ? 10 : 28, bev = LITE ? 0 : .008;
   const lacquer = LITE ? std({ color:'#0b0a0c', roughness:.22, envMapIntensity:.6 }) : new THREE.MeshPhysicalMaterial({ color:'#0a090b', roughness:.3, clearcoat:1, clearcoatRoughness:.1, envMapIntensity:.55 });
@@ -1248,13 +1239,14 @@ const PK = { idx:{}, white:null, black:null, m4:new THREE.Matrix4() };
   part(new THREE.BoxGeometry(KW + .13, .05, kz + .02), lacquer, 0, PN.keyY - .035, kz / 2);
   for (const sx of [-1, 1]) part(new RoundedBoxGeometry(.06, .07, kz + .02, 2, .012), lacquer, sx * (KW / 2 + .035), PN.keyY + .005, kz / 2);
   part(new THREE.BoxGeometry(KW + .01, .06, .03), lacquer, 0, PN.keyY + .03, -.012);
-  PK.white = new THREE.InstancedMesh(new THREE.BoxGeometry(wk * .9, .014, kz), std({ color:'#f4eee0', roughness:.32, envMapIntensity:.5 }), 52);
-  PK.black = new THREE.InstancedMesh(new THREE.BoxGeometry(wk * .56, .016, kz * .6), std({ color:'#0d0c0e', roughness:.25, envMapIntensity:.6 }), 36);
+  PK.white = new THREE.InstancedMesh(new THREE.BoxGeometry(wk * .9, .014, kz), std({ color:'#ffffff', roughness:.32, envMapIntensity:.5 }), 52);
+  PK.black = new THREE.InstancedMesh(new THREE.BoxGeometry(wk * .56, .016, kz * .6), std({ color:'#ffffff', roughness:.25, envMapIntensity:.6 }), 36);
+  PK.rev.set(PK.white, []); PK.rev.set(PK.black, []);
   let wi = 0, bi = 0;
   for (let m = 21; m <= 108; m++){
     const black = [1, 3, 6, 8, 10].includes(m % 12);
-    PK.idx[m] = black ? { mesh:PK.black, i:bi++, x:-KW / 2 + wi * wk, y:PN.keyY + .011, z:kz * .3 } : { mesh:PK.white, i:wi, x:-KW / 2 + (wi++ + .5) * wk, y:PN.keyY, z:kz / 2 };
-    pianoKey3D(m, false);
+    PK.idx[m] = black ? { mesh:PK.black, i:bi++, x:-KW / 2 + wi * wk, y:PN.keyY + .011, z:kz * .3, black } : { mesh:PK.white, i:wi, x:-KW / 2 + (wi++ + .5) * wk, y:PN.keyY, z:kz / 2, black };
+    PK.rev.get(PK.idx[m].mesh)[PK.idx[m].i] = m; pianoKey3D(m, false);
   }
   for (const k of [PK.white, PK.black]){ k.receiveShadow = true; pianoG.add(k); }
   /* music desk with a page on it */
@@ -1274,7 +1266,79 @@ function pianoKey3D(m, down){
   const k = PK.idx[m]; if (!k) return;
   PK.m4.makeRotationX(down ? .06 : 0).setPosition(k.x, k.y - (down ? .004 : 0), k.z);
   k.mesh.setMatrixAt(k.i, PK.m4); k.mesh.instanceMatrix.needsUpdate = true;
+  k.mesh.setColorAt(k.i, k.black ? (down ? PK.cOnB : PK.cB) : (down ? PK.cOnW : PK.cW)); k.mesh.instanceColor.needsUpdate = true;
 }
+/* ---------------- the music corner: an acoustic guitar on its stand, and a stool to play it from ---------------- */
+/* outer group: on the floor, front facing into the room; inner group: the guitar itself, leaning back on the stand (front is +z, neck is +y, low E at -x) */
+const GT = { x:4.5, z:-2.8, S:1.2, lean:-.2, face:Math.PI / 2, topZ:.0035 };
+GT.seat = new THREE.Vector3(GT.x - .55, 0, GT.z);
+const gtG = new THREE.Group(); gtG.position.set(GT.x, 0, GT.z); gtG.rotation.y = -Math.PI / 2; scene.add(gtG);
+const gtIn = new THREE.Group(); gtIn.position.set(0, .07, 0); gtIn.rotation.x = GT.lean; gtIn.scale.setScalar(GT.S); gtG.add(gtIn);
+const GTS = { strings:[], dots:[], xb:i => -.025 + i * .01, xn:i => -.0165 + i * .0066, yb:.088, yn:.577, fret:n => .577 - .489 * (1 - Math.pow(2, -n / 12)) };
+{
+  const seg = LITE ? 12 : 32, bev = LITE ? 0 : .0035, top = GT.topZ;
+  const rosewood = std({ color:'#4a2212', roughness:.32, envMapIntensity:.6 }), ebony = std({ color:'#17100b', roughness:.45 });
+  const nickel = std({ color:'#d9d4c8', metalness:1, roughness:.3 }), bone = std({ color:'#efe7d4', roughness:.5 });
+  const add = (geo, mat, x, y, z, parent = gtIn, cast = !LITE) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = cast; m.receiveShadow = true; parent.add(m); return m; };
+  /* the body: a lower bout, a waist and an upper bout, mirrored */
+  const outline = () => {
+    const s = new THREE.Shape(), R = [[.09, 0, .125, .04, .125, .1], [.125, .16, .075, .17, .075, .2], [.075, .23, .102, .24, .1, .275], [.098, .31, .05, .32, 0, .32]];
+    s.moveTo(0, 0); for (const c of R) s.bezierCurveTo(...c);
+    for (const c of R.slice().reverse()){ const p = R.indexOf(c), from = p ? R[p - 1] : [0, 0, 0, 0, 0, 0]; s.bezierCurveTo(-c[2], c[3], -c[0], c[1], -from[4], from[5]); }
+    return s;
+  };
+  const body = new THREE.ExtrudeGeometry(outline(), { depth:.05, bevelEnabled:bev > 0, bevelThickness:bev, bevelSize:bev, bevelSegments:2, curveSegments:seg }); body.translate(0, 0, -.05);
+  add(body, rosewood, 0, 0, 0);
+  /* spruce top with the soundhole cut out, rosette, pickguard, bridge and pins */
+  const spruce = canvasTex(128, 256, (g, w, h) => { g.fillStyle = '#d8b273'; g.fillRect(0, 0, w, h); for (let x = 0; x < w; x += 2){ g.fillStyle = `rgba(120,80,30,${(Math.sin(x * 1.7) * .5 + .5) * .16})`; g.fillRect(x, 0, 1, h); } });
+  spruce.repeat.set(1 / .25, 1 / .32); spruce.offset.set(.5, 0);
+  const topS = outline(); topS.holes.push(new THREE.Path().absarc(0, .2, .031, 0, Math.PI * 2, true));
+  add(new THREE.ShapeGeometry(topS, seg), std({ map:spruce, roughness:.4, envMapIntensity:.5 }), 0, 0, top + .0006, gtIn, false);
+  add(new THREE.CircleGeometry(.031, 32), new THREE.MeshBasicMaterial({ color:'#0a0604' }), 0, .2, top + .0002, gtIn, false);
+  add(new THREE.RingGeometry(.032, .039, 48), std({ color:'#2b1a0e', roughness:.5 }), 0, .2, top + .0009, gtIn, false);
+  add(new THREE.RingGeometry(.0345, .0365, 48), gildM, 0, .2, top + .001, gtIn, false);
+  const guard = add(new THREE.CircleGeometry(.03, 24), std({ color:'#5a2c16', roughness:.35 }), .042, .158, top + .0009, gtIn, false); guard.scale.set(.62, 1.05, 1); guard.rotation.z = -.5;
+  add(new THREE.BoxGeometry(.075, .016, .005), ebony, 0, .084, top + .003);
+  add(new THREE.BoxGeometry(.054, .002, .004), bone, 0, GTS.yb, top + .0065, gtIn, false);
+  for (let i = 0; i < 6; i++) add(new THREE.SphereGeometry(.0022, 8, 6), bone, GTS.xb(i), .077, top + .0055, gtIn, false);
+  /* neck, fretboard with nickel frets and pearl dots, bone nut, headstock with tuners */
+  add(new THREE.BoxGeometry(.04, .3, .02), rosewood, 0, .44, top - .012);
+  add(new THREE.BoxGeometry(.043, .332, .005), ebony, 0, .411, top + .0025);
+  for (let n = 1; n <= 14; n++) add(new THREE.BoxGeometry(.043, .0016, .0024), nickel, 0, GTS.fret(n), top + .0055, gtIn, false);
+  for (const n of [3, 5, 7, 9, 12]) for (const dx of n === 12 ? [-.009, .009] : [0]) add(new THREE.CircleGeometry(.0028, 12), bone, dx, (GTS.fret(n) + GTS.fret(n - 1)) / 2, top + .0051, gtIn, false);
+  add(new THREE.BoxGeometry(.043, .004, .006), bone, 0, GTS.yn, top + .006, gtIn, false);
+  const head = new THREE.Group(); head.position.set(0, .582, top - .004); head.rotation.x = -.18; gtIn.add(head);
+  add(new THREE.BoxGeometry(.05, .085, .013), rosewood, 0, .044, 0, head);
+  for (let i = 0; i < 3; i++) for (const s of [-1, 1]){
+    add(new THREE.CylinderGeometry(.003, .003, .022, 8), nickel, s * .033, .018 + i * .025, -.002, head, false).rotation.z = Math.PI / 2;
+    add(new THREE.BoxGeometry(.008, .011, .004), bone, s * .046, .018 + i * .025, -.002, head, false);
+  }
+  /* six strings: phosphor-bronze wound basses, plain trebles; each keeps its own material so it can glow while it rings */
+  for (let i = 0; i < 6; i++){
+    const a = new THREE.Vector3(GTS.xb(i), GTS.yb, top + .0095), b = new THREE.Vector3(GTS.xn(i), GTS.yn, top + .0082);
+    const mat = std({ color:i < 4 ? '#c09050' : '#e4e1da', metalness:1, roughness:.28, emissive:'#ffc860', emissiveIntensity:0 });
+    const st = add(new THREE.CylinderGeometry(.00115 - i * .00011, .00115 - i * .00011, a.distanceTo(b), 6), mat, 0, 0, 0, gtIn, false);
+    st.position.copy(a).add(b).multiplyScalar(.5); st.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize());
+    st.userData.base = st.position.clone(); GTS.strings.push(st);
+  }
+  /* finger dots for the chosen chord, hidden until you sit down */
+  const dotM = new THREE.MeshBasicMaterial({ color:new THREE.Color(2.2, 1.6, .55), toneMapped:false });
+  for (let i = 0; i < 6; i++){ const d = add(new THREE.SphereGeometry(.0042, 12, 8), dotM, 0, 0, top + .0105, gtIn, false); d.visible = false; GTS.dots.push(d); }
+  /* the stand: a black tubular A-frame with a padded cradle and a neck yoke */
+  const tubeM = std({ color:'#141416', roughness:.5, metalness:.6 });
+  const tube = (ax, ay, az, bx, by, bz, r = .007) => { const a = new THREE.Vector3(ax, ay, az), b = new THREE.Vector3(bx, by, bz); const m = add(new THREE.CylinderGeometry(r, r, a.distanceTo(b), 8), tubeM, 0, 0, 0, gtG); m.position.copy(a).add(b).multiplyScalar(.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.sub(a).normalize()); };
+  for (const s of [-1, 1]){ tube(s * .11, 0, .13, s * .065, .07, .035); tube(s * .065, .07, .035, s * .065, .095, .045, .006); }
+  tube(-.075, .068, .035, .075, .068, .035, .009);
+  tube(0, 0, -.32, 0, .66, -.16); tube(0, .03, .1, 0, .03, -.3); tube(-.022, .66, -.155, .022, .66, -.155, .008);
+  /* a round leather stool at chair height */
+  const stool = new THREE.Group(); stool.position.copy(GT.seat); scene.add(stool);
+  add(new THREE.CylinderGeometry(.13, .12, .035, LITE ? 16 : 32), std({ color:'#5c1a22', roughness:.55 }), 0, .113, 0, stool);
+  for (let i = 0; i < 3; i++){ const a = i / 3 * Math.PI * 2; const l = add(new THREE.CylinderGeometry(.01, .008, .1, 8), woodDkM, Math.cos(a) * .08, .048, Math.sin(a) * .08, stool); l.rotation.set(Math.sin(a) * .2, 0, -Math.cos(a) * .2); }
+  add(new THREE.TorusGeometry(.075, .005, 6, 24), gildM, 0, .04, 0, stool, false).rotation.x = Math.PI / 2;
+  for (const g of [gtG, stool]) g.traverse(o => { if (o.isMesh) o.userData.act = 'guitar'; });
+  ENV_COLLIDERS.push({ x:GT.x, z:GT.z, r:.26 }, { x:GT.x + .2, z:GT.z, r:.18 }, { x:GT.seat.x, z:GT.z, r:.15 });
+}
+
 
 /* finish the salon: bake every kit into one mesh each, draw all the little lit bulbs as one instanced mesh */
 Object.values(K).forEach(k => k.done());
@@ -1611,10 +1675,13 @@ addEventListener('keydown', e => {
   if (k === 'h' && (mode === 'walk' || mode === 'seated')) replayHelp();
 });
 addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; if (mode === 'station' && station && station.keyup) station.keyup(e.key.toLowerCase(), e); });
-addEventListener('blur', () => { for (const k in keys) keys[k] = false; pnAllOff(); });
+addEventListener('blur', () => { for (const k in keys) keys[k] = false; pnAllOff(); gt.ptr.clear(); });
 const cvs = renderer.domElement;
 cvs.addEventListener('mousedown', e => { dragging = true; if (mode === 'walk' && cvs.requestPointerLock){ try { const r = cvs.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch (_) {} } });
 addEventListener('mouseup', () => dragging = false);
+/* the instruments are played right on the canvas: pointers go to the station you're at */
+for (const [ev, t] of [['pointerdown', 'down'], ['pointermove', 'move'], ['pointerup', 'up'], ['pointercancel', 'up']])
+  (t === 'down' ? cvs : window).addEventListener(ev, e => { if (mode === 'station' && station && station.ptr){ if (t === 'down'){ e.preventDefault(); try { cvs.setPointerCapture(e.pointerId); } catch (_) {} } station.ptr(t, e); } });
 addEventListener('mousemove', e => {
   if (mode !== 'walk') return;
   if (document.pointerLockElement === cvs || dragging){ yaw -= e.movementX * .0026; pitch = THREE.MathUtils.clamp(pitch + e.movementY * .002, -.35, .7); }
@@ -1671,18 +1738,15 @@ function phoneLandscape(){
 /* when a panel sits on the right edge (short landscape screens), slide the 3D view left so the subject stays in the open area */
 const shortLand = matchMedia('(max-height:500px) and (orientation:landscape)');
 const sidePanels = ['dlg', 'stUI', 'soccerUI'].map(id => document.getElementById(id));
-let viewShift = 0, viewShiftY = 0;
+let viewShift = 0;
 function updateViewShift(dt){
   let w = 0;
   if (shortLand.matches) for (const el of sidePanels) if (!el.hidden){ w = el.offsetWidth + 10; break; }
   document.body.classList.toggle('side', w > 0);
-  /* the piano keyboard covers the bottom of the screen: lift the picture into the space above it */
-  const tgt = w / 2, tgtY = pnEl.hidden ? 0 : pnEl.offsetHeight * .45;
-  if (viewShift === tgt && viewShiftY === tgtY) return;
-  const k = Math.min(1, dt * 7);
-  viewShift += (tgt - viewShift) * k; if (Math.abs(tgt - viewShift) < .5) viewShift = tgt;
-  viewShiftY += (tgtY - viewShiftY) * k; if (Math.abs(tgtY - viewShiftY) < .5) viewShiftY = tgtY;
-  if (viewShift > .5 || viewShiftY > .5) camera.setViewOffset(innerWidth, innerHeight, viewShift, viewShiftY, innerWidth, innerHeight); else camera.clearViewOffset();
+  const tgt = w / 2;
+  if (viewShift === tgt) return;
+  viewShift += (tgt - viewShift) * Math.min(1, dt * 7); if (Math.abs(tgt - viewShift) < .5) viewShift = tgt;
+  if (viewShift > .5) camera.setViewOffset(innerWidth, innerHeight, viewShift, 0, innerWidth, innerHeight); else camera.clearViewOffset();
 }
 document.getElementById('tE').addEventListener('click', () => interact());
 document.getElementById('tV').addEventListener('click', () => { if (mode === 'walk' || mode === 'seated') togglePov(); });
@@ -1800,7 +1864,7 @@ const Synth = (() => {
       if (!timer){ nextT = ctx.currentTime + .1; timer = setInterval(tick, 25); }
     } else {
       master.gain.linearRampToValueAtTime(0, t + .4);
-      setTimeout(() => { if (!on){ clearInterval(timer); timer = null; if (!(station && station.id === 'piano')) ctx.suspend(); } }, 500);
+      setTimeout(() => { if (!on){ clearInterval(timer); timer = null; if (!(station && (station.id === 'piano' || station.id === 'guitar'))) ctx.suspend(); } }, 500);
     }
     const b = document.getElementById('musicBtn');
     if (b){ b.textContent = on ? '♪ MUSIC ON' : '♪ MUSIC OFF'; b.setAttribute('aria-pressed', on); }
@@ -3037,32 +3101,54 @@ STATIONS.chess = {
 };
 SPOTS.push({ id:'chess', pos:new THREE.Vector3(CH.cx + .1, 0, CH.cz + 1.3), r:.7, label:'play EyalBot at chess', dot:'#7fd1ff' });
 
-/* ---------------- the music corner: sit at the grand and play it ---------------- */
+/* ---------------- the music corner: the grand piano and the guitar, played right on the instruments ---------------- */
+/* shared by both: one room reverb, the song fading out on your first note, and a small pill with the controls */
+const jamEl = document.getElementById('jam'), jamHint = document.getElementById('jamHint');
+const jam = { paused:false, musicWas:false, room:null };
+function jamRoom(){
+  if (!jam.room){
+    const ctx = audioCtx(), len = ctx.sampleRate * 1.8 | 0, ir = ctx.createBuffer(2, len, ctx.sampleRate), g = ctx.createGain();
+    for (let c = 0; c < 2; c++){ const d = ir.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.4); }
+    jam.room = ctx.createConvolver(); jam.room.buffer = ir; g.gain.value = .2; jam.room.connect(g); g.connect(ctx.destination);
+  }
+  if (AC.state !== 'running') AC.resume();
+  return jam.room;
+}
+function jamStart(){ if (!jam.paused){ jam.paused = true; jam.musicWas = Music.on; if (Music.on) Music.set(false); } }
+/* if you switch the music back on while playing, that's your call: don't switch it on again on the way out */
+function jamEnd(){ if (jam.musicWas && !Music.on) Music.set(true); jam.paused = jam.musicWas = false; setTimeout(() => { if (AC && !Synth.on && !station && AC.state === 'running') AC.suspend(); }, 2500); }
+function jamTick(){ if (jam.paused && jam.musicWas && Music.on) jam.musicWas = false; }
+function jamShow(kind, hint){ jamEl.className = kind; document.getElementById('jamWho').textContent = 'THE MUSIC CORNER · ' + kind.toUpperCase(); jamHint.innerHTML = hint; jamEl.hidden = false; document.body.classList.add('jam'); }
+function jamHide(){ jamEl.hidden = true; document.body.classList.remove('jam'); }
+const _jr = new THREE.Raycaster(), _jm = new THREE.Vector2();
+function jamRay(e){ _jm.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); _jr.setFromCamera(_jm, camera); return _jr; }
+/* frame a w × h patch of an instrument (in its own local space) from along direction n */
+function fitCam(cam, group, c, n, w, h){
+  const t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), d = Math.max(h / 2 / t, w / 2 / (t * camera.aspect)) * 1.05;
+  cam.l.copy(c); group.localToWorld(cam.l); cam.p.copy(n).normalize().multiplyScalar(d).add(c); group.localToWorld(cam.p);
+}
+const letterTex = (L, ink, w = 64) => canvasTex(w, 64, (g, W, H) => { g.font = '800 46px Nunito, system-ui, sans-serif'; g.fillStyle = ink; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(L, W / 2, H / 2 + 2); });
+
+/* ---- the piano: a top-down view of the keys; the computer-key letters sit on the ivories, keys light up gold as they play ---- */
 /* computer keys by position (e.code), so other layouts work too: the home row is the white keys, the row above the black ones */
 const PN_CODES = { KeyA:0, KeyW:1, KeyS:2, KeyE:3, KeyD:4, KeyF:5, KeyT:6, KeyG:7, KeyY:8, KeyH:9, KeyU:10, KeyJ:11, KeyK:12, KeyO:13, KeyL:14, KeyP:15, Semicolon:16, Quote:17 };
-const PN_LETTER = { 0:'A', 1:'W', 2:'S', 3:'E', 4:'D', 5:'F', 6:'T', 7:'G', 8:'Y', 9:'H', 10:'U', 11:'J', 12:'K', 13:'O', 14:'L', 15:'P', 16:';', 17:'\'' };
-const pnEl = document.getElementById('piano'), pnKeys = document.getElementById('pnKeys'), pnHint = document.getElementById('pnHint');
-const pn = { live:false, lo:48, notes:0, paused:false, musicWas:false, voices:new Map(), count:new Map(), held:new Map(), ptr:new Map(), bus:null, wave:null };
-const PN_NAMES = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
-function pnBuild(){
-  /* two octaves and the top C, starting at pn.lo */
-  let html = '', wi = 0;
-  for (let m = pn.lo; m <= pn.lo + 24; m++){
-    const black = [1, 3, 6, 8, 10].includes(m % 12), L = PN_LETTER[m - pn.lo], on = pn.count.get(m) ? ' on' : '';
-    const tag = (L ? `<i>${L}</i>` : '') + (m % 12 === 0 ? `<small>C${m / 12 - 1}</small>` : '');
-    html += black ? `<b class="b${on}" data-m="${m}" style="left:${wi / 15 * 100}%">${tag}</b>` : `<b class="w${on}" data-m="${m}">${tag}</b>`;
-    if (!black) wi++;
-  }
-  pnKeys.innerHTML = html;
-  document.getElementById('pnOct').textContent = 'C' + (pn.lo / 12 - 1) + '–C' + (pn.lo / 12 + 1);
+const PN_LETTER = ['A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K', 'O', 'L', 'P', ';', '\''];
+/* Salamander Grand Piano (Yamaha C5), sampled by Alexander Holm, CC BY 3.0; one sample every minor third, pitched to the notes between */
+const PN_SAMPLES = 'https://cdn.jsdelivr.net/gh/Tonejs/audio@efd8296360f9526e379bfbe5c1698ff54d6a1d34/salamander/';
+const pn = { live:false, lo:48, notes:0, voices:new Map(), count:new Map(), held:new Map(), ptr:new Map(), bus:null, wave:null, buf:{}, loading:false, labG:null, labs:[] };
+const pnName = m => ['C', 'Ds', 'Fs', 'A'][(m % 12) / 3] + (Math.floor(m / 12) - 1);
+function pnLoad(){
+  if (pn.loading) return; pn.loading = true;
+  const ctx = audioCtx(), list = []; for (let m = 21; m <= 108; m += 3) list.push(m);
+  list.sort((a, b) => Math.abs(a - pn.lo - 9) - Math.abs(b - pn.lo - 9)); // the octaves on screen first
+  for (const m of list) fetch(PN_SAMPLES + pnName(m) + '.mp3').then(r => r.ok ? r.arrayBuffer() : Promise.reject(r.status)).then(a => new Promise((ok, no) => ctx.decodeAudioData(a, ok, no))).then(b => { pn.buf[m] = b; }).catch(() => {});
 }
 function pnAudio(){
   const ctx = audioCtx();
   if (!pn.bus){
-    pn.bus = ctx.createGain(); pn.bus.gain.value = .5;
-    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 6500; lp.Q.value = .4;
-    pn.bus.connect(lp); lp.connect(ctx.destination);
-    /* a bright-ish string tone: falling odd and even harmonics */
+    pn.bus = ctx.createGain(); pn.bus.gain.value = .9; pn.bus.connect(ctx.destination);
+    const send = ctx.createGain(); send.gain.value = .5; pn.bus.connect(send); send.connect(jamRoom());
+    /* fallback tone while the samples load (or if they can't): falling harmonics, a little detuned */
     const n = 14, re = new Float32Array(n), im = new Float32Array(n);
     for (let i = 1; i < n; i++) im[i] = Math.pow(.62, i - 1) * (i % 2 ? 1 : .75);
     pn.wave = ctx.createPeriodicWave(re, im);
@@ -3071,75 +3157,75 @@ function pnAudio(){
   return ctx;
 }
 function pnOn(m){
-  const ctx = pnAudio(), t = ctx.currentTime, f = 440 * Math.pow(2, (m - 69) / 12);
+  const ctx = pnAudio(), t = ctx.currentTime, vel = .78 + Math.random() * .08;
   pnOff(m, true);
-  if (pn.voices.size >= 16) pnOff(pn.voices.keys().next().value, true); // steal the oldest voice
-  const g = ctx.createGain(), lp = ctx.createBiquadFilter(), oscs = [];
+  if (pn.voices.size >= 24) pnOff(pn.voices.keys().next().value, true); // steal the oldest voice
+  const g = ctx.createGain(); g.connect(pn.bus);
+  let s = null; for (let d = 0; d <= 3 && s === null; d++){ if (pn.buf[m - d]) s = m - d; else if (pn.buf[m + d]) s = m + d; }
+  if (s !== null){
+    const src = ctx.createBufferSource(); src.buffer = pn.buf[s]; src.playbackRate.value = Math.pow(2, (m - s) / 12);
+    g.gain.value = vel; src.connect(g); src.start(t); pn.voices.set(m, { g, srcs:[src] }); return;
+  }
+  const f = 440 * Math.pow(2, (m - 69) / 12), lp = ctx.createBiquadFilter(), srcs = [];
   lp.type = 'lowpass'; lp.frequency.setValueAtTime(Math.min(12000, f * 9 + 1500), t); lp.frequency.setTargetAtTime(Math.min(5000, f * 2.5 + 400), t, .4);
-  for (const d of [-3.5, 3.5]){ const o = ctx.createOscillator(); o.setPeriodicWave(pn.wave); o.frequency.value = f; o.detune.value = d; o.connect(lp); o.start(t); oscs.push(o); }
-  /* hammer strike, quick drop, then a long ring that dies away even while held; low notes ring longest */
+  for (const d of [-3.5, 3.5]){ const o = ctx.createOscillator(); o.setPeriodicWave(pn.wave); o.frequency.value = f; o.detune.value = d; o.connect(lp); o.start(t); srcs.push(o); }
   const peak = .2 * Math.min(1.25, Math.max(.6, 1.15 - (m - 60) / 80)), ring = Math.max(.7, 3.4 - (m - 36) / 18);
-  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(peak, t + .005);
-  g.gain.setTargetAtTime(peak * .38, t + .005, .14); g.gain.setTargetAtTime(0, t + .4, ring);
-  lp.connect(g); g.connect(pn.bus);
-  pn.voices.set(m, { g, oscs });
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(peak, t + .005); g.gain.setTargetAtTime(peak * .38, t + .005, .14); g.gain.setTargetAtTime(0, t + .4, ring);
+  lp.connect(g); pn.voices.set(m, { g, srcs });
 }
 function pnOff(m, quick){
   const v = pn.voices.get(m); if (!v) return; pn.voices.delete(m);
-  const t = AC.currentTime, tau = quick ? .01 : .09, gn = v.g.gain;
+  const t = AC.currentTime, tau = quick ? .015 : .11, gn = v.g.gain; // the damper settles onto the string
   if (gn.cancelAndHoldAtTime) gn.cancelAndHoldAtTime(t); else { gn.cancelScheduledValues(t); gn.setValueAtTime(gn.value, t); }
-  gn.setTargetAtTime(0, t, tau); v.oscs.forEach(o => o.stop(t + tau * 8 + .02));
+  gn.setTargetAtTime(0, t, tau); v.srcs.forEach(o => o.stop(t + tau * 8 + .02));
 }
+/* the letters, laid on the keys of the playable range */
+function pnLabels(){
+  if (!pn.labG){
+    pn.labG = new THREE.Group(); pianoG.add(pn.labG);
+    PN_LETTER.forEach((L, i) => {
+      const black = [1, 3, 6, 8, 10, 13, 15].includes(i), s = black ? .0082 : .0128;
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(s, s), new THREE.MeshBasicMaterial({ map:letterTex(L, black ? '#f3e2b8' : '#3b2a18'), transparent:true, depthWrite:false, toneMapped:false }));
+      m.rotation.x = -Math.PI / 2; m.renderOrder = 2; pn.labG.add(m); pn.labs.push(m);
+    });
+  }
+  pn.labs.forEach((lab, i) => { const k = PK.idx[pn.lo + i]; lab.position.set(k.x, k.black ? PN.keyY + .0196 : PN.keyY + .0076, k.black ? .064 : .121); lab.userData.y = lab.position.y; });
+  document.getElementById('pnOct').textContent = 'C' + (pn.lo / 12 - 1) + '–F' + (pn.lo / 12);
+}
+function pnLabelDrop(m, down){ const lab = pn.labs[m - pn.lo]; if (lab) lab.position.y = lab.userData.y - (down ? .004 : 0); }
 function pnPress(m){
-  if (!pn.live) return;
+  if (!pn.live || !PK.idx[m]) return;
   const c = (pn.count.get(m) || 0) + 1; pn.count.set(m, c);
-  pnOn(m); pianoKey3D(m, true);
-  const el = pnKeys.querySelector(`[data-m="${m}"]`); if (el) el.classList.add('on');
-  /* the first note fades the room's song out; it comes back when you stand up */
-  if (!pn.paused){ pn.paused = true; pn.musicWas = Music.on; if (Music.on) Music.set(false); }
-  if (++pn.notes === 8 && !found.has('piano')){ mark('piano'); pnHint.textContent = 'Chip found. Keep playing, or stand up when you’re done.'; }
+  pnOn(m); pianoKey3D(m, true); pnLabelDrop(m, true); jamStart();
+  if (++pn.notes === 8 && !found.has('piano')){ mark('piano'); jamHint.textContent = 'Chip found. Keep playing, or stand up when you’re done.'; }
 }
 function pnRelease(m){
   const c = (pn.count.get(m) || 0) - 1;
   if (c > 0){ pn.count.set(m, c); return; }
-  pn.count.delete(m); pnOff(m); pianoKey3D(m, false);
-  const el = pnKeys.querySelector(`[data-m="${m}"]`); if (el) el.classList.remove('on');
+  pn.count.delete(m); pnOff(m); pianoKey3D(m, false); pnLabelDrop(m, false);
 }
 function pnAllOff(){ for (const m of [...pn.count.keys()]){ pn.count.set(m, 1); pnRelease(m); } pn.held.clear(); pn.ptr.clear(); }
-function pnOct(d){ const lo = Math.max(24, Math.min(84, pn.lo + d)); if (lo === pn.lo) return; pnAllOff(); pn.lo = lo; pnBuild(); }
-pnKeys.addEventListener('pointerdown', e => {
-  const k = e.target.closest('[data-m]'); if (!k) return; e.preventDefault();
-  if (k.hasPointerCapture && k.hasPointerCapture(e.pointerId)) k.releasePointerCapture(e.pointerId); // touches capture implicitly; let them slide across keys
-  const m = +k.dataset.m; pn.ptr.set(e.pointerId, m); pnPress(m);
-});
-addEventListener('pointermove', e => {
-  if (!pn.ptr.has(e.pointerId)) return;
-  const el = document.elementFromPoint(e.clientX, e.clientY), k = el && el.closest && el.closest('#pnKeys [data-m]');
-  const m = k ? +k.dataset.m : null, was = pn.ptr.get(e.pointerId); if (m === was) return;
-  if (was !== null) pnRelease(was); pn.ptr.set(e.pointerId, m); if (m !== null) pnPress(m);
-});
-const pnUp = e => { if (!pn.ptr.has(e.pointerId)) return; const m = pn.ptr.get(e.pointerId); pn.ptr.delete(e.pointerId); if (m !== null) pnRelease(m); };
-addEventListener('pointerup', pnUp); addEventListener('pointercancel', pnUp);
-pnEl.addEventListener('contextmenu', e => e.preventDefault());
+function pnOct(d){ const lo = Math.max(24, Math.min(84, pn.lo + d)); if (lo === pn.lo) return; pnAllOff(); pn.lo = lo; pnLabels(); }
+function pnPick(e){ const h = jamRay(e).intersectObjects([PK.black, PK.white], false)[0]; return h ? PK.rev.get(h.object)[h.instanceId] : null; }
 document.getElementById('pnDown').addEventListener('click', e => { e.currentTarget.blur(); pnOct(-12); });
 document.getElementById('pnUp').addEventListener('click', e => { e.currentTarget.blur(); pnOct(12); });
-document.getElementById('pnExit').addEventListener('click', e => { e.currentTarget.blur(); leaveStation(); });
+document.getElementById('jamExit').addEventListener('click', e => { e.currentTarget.blur(); leaveStation(); });
+jamEl.addEventListener('contextmenu', e => e.preventDefault());
+const _pc = new THREE.Vector3(), _pn = new THREE.Vector3(0, Math.cos(.42), Math.sin(.42));
 STATIONS.piano = {
-  id:'piano', hideDog:false, exitYaw:-Math.PI / 2, chipLater:true,
-  cam:{ p:new THREE.Vector3(PN.seat.x - .62, 1.02, PN.z + .42), l:new THREE.Vector3(PN.x0 + .45, .42, PN.z - .1) },
+  id:'piano', hideDog:true, exitYaw:-Math.PI / 2, chipLater:true,
+  cam:{ p:new THREE.Vector3(), l:new THREE.Vector3() },
   enter(){
+    pnLoad(); pnLabels(); this.tick(0); pn.labG.visible = !COARSE;
     const S = PN.seat, front = S.clone().add(new THREE.Vector3(SIT_FWD, 0, 0)), side = dog.position.z < PN.z ? -1 : 1;
     sitAt([new THREE.Vector3(S.x - .3, 0, PN.z + side * .42), new THREE.Vector3(front.x, 0, PN.z + side * .42), front], PN.face, 0, () => {
       if (station !== STATIONS.piano) return;
-      pn.live = true; pn.notes = found.has('piano') ? 99 : 0; pnBuild(); pnEl.hidden = false; document.body.classList.add('piano');
-      pnHint.innerHTML = COARSE ? 'Tap or slide across the keys. Use several fingers for chords.' : 'Click the keys or type the letters on them. <kbd>Z</kbd> <kbd>X</kbd> change octave.';
+      pn.live = true; pn.notes = found.has('piano') ? 99 : 0;
+      jamShow('piano', COARSE ? 'Tap the keys. Use several fingers for chords.' : 'Type the letters on the keys, or click them. <kbd>Z</kbd> <kbd>X</kbd> octave');
     });
   },
   leave(done){
-    pn.live = false; pnAllOff(); pnEl.hidden = true; document.body.classList.remove('piano');
-    if (pn.musicWas && !Music.on) Music.set(true);
-    pn.paused = pn.musicWas = false;
-    setTimeout(() => { if (AC && !Synth.on && station !== STATIONS.piano && AC.state === 'running') AC.suspend(); }, 1500);
+    pn.live = false; pnAllOff(); jamHide(); jamEnd(); pn.labG.visible = false;
     const side = dog.position.z < PN.z ? -1 : 1, fx = PN.seat.x + SIT_FWD;
     standFrom(PN.face, 0, [new THREE.Vector3(fx, 0, PN.z + side * .42), new THREE.Vector3(PN.seat.x - .45, 0, PN.z + side * .42)], done);
   },
@@ -3152,9 +3238,171 @@ STATIONS.piano = {
     if (off !== undefined && !pn.held.has(e.code)){ const m = pn.lo + off; pn.held.set(e.code, m); pnPress(m); }
   },
   keyup(k, e){ const m = pn.held.get(e.code); if (m !== undefined){ pn.held.delete(e.code); pnRelease(m); } },
-  /* if you switch the music back on while playing, that's your call: don't switch it on again on the way out */
-  tick(){ if (pn.paused && pn.musicWas && Music.on) pn.musicWas = false; }
+  /* mouse and fingers play the 3D keys directly; slide across them for a glissando */
+  ptr(type, e){
+    if (type === 'down'){ if (!pn.live) return; const m = pnPick(e); if (m == null) return; pn.ptr.set(e.pointerId, m); pnPress(m); return; }
+    if (!pn.ptr.has(e.pointerId)) return;
+    const was = pn.ptr.get(e.pointerId);
+    if (type === 'move'){ const m = pnPick(e); if (m === was) return; if (was != null) pnRelease(was); pn.ptr.set(e.pointerId, m); if (m != null) pnPress(m); }
+    else { pn.ptr.delete(e.pointerId); if (was != null) pnRelease(was); }
+  },
+  /* the camera hangs over the playable range and glides along when you change octave */
+  tick(){
+    if (station !== this) return; jamTick();
+    const a = PK.idx[Math.max(21, pn.lo - 1)].x, b = PK.idx[pn.lo + 17].x;
+    /* on touch there are no letters to read, so get in close and make the keys big enough for fingers */
+    _pc.set((a + b) / 2, PN.keyY, COARSE ? .105 : .118); fitCam(this.cam, pianoG, _pc, _pn, b - a + (COARSE ? .02 : .06), COARSE ? .14 : .27);
+  }
 };
+
+/* ---- the guitar: pick a chord on the cards beside it, strum across the strings ---- */
+const GT_OPEN = [40, 45, 50, 55, 59, 64];
+const GT_CHORDS = [['C', 'KeyA', 'A', [-1, 3, 2, 0, 1, 0]], ['G', 'KeyS', 'S', [3, 2, 0, 0, 0, 3]], ['D', 'KeyD', 'D', [-1, -1, 0, 2, 3, 2]], ['A', 'KeyF', 'F', [-1, 0, 2, 2, 2, 0]],
+  ['E', 'KeyG', 'G', [0, 2, 2, 1, 0, 0]], ['Am', 'KeyH', 'H', [-1, 0, 2, 2, 1, 0]], ['Em', 'KeyJ', 'J', [0, 2, 2, 0, 0, 0]], ['Dm', 'KeyK', 'K', [-1, -1, 0, 2, 3, 1]]];
+const gt = { live:false, chord:1, plays:0, amp:[0, 0, 0, 0, 0, 0], ptr:new Map(), cache:new Map(), bus:null, cards:[], plane:new THREE.Plane(), t:0 };
+/* plucked-string synthesis (Karplus-Strong): a burst of soft noise circulating in a delay line the length of one period, a little duller each pass */
+function gtBuf(m){
+  if (gt.cache.has(m)) return gt.cache.get(m);
+  const ctx = audioCtx(), sr = ctx.sampleRate, f = 440 * Math.pow(2, (m - 69) / 12), N = Math.max(2, Math.floor(sr / f - .5)), T = Math.max(1.6, 4.2 - (m - 40) * .07);
+  const len = sr * T | 0, b = ctx.createBuffer(1, len, sr), out = b.getChannelData(0), d = new Float32Array(N), rho = Math.pow(.001, 1 / (f * T));
+  let lp = 0; for (let i = 0; i < N; i++){ lp += (Math.random() * 2 - 1 - lp) * .6; d[i] = lp; }
+  const pick = Math.max(1, N * .13 | 0); for (let i = N - 1; i >= pick; i--) d[i] -= d[i - pick] * .9; // plucked a little way from the bridge
+  let k = 0, peak = 0;
+  for (let i = 0; i < len; i++){ const a = d[k]; d[k] = (a + d[(k + 1) % N]) * .5 * rho; out[i] = a; if (Math.abs(a) > peak) peak = Math.abs(a); k = (k + 1) % N; }
+  for (let i = 0; i < len; i++) out[i] /= peak;
+  const r = { b, rate:f * (N + .5) / sr }; gt.cache.set(m, r); return r;
+}
+function gtAudio(){
+  const ctx = audioCtx();
+  if (!gt.bus){
+    /* the body: a woody low resonance, a second one above it, and soft highs */
+    gt.bus = ctx.createGain(); gt.bus.gain.value = .55;
+    const f1 = ctx.createBiquadFilter(), f2 = ctx.createBiquadFilter(), f3 = ctx.createBiquadFilter();
+    f1.type = 'peaking'; f1.frequency.value = 105; f1.Q.value = 1.4; f1.gain.value = 6;
+    f2.type = 'peaking'; f2.frequency.value = 220; f2.Q.value = 1.2; f2.gain.value = 3;
+    f3.type = 'highshelf'; f3.frequency.value = 4500; f3.gain.value = -5;
+    gt.bus.connect(f1); f1.connect(f2); f2.connect(f3); f3.connect(ctx.destination);
+    const send = ctx.createGain(); send.gain.value = .45; f3.connect(send); send.connect(jamRoom());
+  }
+  if (ctx.state !== 'running') ctx.resume();
+  return ctx;
+}
+function gtPluck(i, vel, when = 0){
+  const fr = GT_CHORDS[gt.chord][3][i]; if (fr < 0 || !gt.live) return;
+  const ctx = gtAudio(), { b, rate } = gtBuf(GT_OPEN[i] + fr), t = ctx.currentTime + when;
+  const src = ctx.createBufferSource(), g = ctx.createGain(), p = ctx.createStereoPanner();
+  src.buffer = b; src.playbackRate.value = rate; g.gain.value = vel; p.pan.value = (i - 2.5) * .08;
+  src.connect(g); g.connect(p); p.connect(gt.bus); src.start(t);
+  if (gt.voices && gt.voices[i]){ const o = gt.voices[i]; o.g.gain.setTargetAtTime(0, t, .02); o.src.stop(t + .2); } // a new pluck stops the old ring on that string
+  (gt.voices = gt.voices || [])[i] = { src, g };
+  setTimeout(() => { gt.amp[i] = Math.max(gt.amp[i], vel); }, when * 1000);
+  jamStart();
+}
+function gtCount(){ if (++gt.plays === 6 && !found.has('guitar')){ mark('guitar'); jamHint.textContent = 'Chip found. Keep strumming, or stand up when you’re done.'; } }
+function gtStrum(up, vel = .8){
+  const order = up ? [5, 4, 3, 2, 1, 0] : [0, 1, 2, 3, 4, 5]; let w = 0;
+  for (const i of order){ if (GT_CHORDS[gt.chord][3][i] < 0) continue; gtPluck(i, vel * (up ? .75 : 1) * (.9 + Math.random() * .15), w); w += .011 + Math.random() * .007; }
+  gtCount();
+}
+/* chord cards: a column of little placards beside the guitar, the chosen one in gold */
+function gtCard(i, on){
+  const [name, , L] = GT_CHORDS[i];
+  return canvasTex(192, 96, (g, w, h) => {
+    g.fillStyle = on ? '#e2b552' : 'rgba(14,9,7,.88)'; g.strokeStyle = on ? '#fff3cf' : 'rgba(226,181,82,.75)'; g.lineWidth = 6;
+    g.beginPath(); g.roundRect(4, 4, w - 8, h - 8, 18); g.fill(); g.stroke();
+    g.fillStyle = on ? '#1c120b' : '#f3e9d8'; g.font = '800 54px Nunito, system-ui, sans-serif'; g.textBaseline = 'middle'; g.textAlign = 'left'; g.fillText(name, 22, h / 2 + 3);
+    if (!COARSE){ g.fillStyle = on ? 'rgba(28,18,11,.85)' : '#fff'; g.beginPath(); g.roundRect(w - 62, h / 2 - 20, 42, 40, 8); g.fill(); g.fillStyle = on ? '#e2b552' : '#111'; g.font = '800 28px Nunito, system-ui, sans-serif'; g.textAlign = 'center'; g.fillText(L, w - 41, h / 2 + 2); }
+  });
+}
+function gtCards(){
+  if (gt.cards.length) return;
+  GT_CHORDS.forEach((c, i) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(.1, .05), new THREE.MeshBasicMaterial({ map:gtCard(i, false), transparent:true, toneMapped:false }));
+    m.userData.tex = [m.material.map, gtCard(i, true)]; m.userData.chord = i;
+    /* fingers need bigger targets: on touch the cards sit in two columns, a size up */
+    if (COARSE){ m.position.set(.24 + (i % 2) * .125, .49 - (i >> 1) * .078, .12); m.scale.setScalar(1.15); } else m.position.set(.25, .66 - i * .062, .12);
+    gtG.add(m); gt.cards.push(m);
+  });
+}
+function gtChord(i){
+  gt.chord = i; const fr = GT_CHORDS[i][3];
+  gt.cards.forEach((m, k) => m.material.map = m.userData.tex[k === i ? 1 : 0]);
+  /* finger dots between the frets; muted strings go dark */
+  GTS.dots.forEach((d, s) => {
+    d.visible = fr[s] > 0; if (!d.visible) return;
+    const y = (GTS.fret(fr[s]) + GTS.fret(fr[s] - 1)) / 2, k = (y - GTS.yb) / (GTS.yn - GTS.yb);
+    d.position.set(GTS.xb(s) + (GTS.xn(s) - GTS.xb(s)) * k, y, GT.topZ + .0105);
+  });
+  GTS.strings.forEach((st, s) => st.material.color.set(fr[s] < 0 ? '#3a352e' : s < 4 ? '#c09050' : '#e4e1da'));
+}
+/* where a pointer is across the strings: 0 (low E) to 5 (high E), spread over the whole body so a swipe anywhere strums */
+const _gp = new THREE.Vector3();
+function gtZone(e){
+  const r = jamRay(e); if (!r.ray.intersectPlane(gt.plane, _gp)) return null;
+  gtIn.worldToLocal(_gp); if (_gp.y < -.01 || _gp.y > .34 || Math.abs(_gp.x) > .17) return null;
+  return THREE.MathUtils.clamp((_gp.x + .09) / .18 * 5, -.4, 5.4);
+}
+const _gc = COARSE ? new THREE.Vector3(.13, .37, .05) : new THREE.Vector3(.07, .46, .05), _gn = new THREE.Vector3(0, .14, 1), _gq = new THREE.Vector3();
+STATIONS.guitar = {
+  id:'guitar', hideDog:true, exitYaw:-Math.PI / 2, chipLater:true,
+  cam:{ p:new THREE.Vector3(), l:new THREE.Vector3() },
+  enter(){
+    gtCards(); gt.cards.forEach(m => m.visible = true); gtChord(gt.chord); this.tick(0);
+    gtIn.updateMatrixWorld(true); _gq.set(0, 0, 1).transformDirection(gtIn.matrixWorld); gt.plane.setFromNormalAndCoplanarPoint(_gq, gtIn.localToWorld(new THREE.Vector3(0, 0, GT.topZ + .01)));
+    const S = GT.seat, front = S.clone().add(new THREE.Vector3(SIT_FWD, 0, 0)), side = dog.position.z < GT.z ? -1 : 1;
+    sitAt([new THREE.Vector3(S.x - .3, 0, GT.z + side * .34), new THREE.Vector3(front.x, 0, GT.z + side * .34), front], GT.face, 0, () => {
+      if (station !== STATIONS.guitar) return;
+      gt.live = true; gt.plays = found.has('guitar') ? 99 : 0;
+      jamShow('guitar', COARSE ? 'Tap a chord card, then swipe across the strings.' : 'Letters pick a chord. Strum with <kbd>Space</kbd> or drag across the strings.');
+    });
+  },
+  leave(done){
+    gt.live = false; gt.ptr.clear(); jamHide(); jamEnd(); gt.cards.forEach(m => m.visible = false); GTS.dots.forEach(d => d.visible = false); gtChord(gt.chord); GTS.dots.forEach(d => d.visible = false);
+    GTS.strings.forEach((st, s) => st.material.color.set(s < 4 ? '#c09050' : '#e4e1da'));
+    const side = dog.position.z < GT.z ? -1 : 1, fx = GT.seat.x + SIT_FWD;
+    standFrom(GT.face, 0, [new THREE.Vector3(fx, 0, GT.z + side * .34), new THREE.Vector3(GT.seat.x - .4, 0, GT.z + side * .34)], done);
+  },
+  key(k, e){
+    if (k === 'escape') return leaveStation();
+    if (!gt.live || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+    const c = GT_CHORDS.findIndex(x => x[1] === e.code); if (c >= 0) return gtChord(c);
+    if (e.code === 'Space' || e.code === 'ArrowDown' || e.code === 'Enter') return gtStrum(false);
+    if (e.code === 'ArrowUp') return gtStrum(true);
+    const n = /^Digit([1-6])$/.exec(e.code); if (n){ gtPluck(+n[1] - 1, .85); gtCount(); }
+  },
+  ptr(type, e){
+    if (type === 'down'){
+      if (!gt.live) return;
+      const card = jamRay(e).intersectObjects(gt.cards, false)[0]; if (card) return gtChord(card.object.userData.chord);
+      const v = gtZone(e); if (v === null) return;
+      gt.ptr.set(e.pointerId, { v, t:performance.now(), n:0 }); return;
+    }
+    const p = gt.ptr.get(e.pointerId); if (!p) return;
+    if (type === 'move'){
+      const v = gtZone(e); if (v === null) return;
+      const now = performance.now(), vel = THREE.MathUtils.clamp(Math.abs(v - p.v) / Math.max(8, now - p.t) * 18, .45, 1);
+      const hit = []; for (let i = 0; i < 6; i++) if ((v > p.v && i > p.v && i <= v) || (v < p.v && i < p.v && i >= v)) hit.push(i);
+      if (v < p.v) hit.reverse();
+      hit.forEach((i, k) => gtPluck(i, vel, k * .004)); if (hit.length){ p.n += hit.length; p.t = now; }
+      if (hit.length && p.n >= 3 && p.n - hit.length < 3) gtCount();
+      p.v = v;
+    } else {
+      gt.ptr.delete(e.pointerId);
+      if (!p.n){ gtPluck(THREE.MathUtils.clamp(Math.round(p.v), 0, 5), .8); gtCount(); } // a tap plucks the nearest string
+    }
+  },
+  tick(dt){
+    /* ringing strings shimmer and glow, then settle */
+    gt.t += dt;
+    GTS.strings.forEach((st, i) => {
+      const a = gt.amp[i] *= Math.exp(-dt * 2.4); if (a < .002){ gt.amp[i] = 0; st.position.copy(st.userData.base); st.material.emissiveIntensity = 0; return; }
+      st.position.copy(st.userData.base); st.position.x += Math.sin(gt.t * 90 + i * 1.7) * a * .0011; st.material.emissiveIntensity = a * .9;
+    });
+    if (station !== this) return; jamTick();
+    fitCam(this.cam, gtG, _gc, _gn, COARSE ? .62 : .5, COARSE ? .66 : .9);
+  }
+};
+SPOTS.push({ id:'guitar', pos:new THREE.Vector3(GT.seat.x - .45, 0, GT.z), r:.7, label:'pick up the guitar', dot:'#ffd27f' });
 
 function stationTick(dt){ if (!dogChar) return; perchTick(dt); for (const k in STATIONS) if (STATIONS[k].tick) STATIONS[k].tick(dt); }
 
@@ -3295,7 +3543,7 @@ function frame(now){
 requestAnimationFrame(frame);
 
 addEventListener('resize', () => {
-  camera.aspect = innerWidth / innerHeight; if (camera.view && camera.view.enabled) camera.setViewOffset(innerWidth, innerHeight, viewShift, viewShiftY, innerWidth, innerHeight); camera.updateProjectionMatrix();
+  camera.aspect = innerWidth / innerHeight; if (camera.view && camera.view.enabled) camera.setViewOffset(innerWidth, innerHeight, viewShift, 0, innerWidth, innerHeight); camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight); if (composer) composer.setSize(innerWidth, innerHeight);
 });
 </script>
