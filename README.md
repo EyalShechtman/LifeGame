@@ -18,7 +18,7 @@ python3 -m http.server 8765 -d public
 
 Then go to http://localhost:8765.
 
-Controls: WASD to move, mouse to look, Shift to run, E to interact, V for the dog's eyes, M for music.
+Controls: WASD to move, drag to look, click something nearby (or press E) to open it, Shift to run, V for the dog's eyes, M for music.
 
 ## Deploy
 
