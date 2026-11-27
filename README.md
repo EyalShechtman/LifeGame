@@ -2,7 +2,7 @@
 
 A 3D card room in the browser (Three.js). You walk in as the dog, take the empty seat, and each player at the table pitches one project. Fold, call, raise or go all in.
 
-Around the room: a bar with a bartender (Guinness or Super Bock), a library of essays next to the fireplace, a chess table where EyalBot plays you, the soccer wall and TV, and the Music Corner with a grand piano you can play.
+Around the room: a bar with a bartender (Guinness or Super Bock), a library of essays next to the fireplace, a chess table where EyalBot plays you, the soccer wall and TV, and the Music Corner with a grand piano and a guitar you can play.
 
 First-time visitors get a short welcome tour (the `#tour` sheet) and then a step-by-step guide with a marker in the room. The contact bar at the top opens the Recruiter view (the `#quick` sheet): everything on one page.
 
@@ -53,7 +53,7 @@ Several agents edit this site at once. Edit the file that owns what you are chan
 - Styles for any HUD, sheet or menu: `public/src/styles.css`.
 - Markup (title screen, contact bar, Recruiter view, tour, menus): `public/index.html`.
 - Chess rules or the fallback engine: `public/src/chess-engine.js`.
-- Everything else is in `public/src/main.js`, in sections marked by banners like `/* ---------------- the bar: ... ---------------- */`. The main ones: room and decor, poker table, the music corner (piano build, then "sit at the grand and play it"), characters, input, music, contact bar / recruiter view / tour, first-visit guide, interactions, soccer corner, stations (bar, library, chess), minimap, loop. Keep edits inside the section you own.
+- Everything else is in `public/src/main.js`, in sections marked by banners like `/* ---------------- the bar: ... ---------------- */`. The main ones: room and decor, poker table, the music corner (piano and guitar builds, then "the grand piano and the guitar, played right on the instruments"), characters, input, music, contact bar / recruiter view / tour, first-visit guide, interactions, soccer corner, stations (bar, library, chess), minimap, loop. Keep edits inside the section you own.
 - New files the site loads go in `public/assets/` and are referenced as `assets/...`.
 
 `main.js` stays one module on purpose: its sections share mutable state (`mode`, `yaw`, `pitch`, `pov`, `speed`, …) and call each other in both directions, so splitting it further would mean changing logic.
