@@ -1,1 +1,6 @@
 .DS_Store
+node_modules/
+dist/
+.wrangler/
+__pycache__/
+.claude/

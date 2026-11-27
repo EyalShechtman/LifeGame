@@ -18,10 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Everything the site serves lives in public/ (tools/ and docs are never deployed).
       - name: Collect site files
         run: |
-          mkdir dist
-          cp -R index.html dog.webp dog_head.glb.b64.txt dog_rigged.glb.b64.txt autumn-leaves.mp3 soccer essays chess dist/
+          cp -R public dist
+          find dist -name .DS_Store -delete
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
