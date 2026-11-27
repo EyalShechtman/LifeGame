@@ -6,7 +6,7 @@ Around the room: a bar with a bartender (Guinness or Super Bock), a library of e
 
 First-time visitors get a short welcome tour (the `#tour` sheet) and then a step-by-step guide with a marker in the room. The contact bar at the top opens the Recruiter view (the `#quick` sheet): everything on one page.
 
-Live at https://lifegame-88o.pages.dev, moving to https://eyalshechtman.com.
+Live at https://eyalshechtman.com (also https://lifegame-88o.pages.dev).
 
 ## Run it
 
