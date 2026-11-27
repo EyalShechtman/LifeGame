@@ -1619,24 +1619,15 @@ addEventListener('mousemove', e => {
   if (mode !== 'walk') return;
   if (document.pointerLockElement === cvs || dragging){ yaw -= e.movementX * .0026; pitch = THREE.MathUtils.clamp(pitch + e.movementY * .002, -.35, .7); }
 });
+/* clicks in the room only look around; things open with E, the touch E button, or a click on the "Press E" prompt */
 cvs.addEventListener('click', e => {
-  if (mode === 'station' && station && station.click){ station.click(e); return; }
-  if (mode !== 'walk') return;
-  const ray = new THREE.Raycaster(), m = new THREE.Vector2();
-  if (document.pointerLockElement === cvs) m.set(0, 0); else m.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
-  ray.setFromCamera(m, camera);
-  const hit = ray.intersectObjects(scene.children, true).find(h => h.object.userData.act !== undefined && h.object.userData.act !== null);
-  if (hit && hit.distance < 7) doAct(hit.object.userData.act);
+  if (mode === 'station' && station && station.click) station.click(e);
 });
-/* touch: left half = a stick that appears under your thumb, right half = look; a quick tap on the right picks what you tapped */
+/* touch: left half = a stick that appears under your thumb, right half = look; a quick tap on the right opens what you're standing next to */
 const stick = document.getElementById('stick'), knob = document.getElementById('knob');
 let stickId = null, lookId = null, lookX = 0, lookY = 0, sx = 0, sy = 0, tap = null;
 const touchLayer = document.getElementById('touch');
-function tapPick(x, y){
-  const ray = new THREE.Raycaster(); ray.setFromCamera(new THREE.Vector2(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1), camera);
-  const hit = ray.intersectObjects(scene.children, true).find(h => h.object.userData.act !== undefined && h.object.userData.act !== null);
-  if (hit && hit.distance < 7) doAct(hit.object.userData.act); else interact();
-}
+function tapPick(){ interact(); }
 touchLayer.addEventListener('touchstart', e => { for (const t of e.changedTouches){
   if (t.clientX < innerWidth * .45 && stickId === null){
     stickId = t.identifier; sx = Math.max(70, t.clientX); sy = Math.min(innerHeight - 70, Math.max(70, t.clientY));
