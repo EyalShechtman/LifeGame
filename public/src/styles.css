@@ -114,7 +114,9 @@ body.jam canvas{touch-action:none}
 #rotate b{font:400 34px/1 var(--display);letter-spacing:.03em}
 #rotate span{max-width:280px;font-size:15px;font-weight:700;color:var(--muted);line-height:1.45}
 @keyframes turn{0%,25%{transform:rotate(0)}55%,85%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
-@media (pointer:coarse) and (orientation:portrait){#rotate{display:flex}}
+#rotate small{margin-top:6px;font-size:13px;font-weight:700;color:var(--muted)}
+#rotate button{margin-top:-10px;padding:12px 22px;border-radius:999px;border:2px solid var(--gold);background:var(--gold);color:#1c120b;font:800 15px var(--body);cursor:pointer}
+@media (pointer:coarse) and (orientation:portrait){#rotate{display:flex}body:has(.sheet:not([hidden])) #rotate{display:none}}
 .tOnly,#title .tOnly,.sheet .tOnly{display:none}
 @media (pointer:coarse){
   .tOnly,#title .tOnly{display:flex}.sheet .tOnly{display:grid}.kOnly{display:none!important}
@@ -270,3 +272,13 @@ body.soccer #coach,body.station #coach,body.side #coach,body.soccer #coachArrow,
 
 /* hover tag next to the cursor: what a click on this thing will do */
 #hoverTag{transform:translate(16px,14px);padding:6px 10px;background:var(--panel);border:1px solid var(--gold);border-radius:6px;font-size:13px;font-weight:800;white-space:nowrap;color:var(--ink)}
+/* very short landscape (in-app browsers like X's, smaller iPhones): the first screen after turning the phone must fit */
+@media (max-height:340px) and (orientation:landscape){
+  #title{padding-top:calc(50px + env(safe-area-inset-top,0px));padding-bottom:8px}
+  #title::before{width:36%}#title::after{width:41%}
+  #title img{height:74vh;max-width:28vw}
+  #title h1{font-size:clamp(40px,14vh,90px)}
+  #title .tag{margin-top:6px;font-size:14px}
+  #title .btn{margin-top:10px;padding:10px 20px}
+  #title .ctl{margin-top:8px;gap:4px 10px;font-size:11px}
+}

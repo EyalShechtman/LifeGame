@@ -1505,6 +1505,7 @@ function openQuick(){ openSheet(quick); }
 document.getElementById('cbRec').addEventListener('click', openQuick);
 document.getElementById('cbWho').addEventListener('click', openQuick);
 document.getElementById('cbCopy').addEventListener('click', copyEmail);
+document.getElementById('rotRec').addEventListener('click', openQuick);
 quick.querySelector('[data-copy]').addEventListener('click', copyEmail);
 for (const s of [quick, tour]){
   s.addEventListener('click', e => { if (e.target === s || e.target.closest('[data-close]')) closeSheets(); });
@@ -2994,7 +2995,11 @@ function frame(now){
 }
 requestAnimationFrame(frame);
 
-addEventListener('resize', () => {
+/* iOS can report the old size on the first resize after a rotation, so measure again once it settles */
+for (const ev of ['orientationchange', 'pageshow']) addEventListener(ev, () => setTimeout(onResize, 350));
+if (window.visualViewport) visualViewport.addEventListener('resize', () => onResize());
+addEventListener('resize', onResize);
+function onResize(){
   camera.aspect = innerWidth / innerHeight; if (camera.view && camera.view.enabled) camera.setViewOffset(innerWidth, innerHeight, viewShift, 0, innerWidth, innerHeight); camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight); if (composer) composer.setSize(innerWidth, innerHeight);
-});
+}
