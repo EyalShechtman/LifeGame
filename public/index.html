@@ -7,7 +7,7 @@
 <title>Eyal's Card Room</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Nunito:wght@400;700;800&display=swap">
-<link rel="stylesheet" href="src/styles.css?v=2">
+<link rel="stylesheet" href="src/styles.css?v=3">
 
 <div id="stage"></div>
 <div id="vignette" class="hud"></div>
@@ -22,7 +22,7 @@
   <div class="row acts"><button type="button" class="btn" id="sWatch0">▶ High school highlights</button><button type="button" class="btn" id="sWatch1">▶ Bellevue Athletic highlights</button><button type="button" class="btn ghost" id="sStory">Read the story</button><button type="button" class="btn ghost" id="sBack">Back · Esc</button></div>
 </div>
 <div id="stUI" class="hud" hidden role="dialog" aria-label="Conversation"><div class="who"><span id="stWho"></span><span id="stSub"></span></div><p id="stText" aria-live="polite"></p><div class="acts" id="stActs"></div></div>
-<div id="jam" hidden role="region" aria-label="Music corner controls"><span id="jamWho">THE MUSIC CORNER</span><span id="jamHint"></span><span class="pBtns"><button type="button" class="pnOnly" id="pnDown" aria-label="Octave down">‹ <span class="kOnly">Z</span></button><em class="pnOnly" id="pnOct">C3–F4</em><button type="button" class="pnOnly" id="pnUp" aria-label="Octave up"><span class="kOnly">X</span> ›</button><button type="button" id="jamExit">Stand up<span class="kOnly"> · Esc</span></button></span></div>
+<div id="jam" hidden role="region" aria-label="Music corner controls"><span id="jamWho">THE MUSIC CORNER</span><span id="jamHint"></span><span class="pBtns"><button type="button" class="pnOnly" id="pnDown" aria-label="Octave down">‹ <span class="kOnly">Z</span></button><em class="pnOnly" id="pnOct">C3–F4</em><button type="button" class="pnOnly" id="pnUp" aria-label="Octave up"><span class="kOnly">X</span> ›</button><button type="button" class="pnOnly fav" id="pnSong">▶ Eyal’s favourite</button><button type="button" id="jamExit">Stand up<span class="kOnly"> · Esc</span></button></span></div>
 <div id="reader" hidden role="dialog" aria-label="Book"><div class="book"><div class="pages" id="rdPages"><div id="rdFlow"></div></div><div class="rdNav"><button type="button" id="rdPrev" aria-label="Previous page">‹</button><span id="rdNum"></span><button type="button" id="rdNext" aria-label="Next page">›</button><button type="button" id="rdClose" class="btn">Put it back · Esc</button></div></div></div>
 <canvas id="map" class="hud" width="170" height="170" aria-hidden="true"></canvas>
 <div id="keys" class="hud"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move</span><span>Drag to look</span><span>Click to open</span><span><kbd>Shift</kbd> run</span><span><kbd>E</kbd> interact</span><span><kbd>V</kbd> dog's eyes</span><span><kbd>M</kbd> music</span><span><kbd>H</kbd> help</span></div>
@@ -141,4 +141,4 @@
 </div>
 
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="src/main.js?v=2"></script>
+<script type="module" src="src/main.js?v=3"></script>

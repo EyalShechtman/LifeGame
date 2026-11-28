@@ -32,6 +32,7 @@ body.soccer #keys,body.soccer #map,body.soccer #help,body.soccer #prompt,body.st
 #jam .pBtns{display:flex;align-items:center;gap:6px;white-space:nowrap}
 #jam .pBtns button{padding:5px 11px;border-radius:999px;border:2px solid var(--gold);background:transparent;color:var(--gold);font:800 12px var(--body);cursor:pointer}
 #jam .pBtns #jamExit{border-color:rgba(255,255,255,.35);color:var(--ink)}
+#jam .pBtns .fav{background:var(--gold);color:#1c120b}
 #jam.guitar .pnOnly{display:none}
 #pnOct{font:800 12px var(--body);font-style:normal;color:var(--ink);min-width:52px;text-align:center}
 body.jam #chips i,body.jam #coach,body.jam #coachArrow{display:none!important}

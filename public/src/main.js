@@ -2544,7 +2544,7 @@ const PN_CODES = { KeyA:0, KeyW:1, KeyS:2, KeyE:3, KeyD:4, KeyF:5, KeyT:6, KeyG:
 const PN_LETTER = ['A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K', 'O', 'L', 'P', ';', '\''];
 /* Salamander Grand Piano (Yamaha C5), sampled by Alexander Holm, CC BY 3.0; one sample every minor third, pitched to the notes between */
 const PN_SAMPLES = 'https://cdn.jsdelivr.net/gh/Tonejs/audio@efd8296360f9526e379bfbe5c1698ff54d6a1d34/salamander/';
-const pn = { live:false, lo:48, notes:0, voices:new Map(), count:new Map(), held:new Map(), ptr:new Map(), bus:null, wave:null, buf:{}, loading:false, labG:null, labs:[] };
+const pn = { live:false, lo:48, notes:0, voices:new Map(), count:new Map(), held:new Map(), ptr:new Map(), bus:null, wave:null, buf:{}, loading:false, labG:null, labs:[], auto:false, songT:0, songI:0, songOn:[], songKeys:new Map() };
 const pnName = m => ['C', 'Ds', 'Fs', 'A'][(m % 12) / 3] + (Math.floor(m / 12) - 1);
 function pnLoad(){
   if (pn.loading) return; pn.loading = true;
@@ -2565,8 +2565,8 @@ function pnAudio(){
   if (ctx.state !== 'running') ctx.resume();
   return ctx;
 }
-function pnOn(m){
-  const ctx = pnAudio(), t = ctx.currentTime, vel = .78 + Math.random() * .08;
+function pnOn(m, v){
+  const ctx = pnAudio(), t = ctx.currentTime, vel = v || .78 + Math.random() * .08;
   pnOff(m, true);
   if (pn.voices.size >= 24) pnOff(pn.voices.keys().next().value, true); // steal the oldest voice
   const g = ctx.createGain(); g.connect(pn.bus);
@@ -2613,8 +2613,46 @@ function pnRelease(m){
   if (c > 0){ pn.count.set(m, c); return; }
   pn.count.delete(m); pnOff(m); pianoKey3D(m, false); pnLabelDrop(m, false);
 }
-function pnAllOff(){ for (const m of [...pn.count.keys()]){ pn.count.set(m, 1); pnRelease(m); } pn.held.clear(); pn.ptr.clear(); }
-function pnOct(d){ const lo = Math.max(24, Math.min(84, pn.lo + d)); if (lo === pn.lo) return; pnAllOff(); pn.lo = lo; pnLabels(); }
+function pnAllOff(){ if (pn.auto) pnSong(false); for (const m of [...pn.count.keys()]){ pn.count.set(m, 1); pnRelease(m); } pn.held.clear(); pn.ptr.clear(); }
+function pnOct(d){ if (pn.auto) return; const lo = Math.max(24, Math.min(84, pn.lo + d)); if (lo === pn.lo) return; pnAllOff(); pn.lo = lo; pnLabels(); }
+/* Eyal's favourite: Mozart's Rondo alla Turca (Piano Sonata K. 331, 3rd movement), the A-minor theme, both hands.
+   Notes are name+octave with durations in sixteenths; '+' makes a chord, r is a rest. Each half is played twice, as written. */
+const SONG = (() => {
+  const P = 'B4.1 A4.1 G#4.1 A4.1', R13 = 'C5.2 r.2 D5.1 C5.1 B4.1 C5.1 E5.2 r.2 F5.1 E5.1 D#5.1 E5.1 B5.1 A5.1 G#5.1 A5.1 B5.1 A5.1 G#5.1 A5.1';
+  const R1 = `${R13} C6.4 A5.2 C6.2 B5.2 A5.2 G5.2 A5.2 B5.2 A5.2 G5.2 A5.2 B5.2 A5.2 G5.2 F#5.2 E5.4 ${P}`;
+  const R2 = `${R13} C6.4 A5.2 B5.2 C6.2 B5.2 A5.2 G#5.2 A5.2 E5.2 F5.2 D5.2 C5.4 B4.4`;
+  const L13 = 'A3.2 C4+E4.2 C4+E4.2 C4+E4.2 A3.2 C4+E4.2 C4+E4.2 C4+E4.2 A3.2 C4+E4.2 A3.2 C4+E4.2';
+  const L1 = `${L13} A3.2 C4+E4.2 A3.2 C4+E4.2 E3.2 G3+B3.2 G3+B3.2 G3+B3.2 E3.2 G3+B3.2 G3+B3.2 G3+B3.2 B2.2 D#3+A3.2 B2.2 D#3+A3.2 E3.2 G3+B3.2 E3.2 r.2`;
+  const L2 = `${L13} A3.2 C4+E4.2 A3.2 C4+E4.2 A3.2 C4+E4.2 E3.2 G#3+D4.2 A3.2 C4+E4.2 D3.2 D4+F4.2 E3.2 C4+E4.2 E3.2 G#3+B3+D4.2`;
+  const RH = `${P} ${R1} ${R2} A4.4 ${P} ${R1} ${R2} A4.8`, LH = `r.4 ${L1} ${L2} A2.2 A3+C4+E4.2 r.4 ${L1} ${L2} A2.2 A3+C4+E4.2 r.4`;
+  const SIX = 60 / 126 / 4, ev = [], midi = n => { const [, l, sh, o] = /([A-G])(#?)(\d)/.exec(n); return 12 * (+o + 1) + { C:0, D:2, E:4, F:5, G:7, A:9, B:11 }[l] + (sh ? 1 : 0); };
+  for (const [track, vel, hold] of [[RH, .8, .85], [LH, .5, .75]]){
+    let t = 0;
+    for (const tok of track.split(' ')){
+      const [n, d] = tok.split('.'), dur = +d * SIX;
+      if (n !== 'r') for (const x of n.split('+')) ev.push({ t, m:midi(x), d:dur * hold, v:vel * (.95 + Math.random() * .1) });
+      t += dur;
+    }
+  }
+  return ev.sort((a, b) => a.t - b.t);
+})();
+const pnSongBtn = document.getElementById('pnSong');
+function songKey(m, down){ const c = (pn.songKeys.get(m) || 0) + (down ? 1 : -1); pn.songKeys.set(m, c); if (c === (down ? 1 : 0)) pianoKey3D(m, down); }
+function pnSong(on){
+  if (on === pn.auto || (on && !pn.live)) return;
+  if (on){ pnAllOff(); pn.auto = true; pn.songT = -.6; pn.songI = 0; jamStart(); pnLoad(); }
+  else { pn.auto = false; for (const a of pn.songOn){ pnOff(a.m); songKey(a.m, false); } pn.songOn = []; }
+  if (pn.labG) pn.labG.visible = !on && !COARSE;
+  pnSongBtn.innerHTML = on ? '■ Stop' : '▶ Eyal’s favourite';
+  jamHint.innerHTML = on ? 'Mozart, <i>Rondo alla Turca</i>. Eyal’s favourite.' : COARSE ? 'Tap the keys. Use several fingers for chords.' : 'Type the letters on the keys, or click them. <kbd>Z</kbd> <kbd>X</kbd> octave';
+}
+function songTick(dt){
+  const T = pn.songT += dt;
+  while (pn.songI < SONG.length && SONG[pn.songI].t <= T){ const e = SONG[pn.songI++]; pnOn(e.m, e.v); songKey(e.m, true); pn.songOn.push({ m:e.m, off:e.t + e.d }); }
+  pn.songOn = pn.songOn.filter(a => { if (a.off > T) return true; if (!pn.songOn.some(b => b !== a && b.m === a.m && b.off > T)) pnOff(a.m); songKey(a.m, false); return false; });
+  if (pn.songI >= SONG.length && !pn.songOn.length) pnSong(false);
+}
+pnSongBtn.addEventListener('click', e => { e.currentTarget.blur(); pnSong(!pn.auto); });
 function pnPick(e){ const h = jamRay(e).intersectObjects([PK.black, PK.white], false)[0]; return h ? PK.rev.get(h.object)[h.instanceId] : null; }
 document.getElementById('pnDown').addEventListener('click', e => { e.currentTarget.blur(); pnOct(-12); });
 document.getElementById('pnUp').addEventListener('click', e => { e.currentTarget.blur(); pnOct(12); });
@@ -2631,16 +2669,19 @@ STATIONS.piano = {
       if (station !== STATIONS.piano) return;
       pn.live = true; pn.notes = found.has('piano') ? 99 : 0;
       jamShow('piano', COARSE ? 'Tap the keys. Use several fingers for chords.' : 'Type the letters on the keys, or click them. <kbd>Z</kbd> <kbd>X</kbd> octave');
+      pnSongBtn.innerHTML = '▶ Eyal’s favourite';
     });
   },
   leave(done){
-    pn.live = false; pnAllOff(); jamHide(); jamEnd(); pn.labG.visible = false;
+    pnSong(false); pn.live = false; pnAllOff(); jamHide(); jamEnd(); pn.labG.visible = false;
     const side = dog.position.z < PN.z ? -1 : 1, fx = PN.seat.x + SIT_FWD;
     standFrom(PN.face, 0, [new THREE.Vector3(fx, 0, PN.z + side * .42), new THREE.Vector3(PN.seat.x - .45, 0, PN.z + side * .42)], done);
   },
   key(k, e){
     if (k === 'escape') return leaveStation();
     if (!pn.live || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.code === 'Space'){ e.preventDefault(); return pnSong(!pn.auto); }
+    if (pn.auto) return; // hands off while Mozart plays
     if (e.code === 'KeyZ') return pnOct(-12);
     if (e.code === 'KeyX') return pnOct(12);
     const off = PN_CODES[e.code];
@@ -2649,16 +2690,18 @@ STATIONS.piano = {
   keyup(k, e){ const m = pn.held.get(e.code); if (m !== undefined){ pn.held.delete(e.code); pnRelease(m); } },
   /* mouse and fingers play the 3D keys directly; slide across them for a glissando */
   ptr(type, e){
-    if (type === 'down'){ if (!pn.live) return; const m = pnPick(e); if (m == null) return; pn.ptr.set(e.pointerId, m); pnPress(m); return; }
+    if (type === 'down'){ if (!pn.live || pn.auto) return; const m = pnPick(e); if (m == null) return; pn.ptr.set(e.pointerId, m); pnPress(m); return; }
     if (!pn.ptr.has(e.pointerId)) return;
     const was = pn.ptr.get(e.pointerId);
     if (type === 'move'){ const m = pnPick(e); if (m === was) return; if (was != null) pnRelease(was); pn.ptr.set(e.pointerId, m); if (m != null) pnPress(m); }
     else { pn.ptr.delete(e.pointerId); if (was != null) pnRelease(was); }
   },
   /* the camera hangs over the playable range and glides along when you change octave */
-  tick(){
+  tick(dt){
     if (station !== this) return; jamTick();
-    const a = PK.idx[Math.max(21, pn.lo - 1)].x, b = PK.idx[pn.lo + 17].x;
+    if (pn.auto) songTick(dt);
+    /* the song spans both hands (A2 to C6), so the camera pulls back to show all of it */
+    const a = PK.idx[pn.auto ? 44 : Math.max(21, pn.lo - 1)].x, b = PK.idx[pn.auto ? 86 : pn.lo + 17].x;
     /* on touch there are no letters to read, so get in close and make the keys big enough for fingers */
     _pc.set((a + b) / 2, PN.keyY, COARSE ? .105 : .118); fitCam(this.cam, pianoG, _pc, _pn, b - a + (COARSE ? .02 : .06), COARSE ? .14 : .27);
   }
