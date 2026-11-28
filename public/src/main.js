@@ -1222,33 +1222,61 @@ addEventListener('keydown', e => {
 addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; if (mode === 'station' && station && station.keyup) station.keyup(e.key.toLowerCase(), e); });
 addEventListener('blur', () => { for (const k in keys) keys[k] = false; pnAllOff(); gt.ptr.clear(); });
 const cvs = renderer.domElement;
-cvs.addEventListener('mousedown', e => { dragging = true; if (mode === 'walk' && cvs.requestPointerLock){ try { const r = cvs.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch (_) {} } });
-addEventListener('mouseup', () => dragging = false);
+/* mouse: drag to look, click to pick what's under the cursor (no pointer lock, so the cursor is always where you aim) */
+let downX = 0, downY = 0, dragMoved = 0;
+cvs.addEventListener('mousedown', e => { dragging = true; downX = e.clientX; downY = e.clientY; dragMoved = 0; });
+addEventListener('mouseup', () => { dragging = false; if (mode === 'walk') cvs.style.cursor = ''; });
 /* the instruments are played right on the canvas: pointers go to the station you're at */
 for (const [ev, t] of [['pointerdown', 'down'], ['pointermove', 'move'], ['pointerup', 'up'], ['pointercancel', 'up']])
   (t === 'down' ? cvs : window).addEventListener(ev, e => { if (mode === 'station' && station && station.ptr){ if (t === 'down'){ e.preventDefault(); try { cvs.setPointerCapture(e.pointerId); } catch (_) {} } station.ptr(t, e); } });
 addEventListener('mousemove', e => {
-  if (mode !== 'walk') return;
-  if (document.pointerLockElement === cvs || dragging){ yaw -= e.movementX * .0026; pitch = THREE.MathUtils.clamp(pitch + e.movementY * .002, -.35, .7); }
+  if (mode !== 'walk'){ hoverAt(null); return; }
+  if (dragging){
+    dragMoved = Math.max(dragMoved, Math.hypot(e.clientX - downX, e.clientY - downY));
+    if (dragMoved > 5){ yaw -= e.movementX * .0026; pitch = THREE.MathUtils.clamp(pitch + e.movementY * .002, -.35, .7); cvs.style.cursor = 'grabbing'; hoverAt(null); }
+    return;
+  }
+  hoverAt(e);
 });
+cvs.addEventListener('mouseleave', () => hoverAt(null));
 cvs.addEventListener('click', e => {
   if (mode === 'station' && station && station.click){ station.click(e); return; }
-  if (mode !== 'walk') return;
-  const ray = new THREE.Raycaster(), m = new THREE.Vector2();
-  if (document.pointerLockElement === cvs) m.set(0, 0); else m.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
-  ray.setFromCamera(m, camera);
-  const hit = ray.intersectObjects(scene.children, true).find(h => h.object.userData.act !== undefined && h.object.userData.act !== null);
-  if (hit && hit.distance < 7) doAct(hit.object.userData.act);
+  if (mode !== 'walk' || dragMoved > 5) return;   // a drag to look around is not a click
+  const act = pickAt(e.clientX, e.clientY);
+  if (act){ hoverAt(null); doAct(act); }
 });
+/* picking: only the first solid surface under the pointer counts, so walls and furniture block what's behind them;
+   light cones, glows, decals, shadows and name tags are see-through; it has to be within reach of the dog */
+const PICK_REACH = 3.2, _pickRay = new THREE.Raycaster(), _pickM = new THREE.Vector2();
+const seeThrough = o => o.isSprite || !o.visible || [].concat(o.material || []).every(m => m.transparent && m.depthWrite === false);
+function pickAt(x, y){
+  _pickM.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); _pickRay.setFromCamera(_pickM, camera);
+  const hit = _pickRay.intersectObjects(scene.children, true).find(h => !seeThrough(h.object) && h.object !== ember);
+  const act = hit && hit.object.userData.act;
+  if (!act) return null;
+  if (Math.hypot(hit.point.x - dog.position.x, hit.point.z - dog.position.z) > PICK_REACH) return null;
+  return act;
+}
+/* hover: hand cursor plus a tag saying what a click does */
+const hoverTag = document.createElement('div'); hoverTag.id = 'hoverTag'; hoverTag.className = 'hud'; hoverTag.hidden = true; document.body.append(hoverTag);
+const actLabel = act => { const s = SPOTS.find(s => s.id === act); if (s) return s.label; if (act.startsWith('player:')){ const p = players[+act.split(':')[1]]; return p ? 'meet ' + p.name : ''; } if (act === 'guitar') return 'play the guitar'; return CHAPTERS[act] ? 'open ' + CHAPTERS[act].title : 'take a look'; };
+let hoverPending = null;
+function hoverAt(e){
+  if (!e){ hoverPending = null; hoverTag.hidden = true; if (mode === 'walk' && !dragging) cvs.style.cursor = ''; return; }
+  if (!hoverPending) requestAnimationFrame(() => {   // at most one raycast per frame
+    const p = hoverPending; hoverPending = null; if (!p || mode !== 'walk' || dragging) return;
+    const act = pickAt(p.x, p.y), label = act && actLabel(act);
+    cvs.style.cursor = act ? 'pointer' : '';
+    hoverTag.hidden = !label;
+    if (label){ hoverTag.textContent = 'Click to ' + label; hoverTag.style.left = p.x + 'px'; hoverTag.style.top = p.y + 'px'; }
+  });
+  hoverPending = { x:e.clientX, y:e.clientY };
+}
 /* touch: left half = a stick that appears under your thumb, right half = look; a quick tap on the right picks what you tapped */
 const stick = document.getElementById('stick'), knob = document.getElementById('knob');
 let stickId = null, lookId = null, lookX = 0, lookY = 0, sx = 0, sy = 0, tap = null;
 const touchLayer = document.getElementById('touch');
-function tapPick(x, y){
-  const ray = new THREE.Raycaster(); ray.setFromCamera(new THREE.Vector2(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1), camera);
-  const hit = ray.intersectObjects(scene.children, true).find(h => h.object.userData.act !== undefined && h.object.userData.act !== null);
-  if (hit && hit.distance < 7) doAct(hit.object.userData.act); else interact();
-}
+function tapPick(x, y){ const act = pickAt(x, y); if (act) doAct(act); else interact(); }
 touchLayer.addEventListener('touchstart', e => { for (const t of e.changedTouches){
   if (t.clientX < innerWidth * .45 && stickId === null){
     stickId = t.identifier; sx = Math.max(70, t.clientX); sy = Math.min(innerHeight - 70, Math.max(70, t.clientY));

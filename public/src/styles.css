@@ -266,3 +266,6 @@ body.soccer #coach,body.station #coach,body.side #coach,body.soccer #coachArrow,
 }
 
 
+
+/* hover tag next to the cursor: what a click on this thing will do */
+#hoverTag{transform:translate(16px,14px);padding:6px 10px;background:var(--panel);border:1px solid var(--gold);border-radius:6px;font-size:13px;font-weight:800;white-space:nowrap;color:var(--ink)}
